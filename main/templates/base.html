@@ -346,24 +346,32 @@
     </div>
 
     <script>
-        // Language Selection Logic
+        // Language Selection Logic with Retry if Google Translate isn't ready
         function selectLanguage(langCode) {
             var selectField = document.querySelector(".goog-te-combo");
             if (selectField) {
                 selectField.value = langCode;
                 selectField.dispatchEvent(new Event('change'));
+                document.getElementById('language-overlay-modal').style.display = 'none';
+                localStorage.setItem('ib_lang_selected', 'true');
+            } else {
+                // If not ready, show a small loader and try again in 500ms
+                console.log("Google Translate hasn't loaded yet. Retrying...");
+                setTimeout(function() {
+                    selectLanguage(langCode);
+                }, 500);
             }
-            document.getElementById('language-overlay-modal').style.display = 'none';
-            localStorage.setItem('ib_lang_selected', 'true');
         }
 
         // Show modal on first load if no language is selected
         document.addEventListener('DOMContentLoaded', function() {
             setTimeout(function() {
+                // Check if we already have a selection or if it was dismissed
                 if (!localStorage.getItem('ib_lang_selected')) {
-                    document.getElementById('language-overlay-modal').style.display = 'flex';
+                    var modal = document.getElementById('language-overlay-modal');
+                    if(modal) modal.style.display = 'flex';
                 }
-            }, 1000); 
+            }, 1500); // Slightly longer delay to allow assets to load
         });
     </script>
 
