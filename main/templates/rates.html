@@ -1,0 +1,161 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Interest Rates | Indie Bank{% endblock %}
+{% block content %}
+<style>
+    /* Premium Rates Internal Styles */
+    .rates-table-header {
+        background: #1a202c !important;
+        color: white !important;
+        letter-spacing: 1px;
+        font-weight: 700;
+    }
+
+    .special-row {
+        background: rgba(212, 175, 55, 0.08) !important;
+        box-shadow: inset 4px 0 0 #d4af37;
+    }
+
+    .btn-gold {
+        background: linear-gradient(135deg, #d4af37 0%, #f9e27d 50%, #b8860b 100%);
+        color: #1a202c !important;
+        border: none;
+        padding: 1.25rem 3rem;
+        border-radius: 12px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+    }
+
+    .btn-gold:hover {
+        background: linear-gradient(135deg, #f9e27d 0%, #d4af37 50%, #f9e27d 100%);
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(212, 175, 55, 0.5);
+    }
+</style>
+{% include 'ticker.html' %}
+<section
+    style="position: relative; padding: 13rem 0; background: url('{% static 'img/rates.jpg' %}') center/cover no-repeat; margin-bottom: 4rem; border-radius: 0 0 0px 0px; overflow: hidden;">
+    <div
+        style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to right, rgba(15, 23, 42, 0.95), rgba(15, 23, 42, 0.6));">
+    </div>
+    <div class="container" style="position: relative; z-index: 1; text-align: center; color: white;">
+        <h1 style="font-size: 4rem; font-weight: 900; color: white; margin-bottom: 1rem; letter-spacing: -2px;">Rates &
+            Charges</h1>
+        <p style="font-size: 1.25rem; opacity: 0.8; max-width: 600px; margin: 0 auto;">Uncompromising transparency.
+            Institutional-grade pricing for everyone.</p>
+    </div>
+</section>
+
+<section style="padding: 2rem 0;">
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; margin-bottom: 4rem;">
+        <div class="glass-panel"
+            style="padding: 2.5rem; background: white; border-top: 6px solid var(--color-ib-blue);">
+            <h3 style="font-weight: 800; margin-bottom: 2rem; border-bottom: 1px solid #eee; padding-bottom: 1rem;">
+                <i class="fas fa-piggy-bank" style="margin-right: 12px; color: var(--color-ib-blue);"></i> Deposit
+                Rates
+            </h3>
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr style="text-align: left; font-size: 0.8rem; text-transform: uppercase;">
+                        <th style="padding: 1.25rem;" class="rates-table-header">Period</th>
+                        <th style="padding: 1.25rem;" class="rates-table-header">General</th>
+                        <th style="padding: 1.25rem;" class="rates-table-header">Senior Citizen</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="border-bottom: 1px solid #f0f0f0;">
+                        <td style="padding: 1rem; font-weight: 600;">7 - 14 Days</td>
+                        <td style="padding: 1rem; color: var(--color-ib-blue); font-weight: 700;">3.50%</td>
+                        <td style="padding: 1rem; color: var(--color-success); font-weight: 700;">4.00%</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #f0f0f0;">
+                        <td style="padding: 1rem; font-weight: 600;">180 - 210 Days</td>
+                        <td style="padding: 1rem; color: var(--color-ib-blue); font-weight: 700;">5.75%</td>
+                        <td style="padding: 1rem; color: var(--color-success); font-weight: 700;">6.25%</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #f0f0f0;">
+                        <td style="padding: 1rem; font-weight: 600;">1 Year - 2 Years</td>
+                        <td style="padding: 1rem; color: var(--color-ib-blue); font-weight: 700;">7.25%</td>
+                        <td style="padding: 1rem; color: var(--color-success); font-weight: 700;">7.75%</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #f0f0f0;" class="special-row">
+                        <td style="padding: 1.25rem; font-weight: 800;">399 Days (Special)</td>
+                        <td style="padding: 1.25rem; color: var(--color-ib-accent); font-weight: 800;">8.90%</td>
+                        <td style="padding: 1.25rem; color: var(--color-success); font-weight: 800;">9.40%</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 1rem; font-weight: 600;">Savings Account</td>
+                        <td style="padding: 1rem; color: var(--color-ib-blue); font-weight: 700;">7.50%</td>
+                        <td style="padding: 1rem; color: var(--color-success); font-weight: 700;">7.50%</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="glass-panel"
+            style="padding: 2.5rem; background: white; border-top: 6px solid var(--color-ib-accent);">
+            <h3 style="font-weight: 800; margin-bottom: 2rem; border-bottom: 1px solid #eee; padding-bottom: 1rem;">
+                <i class="fas fa-hand-holding-dollar" style="margin-right: 12px; color: var(--color-ib-accent);"></i>
+                Loan Rates (Floating)
+            </h3>
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr style="text-align: left; font-size: 0.8rem; text-transform: uppercase;">
+                        <th style="padding: 1.25rem;" class="rates-table-header">Loan Type</th>
+                        <th style="padding: 1.25rem;" class="rates-table-header">Starting From</th>
+                        <th style="padding: 1.25rem;" class="rates-table-header">Processing Fee</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="border-bottom: 1px solid #f0f0f0;">
+                        <td style="padding: 1rem; font-weight: 600;">Home Loan</td>
+                        <td style="padding: 1rem; color: var(--color-ib-blue); font-weight: 700;">8.35%*</td>
+                        <td style="padding: 1rem;">Nil</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #f0f0f0;">
+                        <td style="padding: 1rem; font-weight: 600;">Car Loan</td>
+                        <td style="padding: 1rem; color: var(--color-ib-blue); font-weight: 700;">9.20%*</td>
+                        <td style="padding: 1rem;">0.5%</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #f0f0f0;">
+                        <td style="padding: 1rem; font-weight: 600;">Personal Loan</td>
+                        <td style="padding: 1rem; color: var(--color-ib-blue); font-weight: 700;">11.5%*</td>
+                        <td style="padding: 1rem;">1.0%</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #f0f0f0;">
+                        <td style="padding: 1rem; font-weight: 600;">Gold Loan</td>
+                        <td style="padding: 1rem; color: var(--color-ib-blue); font-weight: 700;">8.50%*</td>
+                        <td style="padding: 1rem;">Flat ₹20</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p style="margin-top: 2rem; font-size: 0.75rem; color: #888;">*Rates are linked to REPO and vary based
+                on credit score. Terms and Conditions apply.</p>
+        </div>
+    </div>
+    <div
+        style="margin-top: 6rem; text-align: center; padding: 5rem; background: var(--color-ib-blue-dark); border-radius: 40px; color: white; position: relative; overflow: hidden;">
+        <div
+            style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at 10% 20%, rgba(212, 175, 55, 0.15) 0%, transparent 40%);">
+        </div>
+        <h2 style="font-size: 2.5rem; font-weight: 900; margin-bottom: 1.5rem; position: relative;">Ready to maximize
+            your returns?</h2>
+        <p
+            style="font-size: 1.1rem; opacity: 0.8; margin-bottom: 3rem; max-width: 600px; margin-inline: auto; position: relative;">
+            Open an account in minutes and start earning industry-leading interest rates on your savings.
+        </p>
+        <div style="position: relative;">
+            <a href="{% url 'open_account' %}" class="btn-gold">Open Elite Account</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

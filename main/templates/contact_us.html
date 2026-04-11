@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Contact Us | Indie Bank{% endblock %}
+{% block content %}
+<section
+    style="position: relative; padding: 10rem 0; background: url('{% static 'img/customer support.jpg' %}') center/cover no-repeat; margin-bottom: 4rem; border-radius: 0 0 0px 0px; overflow: hidden;">
+    <div
+        style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to right, rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.5));">
+    </div>
+    <div class="container" style="position: relative; z-index: 1; text-align: center; color: white;">
+        <h1 style="font-size: 3.5rem; font-weight: 800;color:white; margin-bottom: 1rem;">We're Here to Help</h1>
+        <p style="font-size: 1.25rem; opacity: 0.9;">24/7 dedicated support for all your banking needs.</p>
+    </div>
+</section>
+
+<section style="padding: 2rem 0;">
+
+    <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 4rem; align-items: start;">
+        
+        <div style="display: flex; flex-direction: column; gap: 2rem;">
+            <div class="glass-panel"
+                style="padding: 2rem; background: white; border-left: 8px solid var(--color-ib-blue);">
+                <div style="font-size: 1.5rem; color: var(--color-ib-blue); margin-bottom: 1rem;"><i
+                        class="fas fa-phone-volume"></i></div>
+                <h4 style="font-weight: 800; margin-bottom: 0.5rem;">Call Center</h4>
+                <p style="font-size: 1.25rem; font-weight: 700; color: var(--color-ib-blue-dark);">1800 123 4567</p>
+                <p style="font-size: 0.85rem; color: #777;">Toll-free / Available 24/7</p>
+            </div>
+
+            <div class="glass-panel"
+                style="padding: 2rem; background: white; border-left: 8px solid var(--color-ib-accent);">
+                <div style="font-size: 1.5rem; color: var(--color-ib-accent); margin-bottom: 1rem;"><i
+                        class="fas fa-envelope-open-text"></i></div>
+                <h4 style="font-weight: 800; margin-bottom: 0.5rem;">Email Support</h4>
+                <p style="font-size: 1.1rem; font-weight: 700; color: var(--color-ib-blue-dark);">
+                    support@indiebank.com</p>
+                <p style="font-size: 0.85rem; color: #777;">Typical response time: 2-4 hours</p>
+            </div>
+
+            <div class="glass-panel"
+                style="padding: 2rem; background: white; border-left: 8px solid var(--color-success);">
+                <div style="font-size: 1.5rem; color: var(--color-success); margin-bottom: 1rem;"><i
+                        class="fab fa-whatsapp"></i></div>
+                <h4 style="font-weight: 800; margin-bottom: 0.5rem;">WhatsApp Banking</h4>
+                <p style="font-size: 1.1rem; font-weight: 700; color: var(--color-ib-blue-dark);">+91 98765 43210
+                </p>
+                <p style="font-size: 0.85rem; color: #777;">Say 'Hi' to start banking instantly</p>
+            </div>
+        </div>
+
+        <div class="glass-panel"
+            style="padding: 4rem; background: white; box-shadow: 0 30px 60px rgba(0,0,0,0.05); border-radius: 30px;">
+            <h3 style="font-weight: 800; margin-bottom: 2rem;">Send us a Message</h3>
+            <form action="{% url 'contact_us' %}" method="POST"
+                style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                {% csrf_token %}
+                <div style="grid-column: span 1;">
+                    <label
+                        style="display: block; font-size: 0.8rem; font-weight: 700; margin-bottom: 0.5rem; color: #555;">Full
+                        Name</label>
+                    <input type="text" name="full_name" placeholder="Enter your name" required
+                        style="width: 100%; padding: 1rem; border-radius: 8px; border: 1px solid #ddd; outline: none; transition: border-color 0.3s;">
+                </div>
+                <div style="grid-column: span 1;">
+                    <label
+                        style="display: block; font-size: 0.8rem; font-weight: 700; margin-bottom: 0.5rem; color: #555;">Email
+                        Address</label>
+                    <input type="email" name="email" placeholder="email@example.com" required
+                        style="width: 100%; padding: 1rem; border-radius: 8px; border: 1px solid #ddd; outline: none;">
+                </div>
+                <div style="grid-column: span 2;">
+                    <label
+                        style="display: block; font-size: 0.8rem; font-weight: 700; margin-bottom: 0.5rem; color: #555;">Query
+                        Type</label>
+                    <select name="query_type"
+                        style="width: 100%; padding: 1rem; border-radius: 8px; border: 1px solid #ddd; appearance: none; background: white;">
+                        <option value="Account Related">Account Related</option>
+                        <option value="Loan Inquiry">Loan Inquiry</option>
+                        <option value="Credit Card Support">Credit Card Support</option>
+                        <option value="Technical Issue">Technical Issue</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div style="grid-column: span 2;">
+                    <label
+                        style="display: block; font-size: 0.8rem; font-weight: 700; margin-bottom: 0.5rem; color: #555;">Message</label>
+                    <textarea name="message" placeholder="How can we help you?" rows="5" required
+                        style="width: 100%; padding: 1rem; border-radius: 8px; border: 1px solid #ddd; outline: none;"></textarea>
+                </div>
+                <div style="grid-column: span 2;">
+                    <button type="submit" class="btn btn-primary"
+                        style="width: 100%; padding: 1.25rem; font-weight: 800; font-size: 1rem; border-radius: 12px; margin-top: 1rem;">Submit
+                        Inquiry</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    </div>
+</section>
+{% endblock %}

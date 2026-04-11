@@ -1,0 +1,778 @@
+{% extends 'admin_base.html' %}
+{% load static %}
+
+{% block title %}Override Console | Indie Bank Admin{% endblock %}
+{% block page_title %}Override Console{% endblock %}
+
+{% block content %}
+<div id="admin-app" v-cloak>
+    <section class="admin-dashboard-section"
+        style="padding: 0; min-height: 90vh; color: #f8fafc; font-family: 'Inter', sans-serif;">
+        <div class="container" style="max-width: 1400px;">
+
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2rem;">
+                <div>
+                    <h1
+                        style="font-size: 2.75rem; letter-spacing: -1.5px; margin-bottom: 0.5rem; font-weight: 900; background: linear-gradient(135deg, #38bdf8, #818cf8); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">
+                        Override Console
+                    </h1>
+
+                    <div
+                        style="display: flex; gap: 0.5rem; margin-top: 1.5rem; background: rgba(30, 41, 59, 0.5); padding: 0.4rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); width: fit-content;">
+                        <button @click="activeTab = 'overview'"
+                            :class="['tab-btn', activeTab === 'overview' ? 'active' : '']">
+                            <i class="fas fa-wave-square" style="margin-right: 8px;"></i>System Pulse
+                        </button>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 1rem; align-items: flex-end;">
+                    <a href="/admin/" class="btn-refresh"
+                        style="background: rgba(255, 255, 255, 0.1); box-shadow: none; border: 1px solid rgba(255,255,255,0.1);">
+                        <i class="fas fa-user-shield"></i> ADMIN
+                    </a>
+                    <div class="premium-glass-panel"
+                        style="padding: 1.5rem 2.5rem; text-align: right; border-right: 4px solid #10b981; min-width: 300px;">
+                        <div
+                            style="font-size: 2.5rem; font-weight: 900; color: #10b981; letter-spacing: -1px; text-shadow: 0 0 20px rgba(16, 185, 129, 0.4);">
+                            ₹[[ formatCurrency(stats.total_balance) ]]
+                        </div>
+                        <p
+                            style="font-size: 0.75rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 2px; font-weight: 700; margin-top: 0.5rem;">
+                            Global Liquidity Sync</p>
+                    </div>
+                </div>
+            </div>
+
+            <div v-show="activeTab === 'overview'">
+                
+                <div
+                    style="display: grid; grid-template-columns: repeat(5, 1fr); gap: var(--spacing-md); margin-bottom: var(--spacing-md);">
+                    <div class="premium-glass-panel" style="padding: 1.5rem; border-left: 4px solid #38bdf8;">
+                        <p
+                            style="font-size: 0.7rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 0.5rem;">
+                            Total Users</p>
+                        <div style="font-size: 1.75rem; font-weight: 800; color: #f8fafc;">[[ stats.total_users ]]</div>
+                    </div>
+                    <div class="premium-glass-panel" style="padding: 1.5rem; border-left: 4px solid #818cf8;">
+                        <p
+                            style="font-size: 0.7rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 0.5rem;">
+                            Active Accounts</p>
+                        <div style="font-size: 1.75rem; font-weight: 800; color: #f8fafc;">[[ stats.total_accounts ]]
+                        </div>
+                    </div>
+                    <div class="premium-glass-panel" style="padding: 1.5rem; border-left: 4px solid #fbbf24;">
+                        <p
+                            style="font-size: 0.7rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 0.5rem;">
+                            Total Txns</p>
+                        <div style="font-size: 1.75rem; font-weight: 800; color: #f8fafc;">[[ stats.total_transactions
+                            ]]</div>
+                    </div>
+                    <div class="premium-glass-panel" style="padding: 1.5rem; border-left: 4px solid #ef4444;">
+                        <p
+                            style="font-size: 0.7rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 0.5rem;">
+                            Pending Approvals</p>
+                        <div style="font-size: 1.75rem; font-weight: 800; color: #ef4444;">[[ stats.pending_approvals ]]
+                        </div>
+                    </div>
+                    <div class="premium-glass-panel" style="padding: 1.5rem; border-left: 4px solid #f472b6;">
+                        <p
+                            style="font-size: 0.7rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 0.5rem;">
+                            Pending Complaints</p>
+                        <div style="font-size: 1.75rem; font-weight: 800; color: #f472b6;">[[ stats.pending_complaints ]]
+                        </div>
+                    </div>
+                </div>
+
+                <div
+                    style="display: grid; grid-template-columns: 2fr 1fr; gap: var(--spacing-md); margin-bottom: var(--spacing-md);">
+
+                    <div class="premium-glass-panel"
+                        style="padding: var(--spacing-lg); min-height: 400px; display: flex; flex-direction: column;">
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                            <h3 style="font-size: 1.5rem; font-weight: 800; letter-spacing: -0.5px; color: #f8fafc;">
+                                Transaction Volume Pulse</h3>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <span
+                                    style="font-size: 0.8rem; color: #38bdf8; background: rgba(56, 189, 248, 0.1); padding: 0.25rem 0.75rem; border-radius: 12px; font-weight: 600;">LIVE</span>
+                            </div>
+                        </div>
+                        <div style="flex-grow: 1; position: relative;">
+                            
+                            <canvas id="auditChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; flex-direction: column; gap: var(--spacing-md);">
+                        
+                        <div class="premium-glass-panel" style="padding: 1.5rem; flex: 1;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                                <h3 style="font-size: 1.25rem; font-weight: 800; letter-spacing: -0.5px; color: #f8fafc;">
+                                    System Alerts</h3>
+                                <span v-if="notifications.length > 0" class="pulse-badge"
+                                    style="background: rgba(56, 189, 248, 0.2); color: #7dd3fc; border: 1px solid rgba(56, 189, 248, 0.3);">
+                                    [[ notifications.length ]] NEW
+                                </span>
+                            </div>
+                            <div style="max-height: 250px; overflow-y: auto; padding-right: 0.5rem;" class="custom-scrollbar">
+                                <div v-if="notifications.length === 0" style="text-align: center; color: #64748b; padding: 2rem 0;">
+                                    <i class="fas fa-bell-slash" style="font-size: 2rem; margin-bottom: 0.5rem; opacity: 0.5;"></i>
+                                    <p style="font-size: 0.9rem;">No new alerts.</p>
+                                </div>
+                                <div v-for="notif in notifications" :key="notif.id" class="action-card" style="border-left: 3px solid #38bdf8;">
+                                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
+                                        <div style="font-weight: 700; color: #e0f2fe; font-size: 0.95rem;">[[ notif.title ]]</div>
+                                        <div style="font-size: 0.7rem; color: #94a3b8; font-family: monospace;">[[ formatDate(notif.created_at) ]]</div>
+                                    </div>
+                                    <p style="font-size: 0.8rem; color: #94a3b8; margin-bottom: 1rem; line-height: 1.4;">
+                                        [[ notif.message ]]
+                                    </p>
+                                    <div style="display: flex; justify-content: flex-end;">
+                                        <button @click="markNotificationRead(notif.id)" class="btn-action" style="background: rgba(255,255,255,0.1); color: #e2e8f0; width: auto; padding: 0.4rem 1rem;">ACKNOWLEDGE</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="premium-glass-panel" style="padding: 1.5rem; flex: 1;">
+                            <div
+                                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                                <h3
+                                    style="font-size: 1.25rem; font-weight: 800; letter-spacing: -0.5px; color: #f8fafc;">
+                                    Flagged Transfers</h3>
+                                <span class="pulse-badge"
+                                    style="background: rgba(239, 68, 68, 0.2); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.3);">[[
+                                    pendingTransactions.length ]] CRITICAL</span>
+                            </div>
+                            <div style="max-height: 250px; overflow-y: auto; padding-right: 0.5rem;"
+                                class="custom-scrollbar">
+                                <div v-if="pendingTransactions.length === 0"
+                                    style="text-align: center; color: #64748b; padding: 2rem 0;">
+                                    <i class="fas fa-shield-check"
+                                        style="font-size: 2rem; margin-bottom: 0.5rem; opacity: 0.5;"></i>
+                                    <p style="font-size: 0.9rem;">No flagged transactions.</p>
+                                </div>
+                                <div v-for="txn in pendingTransactions" :key="txn.id" class="action-card">
+                                    <div
+                                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                                        <div style="font-weight: 800; color: #fca5a5; font-size: 1.1rem;">
+                                            ₹[[ formatCurrency(txn.amount) ]]
+                                        </div>
+                                        <div style="font-size: 0.7rem; color: #94a3b8; font-family: monospace;">
+                                            REF::ZN_[[ txn.id.toString().padStart(6, '0') ]]
+                                        </div>
+                                    </div>
+                                    <div
+                                        style="display: flex; gap: 0.5rem; justify-content: space-between; margin-top: 1rem;">
+                                        <button @click="approveTxn(txn.id)"
+                                            class="btn-action btn-authorize">VERIFY</button>
+                                        <button @click="rejectTxn(txn.id)" class="btn-action btn-void">VOID</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="premium-glass-panel" style="padding: 1.5rem; flex: 1;">
+                            <div
+                                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                                <h3
+                                    style="font-size: 1.25rem; font-weight: 800; letter-spacing: -0.5px; color: #f8fafc;">
+                                    KYC Queue</h3>
+                                <span class="status-badge"
+                                    style="background: rgba(245, 158, 11, 0.2); color: #fcd34d; border: 1px solid rgba(245, 158, 11, 0.3);">[[
+                                    pendingAccounts.length ]] PENDING</span>
+                            </div>
+                            <div style="max-height: 250px; overflow-y: auto; padding-right: 0.5rem;"
+                                class="custom-scrollbar">
+                                <div v-if="pendingAccounts.length === 0"
+                                    style="text-align: center; color: #64748b; padding: 2rem 0;">
+                                    <i class="fas fa-user-check"
+                                        style="font-size: 2rem; margin-bottom: 0.5rem; opacity: 0.5;"></i>
+                                    <p style="font-size: 0.9rem;">All KYC verified.</p>
+                                </div>
+                                <div v-for="profile in pendingAccounts" :key="profile.id" class="action-card">
+                                    <div style="display: flex; align-items: center; gap: 1rem;">
+                                        <div class="avatar-neon">[[ profile.user.username[0].toUpperCase() ]]</div>
+                                        <div style="flex-grow: 1;">
+                                            <div style="font-weight: 700; font-size: 1rem; color: #f1f5f9;">[[
+                                                profile.user.username ]]</div>
+                                            <div style="font-size: 0.75rem; color: #94a3b8;">[[ profile.user.email ]]
+                                            </div>
+                                        </div>
+                                        <button @click="approveAccount(profile.id)" class="btn-action btn-authorize"
+                                            style="width: auto; padding: 0.4rem 1rem;">AUTH</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="premium-glass-panel" style="padding: 1.5rem; flex: 1;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                                <h3 style="font-size: 1.25rem; font-weight: 800; letter-spacing: -0.5px; color: #f8fafc;">
+                                    Customer Support</h3>
+                                <span class="status-badge" style="background: rgba(244, 114, 182, 0.2); color: #f472b6; border: 1px solid rgba(244, 114, 182, 0.3);">[[ stats.pending_complaints ]] NEW</span>
+                            </div>
+                            <div style="text-align: center; padding: 1rem 0;">
+                                <p style="font-size: 0.9rem; color: #94a3b8; margin-bottom: 1.5rem;">There are [[ stats.pending_complaints ]] customer complaints awaiting resolution.</p>
+                                <a href="{% url 'admin_complaints' %}" class="btn-refresh" style="display: inline-flex; width: auto; background: linear-gradient(135deg, #f472b6, #db2777); box-shadow: 0 4px 15px rgba(244, 114, 182, 0.3);">
+                                    <i class="fas fa-headset"></i> RESOLVE COMPLAINTS
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="premium-glass-panel" style="padding: 1.5rem; flex: 1; border-left: 4px solid #a78bfa;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                                <h3 style="font-size: 1.25rem; font-weight: 800; letter-spacing: -0.5px; color: #f8fafc;">
+                                    💳 Card Applications</h3>
+                                <span class="pulse-badge" style="background: rgba(167,139,250,0.2); color: #a78bfa; border: 1px solid rgba(167,139,250,0.3);">REVIEW</span>
+                            </div>
+                            <div style="text-align: center; padding: 1rem 0;">
+                                <p style="font-size: 0.9rem; color: #94a3b8; margin-bottom: 1.5rem;">Manage Platinum, Gold, and Silver credit card applications from customers.</p>
+                                <a href="{% url 'admin_credit_card_list' %}" class="btn-refresh" style="display: inline-flex; width: auto; background: linear-gradient(135deg, #7c3aed, #a78bfa); box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);">
+                                    <i class="fas fa-credit-card"></i> MANAGE CARDS
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="premium-glass-panel" style="padding: 1.5rem; flex: 1; border-left: 4px solid #3b82f6;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                                <h3 style="font-size: 1.25rem; font-weight: 800; letter-spacing: -0.5px; color: #f8fafc;">
+                                    🏛️ Loan Applications</h3>
+                                <span class="pulse-badge" style="background: rgba(59,130,246,0.2); color: #3b82f6; border: 1px solid rgba(59,130,246,0.3);">PROCESS</span>
+                            </div>
+                            <div style="text-align: center; padding: 1rem 0;">
+                                <p style="font-size: 0.9rem; color: #94a3b8; margin-bottom: 1.5rem;">Review and approve Home, Personal, and Vehicle loan requests.</p>
+                                <a href="{% url 'admin_loan_list' %}" class="btn-refresh" style="display: inline-flex; width: auto; background: linear-gradient(135deg, #1e40af, #3b82f6); box-shadow: 0 4px 15px rgba(30, 64, 175, 0.3);">
+                                    <i class="fas fa-landmark"></i> MANAGE LOANS
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="premium-glass-panel" style="padding: var(--spacing-lg);">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                        <div>
+                            <h3 style="font-size: 1.5rem; font-weight: 800; letter-spacing: -0.5px; color: #f8fafc;">
+                                Global Ledger</h3>
+                            <p style="color: #94a3b8; font-size: 0.85rem; margin-top: 0.25rem;">Real-time feed of all
+                                system transactions.</p>
+                        </div>
+                        <button @click="fetchData" class="btn-refresh" :class="{'spinning': loading}">
+                            <i class="fas fa-sync-alt"></i> SYNC
+                        </button>
+                    </div>
+                    <div
+                        style="overflow-x: auto; background: rgba(15, 23, 42, 0.4); border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.05);">
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <thead>
+                                <tr
+                                    style="text-align: left; color: #64748b; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1.5px; border-bottom: 1px solid rgba(255,255,255,0.05);">
+                                    <th style="padding: 1.25rem 1.5rem; font-weight: 700;">Timestamp</th>
+                                    <th style="padding: 1.25rem 1.5rem; font-weight: 700;">Reference</th>
+                                    <th style="padding: 1.25rem 1.5rem; font-weight: 700;">Magnitude</th>
+                                    <th style="padding: 1.25rem 1.5rem; text-align: right; font-weight: 700;">Finality
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="txn in auditLog" :key="txn.id" class="table-row-hover">
+                                    <td
+                                        style="padding: 1.25rem 1.5rem; font-size: 0.85rem; color: #94a3b8; font-family: 'JetBrains Mono', monospace;">
+                                        [[ formatDate(txn.date) ]]
+                                    </td>
+                                    <td style="padding: 1.25rem 1.5rem;">
+                                        <div style="font-weight: 600; color: #e2e8f0; font-size: 0.95rem;">[[
+                                            txn.description ]]</div>
+                                        <div
+                                            style="font-size: 0.7rem; color: #64748b; font-family: monospace; margin-top: 0.2rem;">
+                                            TXN_[[ txn.id.toString().padStart(8, '0') ]]</div>
+                                    </td>
+                                    <td style="padding: 1.25rem 1.5rem;">
+                                        <div style="font-weight: 800; font-size: 1.05rem;"
+                                            :class="txn.transaction_type === 'CREDIT' ? 'text-success' : 'text-neutral'">
+                                            <span v-if="txn.transaction_type === 'CREDIT'">+</span><span
+                                                v-else>-</span><span style="color: #f1f5f9;">₹[[
+                                                formatCurrency(txn.amount) ]]</span>
+                                        </div>
+                                    </td>
+                                    <td style="padding: 1.25rem 1.5rem; text-align: right;">
+                                        <span :class="['admin-pill', txn.status.toLowerCase()]">
+                                            <i v-if="txn.status === 'APPROVED'" class="fas fa-check-circle"
+                                                style="margin-right: 4px;"></i>
+                                            <i v-else-if="txn.status === 'PENDING'" class="fas fa-clock"
+                                                style="margin-right: 4px;"></i>
+                                            <i v-else class="fas fa-times-circle" style="margin-right: 4px;"></i>
+                                            [[ txn.status ]]
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr v-if="auditLog.length === 0">
+                                    <td colspan="4" style="text-align: center; padding: 4rem; color: #64748b;">No ledger
+                                        entries found.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+</div>
+
+<style>
+    /* Premium Admin Dashboard Styles */
+    [v-cloak] {
+        display: none;
+    }
+
+    .premium-glass-panel {
+        background: rgba(30, 41, 59, 0.7);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 20px;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .premium-glass-panel:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    }
+
+    .action-card {
+        background: rgba(15, 23, 42, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.03);
+        border-radius: 12px;
+        padding: 1.25rem;
+        margin-bottom: 0.75rem;
+        transition: all 0.2s ease;
+    }
+
+    .action-card:hover {
+        background: rgba(30, 41, 59, 0.9);
+        border-color: rgba(56, 189, 248, 0.3);
+        transform: translateX(4px);
+    }
+
+    .btn-action {
+        flex: 1;
+        padding: 0.6rem 1rem;
+        border-radius: 8px;
+        font-weight: 700;
+        font-size: 0.75rem;
+        letter-spacing: 0.5px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-transform: uppercase;
+        border: none;
+    }
+
+    .btn-authorize {
+        background: rgba(16, 185, 129, 0.15);
+        color: #34d399;
+        border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .btn-authorize:hover {
+        background: #10b981;
+        color: white;
+        box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
+    }
+
+    .btn-void {
+        background: rgba(239, 68, 68, 0.15);
+        color: #f87171;
+        border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+
+    .btn-void:hover {
+        background: #ef4444;
+        color: white;
+        box-shadow: 0 0 15px rgba(239, 68, 68, 0.4);
+    }
+
+    .btn-refresh {
+        background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+        color: white;
+        border: none;
+        padding: 0.6rem 1.5rem;
+        border-radius: 20px;
+        font-weight: 700;
+        font-size: 0.8rem;
+        letter-spacing: 1px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+    }
+
+    .btn-refresh:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(59, 130, 246, 0.5);
+    }
+
+    .tab-btn {
+        padding: 0.6rem 1.25rem;
+        border-radius: 8px;
+        border: none;
+        background: transparent;
+        color: #94a3b8;
+        font-weight: 700;
+        font-size: 0.85rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+    }
+
+    .tab-btn:hover {
+        color: #f1f5f9;
+        background: rgba(255, 255, 255, 0.05);
+    }
+
+    .tab-btn.active {
+        background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+        color: white;
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    }
+
+    .btn-refresh .fa-sync-alt {
+        transition: transform 0.5s ease;
+    }
+
+    .btn-refresh.spinning .fa-sync-alt {
+        animation: spin 1s linear infinite;
+    }
+
+    .avatar-neon {
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(135deg, #0ea5e9, #6366f1);
+        color: white;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+        font-size: 1.1rem;
+        box-shadow: 0 0 15px rgba(99, 102, 241, 0.4);
+    }
+
+    .admin-pill {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.4rem 1rem;
+        border-radius: 20px;
+        font-size: 0.7rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .admin-pill.approved {
+        background: rgba(16, 185, 129, 0.15);
+        color: #34d399;
+        border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .admin-pill.pending {
+        background: rgba(245, 158, 11, 0.15);
+        color: #fbbf24;
+        border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+
+    .admin-pill.rejected {
+        background: rgba(239, 68, 68, 0.15);
+        color: #f87171;
+        border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+
+    .pulse-badge {
+        padding: 0.4rem 0.8rem;
+        border-radius: 6px;
+        font-size: 0.7rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        animation: subtlePulse 2s infinite;
+    }
+
+    .status-badge {
+        padding: 0.4rem 0.8rem;
+        border-radius: 6px;
+        font-size: 0.7rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .table-row-hover {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+        transition: background 0.2s ease;
+    }
+
+    .table-row-hover:hover {
+        background: rgba(255, 255, 255, 0.02);
+    }
+
+    .text-success {
+        color: #34d399;
+    }
+
+    .text-neutral {
+        color: #94a3b8;
+    }
+
+    /* Custom Scrollbar for inner overflow */
+    .custom-scrollbar::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-track {
+        background: rgba(15, 23, 42, 0.5);
+        border-radius: 10px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: rgba(56, 189, 248, 0.3);
+        border-radius: 10px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: rgba(56, 189, 248, 0.6);
+    }
+
+    @keyframes spin {
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+    @keyframes subtlePulse {
+        0% {
+            opacity: 1;
+        }
+
+        50% {
+            opacity: 0.7;
+        }
+
+        100% {
+            opacity: 1;
+        }
+    }
+
+    /* Override base styles for dark theme in this section */
+    .admin-dashboard-section a {
+        color: #38bdf8;
+    }
+</style>
+
+<script>
+    const { createApp, ref, onMounted, nextTick } = Vue;
+
+    createApp({
+        delimiters: ['[[', ']]'],
+        setup() {
+            const loading = ref(false);
+            const activeTab = ref('overview');
+            const stats = ref({
+                total_balance: 0,
+                total_users: 0,
+                total_accounts: 0,
+                total_transactions: 0,
+                pending_approvals: 0,
+                pending_complaints: 0
+            });
+            const pendingAccounts = ref([]);
+            const pendingTransactions = ref([]);
+            const auditLog = ref([]);
+            const notifications = ref([]);
+            let chartInstance = null;
+
+            const initChart = (data) => {
+                const ctx = document.getElementById('auditChart');
+                if (!ctx) return;
+
+                if (chartInstance) {
+                    chartInstance.destroy();
+                }
+
+                // Process data to show transaction volume over "time" (using last N transactions)
+                // We'll group by date or just show sequential for visual effect
+                const labels = data.slice(0, 15).reverse().map(t => new Date(t.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+                const amounts = data.slice(0, 15).reverse().map(t => t.amount);
+
+                // Gradient for area
+                const gradient = ctx.getContext('2d').createLinearGradient(0, 0, 0, 400);
+                gradient.addColorStop(0, 'rgba(56, 189, 248, 0.5)');
+                gradient.addColorStop(1, 'rgba(56, 189, 248, 0.0)');
+
+                chartInstance = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Transaction Magnitude',
+                            data: amounts,
+                            borderColor: '#38bdf8',
+                            backgroundColor: gradient,
+                            borderWidth: 3,
+                            pointBackgroundColor: '#0ea5e9',
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: 2,
+                            pointRadius: 4,
+                            pointHoverRadius: 6,
+                            fill: true,
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                                titleColor: '#94a3b8',
+                                bodyColor: '#f1f5f9',
+                                borderColor: 'rgba(255,255,255,0.1)',
+                                borderWidth: 1,
+                                padding: 12,
+                                displayColors: false,
+                                callbacks: {
+                                    label: function (context) {
+                                        let label = context.dataset.label || '';
+                                        if (label) { label += ': '; }
+                                        if (context.parsed.y !== null) {
+                                            label += new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(context.parsed.y);
+                                        }
+                                        return label;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                grid: { color: 'rgba(255, 255, 255, 0.05)', drawBorder: false },
+                                ticks: { color: '#64748b', font: { family: 'monospace' } }
+                            },
+                            x: {
+                                grid: { display: false, drawBorder: false },
+                                ticks: { color: '#64748b', maxRotation: 45, minRotation: 45 }
+                            }
+                        },
+                        interaction: {
+                            intersect: false,
+                            mode: 'index',
+                        },
+                    }
+                });
+            };
+
+            const fetchData = async () => {
+                loading.value = true;
+                try {
+                    const [statsRes, accRes, txRes, auditRes, notifRes] = await Promise.all([
+                        axios.get('/api/admin/stats/'),
+                        axios.get('/api/admin/pending_accounts/'),
+                        axios.get('/api/admin/pending_transactions/'),
+                        axios.get('/api/admin/audit_log/'),
+                        axios.get('/api/admin/notifications/')
+                    ]);
+                    stats.value = statsRes.data;
+                    pendingAccounts.value = accRes.data;
+                    pendingTransactions.value = txRes.data;
+                    auditLog.value = auditRes.data;
+                    notifications.value = notifRes.data;
+
+                    nextTick(() => {
+                        if (auditLog.value.length > 0) {
+                            initChart(auditLog.value);
+                        }
+                    });
+
+                } catch (e) {
+                    console.error("System sync failed.", e);
+                } finally {
+                    loading.value = false;
+                }
+            };
+
+            const approveAccount = async (id) => {
+                try {
+                    await axios.post(`/api/admin/${id}/approve-account/`, {}, {
+                        headers: { 'X-CSRFToken': getCookie('csrftoken') }
+                    });
+                    fetchData();
+                } catch (e) { alert("Authorization failed."); }
+            };
+
+            const approveTxn = async (id) => {
+                try {
+                    await axios.post(`/api/admin/${id}/approve-transaction/`, {}, {
+                        headers: { 'X-CSRFToken': getCookie('csrftoken') }
+                    });
+                    fetchData();
+                } catch (e) { alert("Verification failed."); }
+            };
+
+            const rejectTxn = async (id) => {
+                try {
+                    await axios.post(`/api/admin/${id}/reject-transaction/`, {}, {
+                        headers: { 'X-CSRFToken': getCookie('csrftoken') }
+                    });
+                    fetchData();
+                } catch (e) { alert("Intervention failed."); }
+            };
+
+            const markNotificationRead = async (id) => {
+                try {
+                    await axios.post(`/api/admin/notifications/${id}/read/`, {}, {
+                        headers: { 'X-CSRFToken': getCookie('csrftoken') }
+                    });
+                    fetchData();
+                } catch (e) { console.error("Could not mark as read", e); }
+            };
+
+            const formatDate = (dateStr) => {
+                const date = new Date(dateStr);
+                return date.toLocaleString('en-GB', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            };
+
+            const formatCurrency = (val) => {
+                return parseFloat(val || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            };
+
+            function getCookie(name) {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+
+            onMounted(fetchData);
+
+            return {
+                loading, activeTab, stats, pendingAccounts, pendingTransactions, auditLog, notifications,
+                fetchData, approveAccount, approveTxn, rejectTxn, markNotificationRead, formatDate, formatCurrency
+            };
+        }
+    }).mount('#admin-app');
+</script>
+{% endblock %}

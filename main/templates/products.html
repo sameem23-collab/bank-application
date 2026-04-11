@@ -1,0 +1,158 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Our Products | Indie Bank{% endblock %}
+{% block content %}
+{% include 'ticker.html' %}
+<section
+    style="position: relative; padding: 10rem 0; background-image: url('{% static 'img/products.jpg' %}'); background-position: center; background-size: cover; background-repeat: no-repeat; margin-bottom: 4rem; overflow: hidden; border-radius: 0;">
+
+    <div
+        style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(15, 23, 42, 0.6));">
+    </div>
+    <div class="container" style="position: relative; z-index: 1; text-align: center;">
+        <h1 style="font-size: 4rem; font-weight: 800; color: white; margin-bottom: 1.5rem; letter-spacing: -0.02em;">Our
+            Financial Products</h1>
+        <p
+            style="font-size: 1.25rem; color: rgba(255,255,255,0.8); max-width: 700px; margin: 0 auto; line-height: 1.6;">
+            Tailored solutions for every stage of your financial life. Explore our comprehensive range of banking
+            services designed for global success.</p>
+    </div>
+</section>
+
+<section style="padding: 2rem 0;">
+
+    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 3rem;">
+
+        <div class="glass-panel"
+            style="padding: 3rem; background: white; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid #eef2f6; transition: transform 0.3s;">
+            <div style="display: flex; align-items: center; gap: 1.5rem; margin-bottom: 2rem;">
+                <div
+                    style="width: 60px; height: 60px; background: rgba(59, 130, 246, 0.1); border-radius: 16px; display: flex; align-items: center; justify-content: center; color: #3b82f6;">
+                    <i class="fas fa-wallet" style="font-size: 1.75rem;"></i>
+                </div>
+                <h2 style="font-size: 1.75rem; font-weight: 800; color: var(--color-ib-blue-dark);">Savings &
+                    Accounts</h2>
+            </div>
+            <p style="color: #64748b; margin-bottom: 2rem;">From basic savings to premium high-yield accounts, we
+                offer a range of options to help your money grow faster.</p>
+            <ul style="padding: 0; list-style: none; color: #334155; font-weight: 600; margin-bottom: 2rem;">
+                <li style="margin-bottom: 1rem; display: flex; align-items: center; gap: 0.75rem;">
+                    <i class="fas fa-check-circle" style="color: #4ade80;"></i> Digital Savings Max (7.5%* p.a.)
+                </li>
+                <li style="margin-bottom: 1rem; display: flex; align-items: center; gap: 0.75rem;">
+                    <i class="fas fa-check-circle" style="color: #4ade80;"></i> Fixed Deposits Plus (8.9%* p.a.)
+                </li>
+                <li style="margin-bottom: 1rem; display: flex; align-items: center; gap: 0.75rem;">
+                    <i class="fas fa-check-circle" style="color: #4ade80;"></i> Zero-Balance Salary Accounts
+                </li>
+            </ul>
+            <a href="{% url 'digital_deposits' %}"
+                style="display: inline-block; color: #3b82f6; font-weight: 700; text-decoration: none;">View All
+                Deposits &rarr;</a>
+        </div>
+
+        <div class="glass-panel"
+            style="padding: 3rem; background: white; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid #eef2f6; transition: transform 0.3s;">
+            <div style="display: flex; align-items: center; gap: 1.5rem; margin-bottom: 2rem;">
+                <div
+                    style="width: 60px; height: 60px; background: rgba(245, 158, 11, 0.1); border-radius: 16px; display: flex; align-items: center; justify-content: center; color: #f59e0b;">
+                    <i class="fas fa-hand-holding-dollar" style="font-size: 1.75rem;"></i>
+                </div>
+                <h2 style="font-size: 1.75rem; font-weight: 800; color: var(--color-ib-blue-dark);">Loan Solutions
+                </h2>
+            </div>
+            <p style="color: #64748b; margin-bottom: 2rem;">Fulfilling your dreams with quick approvals, minimal
+                documentation, and highly competitive interest rates.</p>
+            <ul style="padding: 0; list-style: none; color: #334155; font-weight: 600; margin-bottom: 2rem;">
+                <li style="margin-bottom: 1rem; display: flex; align-items: center; gap: 0.75rem;">
+                    <i class="fas fa-check-circle" style="color: #4ade80;"></i> <a href="{% url 'home_loans' %}"
+                        style="color: inherit; text-decoration: none;">Home Loans starting at 8.35%*</a>
+                </li>
+                <li style="margin-bottom: 1rem; display: flex; align-items: center; gap: 0.75rem;">
+                    <i class="fas fa-check-circle" style="color: #4ade80;"></i> <a href="{% url 'vehicle_loans' %}"
+                        style="color: inherit; text-decoration: none;">Fast-Track Car & Bike Loans</a>
+                </li>
+                <li style="margin-bottom: 1rem; display: flex; align-items: center; gap: 0.75rem;">
+                    <i class="fas fa-check-circle" style="color: #4ade80;"></i> <a href="{% url 'personal_loans' %}"
+                        style="color: inherit; text-decoration: none;">Personal Loans for Emergencies</a>
+                </li>
+            </ul>
+            <div style="display: flex; gap: 1rem;">
+                <a href="{% url 'loans' %}"
+                    style="display: inline-block; color: #f59e0b; font-weight: 700; text-decoration: none;">Apply Loan
+                    &rarr;</a>
+            </div>
+        </div>
+
+        <div class="glass-panel"
+            style="padding: 3rem; background: white; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid #eef2f6; transition: transform 0.3s;">
+            <div style="display: flex; align-items: center; gap: 1.5rem; margin-bottom: 2rem;">
+                <div
+                    style="width: 60px; height: 60px; background: rgba(16, 185, 129, 0.1); border-radius: 16px; display: flex; align-items: center; justify-content: center; color: #10b981;">
+                    <i class="fas fa-credit-card" style="font-size: 1.75rem;"></i>
+                </div>
+                <h2 style="font-size: 1.75rem; font-weight: 800; color: var(--color-ib-blue-dark);">Cards & Payments
+                </h2>
+            </div>
+            <p style="color: #64748b; margin-bottom: 2rem;">Experience global acceptance and unmatched rewards with
+                our range of debit and credit cards.</p>
+            <ul style="padding: 0; list-style: none; color: #334155; font-weight: 600; margin-bottom: 2rem;">
+                <li style="margin-bottom: 1rem; display: flex; align-items: center; gap: 0.75rem;">
+                    <i class="fas fa-check-circle" style="color: #4ade80;"></i> Premium Credit Cards with Lounge
+                    Access
+                </li>
+                <li style="margin-bottom: 1rem; display: flex; align-items: center; gap: 0.75rem;">
+                    <i class="fas fa-check-circle" style="color: #4ade80;"></i> Instant Virtual Cards
+                </li>
+                <li style="margin-bottom: 1rem; display: flex; align-items: center; gap: 0.75rem;">
+                    <i class="fas fa-check-circle" style="color: #4ade80;"></i> Tap & Pay Payments
+                </li>
+            </ul>
+            <a href="{% url 'credit_cards' %}"
+                style="display: inline-block; color: #10b981; font-weight: 700; text-decoration: none;">Compare
+                Cards &rarr;</a>
+        </div>
+
+        <div class="glass-panel"
+            style="padding: 3rem; background: white; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid #eef2f6; transition: transform 0.3s;">
+            <div style="display: flex; align-items: center; gap: 1.5rem; margin-bottom: 2rem;">
+                <div
+                    style="width: 60px; height: 60px; background: rgba(99, 102, 241, 0.1); border-radius: 16px; display: flex; align-items: center; justify-content: center; color: #6366f1;">
+                    <i class="fas fa-chart-line" style="font-size: 1.75rem;"></i>
+                </div>
+                <h2 style="font-size: 1.75rem; font-weight: 800; color: var(--color-ib-blue-dark);">Wealth &
+                    Investments</h2>
+            </div>
+            <p style="color: #64748b; margin-bottom: 2rem;">Secure your future with expert advisory services and a
+                wide selection of investment portfolios.</p>
+            <ul style="padding: 0; list-style: none; color: #334155; font-weight: 600; margin-bottom: 2rem;">
+                <li style="margin-bottom: 1rem; display: flex; align-items: center; gap: 0.75rem;">
+                    <i class="fas fa-check-circle" style="color: #4ade80;"></i> Bespoke Wealth Management
+                </li>
+                <li style="margin-bottom: 1rem; display: flex; align-items: center; gap: 0.75rem;">
+                    <i class="fas fa-check-circle" style="color: #4ade80;"></i> Mutual Fund SIPs
+                </li>
+                <li style="margin-bottom: 1rem; display: flex; align-items: center; gap: 0.75rem;">
+                    <i class="fas fa-check-circle" style="color: #4ade80;"></i> Tax-Efficient Investment Plans
+                </li>
+            </ul>
+            <a href="{% url 'wealth_management' %}"
+                style="display: inline-block; color: #6366f1; font-weight: 700; text-decoration: none;">Discover
+                Wealth Services &rarr;</a>
+        </div>
+    </div>
+
+    <div
+        style="margin-top: 6rem; padding: 4rem; background: var(--color-ib-blue-dark); border-radius: 30px; text-align: center; color: white;">
+        <h2 style="font-size: 2.5rem; font-weight: 800; margin-bottom: 1.5rem;">Need a Custom Solution?</h2>
+        <p
+            style="font-size: 1.1rem; color: rgba(255,255,255,0.8); margin-bottom: 2.5rem; max-width: 600px; margin-left: auto; margin-right: auto;">
+            Our financial experts are available 24/7 to help you choose the right product for your unique goals.</p>
+        <a href="{% url 'contact_us' %}" class="btn btn-primary"
+            style="padding: 1rem 3rem; background: var(--color-ib-yellow); color: var(--color-ib-blue-dark); font-weight: 800; border-radius: 50px; border: none; font-size: 1.1rem;">Talk
+            to an Expert</a>
+    </div>
+    </div>
+</section>
+{% endblock %}

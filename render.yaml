@@ -1,0 +1,20 @@
+databases:
+  - name: indiebank_db
+    databaseName: indiebank
+    user: indiebank
+
+services:
+  - type: web
+    name: indiebank
+    env: python
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn banking_project.wsgi:application"
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: indiebank_db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: WEB_CONCURRENCY
+        value: 4

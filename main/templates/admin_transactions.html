@@ -1,0 +1,128 @@
+{% extends 'admin_base.html' %}
+{% load static %}
+
+{% block title %}Global Ledger | Indie Bank Admin{% endblock %}
+{% block page_title %}Global Ledger{% endblock %}
+
+{% block content %}
+<div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2rem;">
+    <div>
+        <h1 style="font-weight: 900; color: #f8fafc; font-size: 2rem; margin-bottom: 0.5rem; letter-spacing: -1px;">System Ledger</h1>
+        <p style="color: #94a3b8; font-size: 0.95rem;">Monitor global transactions in real-time or force-credit/debit an account.</p>
+    </div>
+    <button onclick="document.getElementById('forceTxnModal').style.display='flex';" style="background: linear-gradient(135deg, #ef4444, #f43f5e); color: white; padding: 0.75rem 1.5rem; border-radius: 12px; font-weight: 800; border: none; cursor: pointer; box-shadow: 0 10px 25px -5px rgba(239,68,68,0.4); display: flex; align-items: center; gap: 0.5rem; transition: transform 0.2s;">
+        <i class="fas fa-bolt"></i> Manual Override Protocol
+    </button>
+</div>
+
+<div class="admin-table-container">
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>Txn Hash / Date</th>
+                <th>Participant A (Initiator)</th>
+                <th>Participant B (Receiver)</th>
+                <th>Action Type</th>
+                <th>Amount (₹)</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for txn in transactions %}
+            <tr>
+                <td>
+                    <div style="font-family: monospace; font-size: 0.9rem; color: #f8fafc; font-weight: 700; letter-spacing: 1px;">0xIB{{ txn.id }}TX{{ txn.date|date:"d" }}...</div>
+                    <div style="font-size: 0.75rem; color: #64748b; margin-top: 0.25rem;"><i class="fas fa-clock"></i> {{ txn.date|date:"M d, Y H:i:s" }}</div>
+                </td>
+                <td>
+                    <div style="color: #cbd5e1; font-weight: 700; font-size: 0.9rem;">{{ txn.account.user.username }}</div>
+                    <div style="color: #94a3b8; font-size: 0.75rem; font-family: monospace;">A/c: {{ txn.account.account_number }}</div>
+                </td>
+                <td>
+                    {% if txn.receiver_account %}
+                        <div style="color: #cbd5e1; font-weight: 700; font-size: 0.9rem;">{{ txn.receiver_account.user.username }}</div>
+                        <div style="color: #94a3b8; font-size: 0.75rem; font-family: monospace;">A/c: {{ txn.receiver_account.account_number }}</div>
+                    {% else %}
+                        <div style="color: #475569; font-size: 0.85rem; font-style: italic;">N/A (External Bank / Self)</div>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if txn.transaction_type == 'CREDIT' %}
+                        <span style="background: rgba(16,185,129,0.15); color: #34d399; border: 1px solid rgba(16,185,129,0.3); padding: 0.3rem 0.8rem; border-radius: 50px; font-size: 0.7rem; font-weight: 800;"><i class="fas fa-arrow-down"></i> CREDIT</span>
+                    {% else %}
+                        <span style="background: rgba(239,68,68,0.15); color: #fca5a5; border: 1px solid rgba(239,68,68,0.3); padding: 0.3rem 0.8rem; border-radius: 50px; font-size: 0.7rem; font-weight: 800;"><i class="fas fa-arrow-up"></i> DEBIT</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <div style="font-weight: 800; color: #f8fafc; font-size: 1.05rem;">
+                        {% if txn.transaction_type == 'CREDIT' %}<span style="color: #10b981;">+</span>{% else %}<span style="color: #ef4444;">-</span>{% endif %}
+                        ₹{{ txn.amount|floatformat:2 }}
+                    </div>
+                </td>
+                <td>
+                    {% if txn.status == 'APPROVED' %}
+                        <div style="color: #10b981; font-size: 0.75rem; font-weight: 800;"><i class="fas fa-check-double"></i> SETTLED</div>
+                    {% elif txn.status == 'PENDING' %}
+                        <div style="color: #fbbf24; font-size: 0.75rem; font-weight: 800;"><i class="fas fa-spinner fa-spin"></i> PENDING SYS REVIEW</div>
+                    {% else %}
+                        <div style="color: #f87171; font-size: 0.75rem; font-weight: 800;"><i class="fas fa-times"></i> FAILED / REJECTED</div>
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" style="padding: 4rem; text-align: center; color: #64748b;">
+                    <i class="fas fa-file-invoice" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+                    <p>No transactions recorded in the ledger.</p>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div id="forceTxnModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(8px);">
+    <div style="background: #1e293b; border: 1px solid rgba(239,68,68,0.3); width: 100%; max-width: 500px; padding: 2.5rem; border-radius: 20px; box-shadow: 0 25px 50px rgba(239,68,68,0.15);">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2rem;">
+            <div>
+                <h3 style="font-weight: 900; color: #fca5a5; font-size: 1.5rem; margin: 0; display: flex; align-items: center; gap: 0.5rem;"><i class="fas fa-exclamation-triangle"></i> Override Protocol</h3>
+                <p style="color: #94a3b8; font-size: 0.85rem; margin-top: 0.35rem;">Warning: You are about to directly manipulate customer ledgers. All actions belong to an immutable audit trail.</p>
+            </div>
+            <i class="fas fa-times" onclick="document.getElementById('forceTxnModal').style.display='none';" style="color: #64748b; cursor: pointer; font-size: 1.25rem;"></i>
+        </div>
+
+        <form method="post" action="{% url 'admin_add_transaction' %}">
+            {% csrf_token %}
+            
+            <div style="margin-bottom: 1.5rem;">
+                <label style="display: block; color: #94a3b8; font-size: 0.75rem; font-weight: 700; margin-bottom: 0.5rem; text-transform: uppercase;">Target Account Number *</label>
+                <input type="text" name="account_number" required placeholder="e.g. 84729103... or CC..." style="width: 100%; background: #0f172a; border: 1px solid rgba(255,255,255,0.1); color: #f8fafc; padding: 0.85rem 1rem; border-radius: 8px; font-family: monospace; font-size: 1rem;">
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+                <div>
+                    <label style="display: block; color: #94a3b8; font-size: 0.75rem; font-weight: 700; margin-bottom: 0.5rem; text-transform: uppercase;">Amount (₹) *</label>
+                    <input type="number" name="amount" step="0.01" min="0.01" required style="width: 100%; background: #0f172a; border: 1px solid rgba(255,255,255,0.1); color: #f8fafc; padding: 0.85rem 1rem; border-radius: 8px; font-family: inherit; font-size: 1rem; font-weight: 800;">
+                </div>
+                <div>
+                    <label style="display: block; color: #94a3b8; font-size: 0.75rem; font-weight: 700; margin-bottom: 0.5rem; text-transform: uppercase;">Action Type *</label>
+                    <select name="transaction_type" required style="width: 100%; background: #0f172a; border: 1px solid rgba(255,255,255,0.1); color: #f8fafc; padding: 0.85rem 1rem; border-radius: 8px; font-family: inherit; font-size: 0.95rem; font-weight: 700;">
+                        <option value="CREDIT">Inject Funds (Credit)</option>
+                        <option value="DEBIT">Seize Funds (Debit)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 2rem;">
+                <label style="display: block; color: #94a3b8; font-size: 0.75rem; font-weight: 700; margin-bottom: 0.5rem; text-transform: uppercase;">Administrative Memo</label>
+                <input type="text" name="description" placeholder="Mandatory Audit Remarks..." required style="width: 100%; background: #0f172a; border: 1px solid rgba(255,255,255,0.1); color: #f8fafc; padding: 0.85rem 1rem; border-radius: 8px; font-family: inherit; font-size: 0.9rem;">
+            </div>
+
+            <button type="submit" style="width: 100%; background: rgba(239,68,68,0.1); color: #fca5a5; padding: 1rem; border-radius: 12px; font-weight: 800; border: 1px solid rgba(239,68,68,0.3); cursor: pointer; transition: all 0.2s; display: flex; justify-content: center; align-items: center; gap: 0.5rem; text-transform: uppercase; letter-spacing: 1px;" onmouseover="this.style.background='#ef4444'; this.style.color='#fff';" onmouseout="this.style.background='rgba(239,68,68,0.1)'; this.style.color='#fca5a5';">
+                <i class="fas fa-radiation"></i> Execute Override
+            </button>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

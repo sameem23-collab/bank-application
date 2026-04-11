@@ -1,0 +1,221 @@
+{% extends 'dashboard_base.html' %}
+{% load static %}
+
+{% block page_title %}Payment Requests{% endblock %}
+
+{% block title %}My Requests | Indie Bank{% endblock %}
+{% block content %}
+<div class="animate-up">
+    
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+        <div>
+            <h2 style="font-size: 1.8rem; font-weight: 800; color: var(--color-primary-dark); margin-bottom: 0.5rem;">Money Requests</h2>
+            <p style="color: var(--color-text-muted);">Manage your incoming and outgoing requests</p>
+        </div>
+        <button @click="newRequest" class="btn" style="background: var(--color-ib-blue); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 8px; font-weight: 600; cursor: pointer;">
+            <i class="fas fa-plus" style="margin-right: 0.5rem;"></i> New Request
+        </button>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+        
+        <div style="background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.05);">
+            <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 1.5rem; color: #1e293b;"><i class="fas fa-arrow-down" style="color: #ef4444; margin-right: 0.5rem;"></i> To Pay (Pending)</h3>
+            
+            <div style="display: flex; flex-direction: column; gap: 1rem;">
+                <div v-if="pendingRequests.length === 0" style="text-align: center; padding: 2rem 0; color: #94a3b8; font-size: 0.9rem;">
+                    No pending requests to pay. All caught up!
+                </div>
+                
+        <div v-for="req in pendingRequests" :key="req.id" style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 1rem; border-bottom: 1px solid #f1f5f9;">
+                    <div style="display: flex; gap: 1rem; align-items: center;">
+                        <div style="width: 40px; height: 40px; border-radius: 50%; background: #fee2e2; color: #ef4444; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.2rem;">
+                            [[ (req.requester.username || 'U').charAt(0).toUpperCase() ]]
+                        </div>
+                        <div>
+                            <div style="font-weight: 700; color: #334155;">[[ req.requester.username ]]</div>
+                            <div style="font-size: 0.8rem; color: #64748b;">[[ req.description ]] • [[ formatDate(req.created_at) ]]</div>
+                        </div>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="font-weight: 700; font-size: 1.1rem; color: #1e293b; margin-bottom: 0.25rem;">₹[[ req.amount ]]</div>
+                        
+                        <div v-if="req.status === 'PENDING'" style="display: flex; gap: 0.5rem; justify-content: flex-end;">
+                            <button v-if="!req.processing" @click="processPayment(req)" style="background: var(--color-ib-blue); border: none; padding: 4px 12px; border-radius: 4px; font-size: 0.75rem; font-weight: 600; cursor: pointer; color: white;">Pay Now</button>
+                            <button v-if="!req.processing" @click="rejectRequest(req)" style="background: #f1f5f9; border: 1px solid #e2e8f0; padding: 4px 12px; border-radius: 4px; font-size: 0.75rem; font-weight: 600; cursor: pointer; color: #64748b;">Reject</button>
+                        </div>
+                        
+                        <button v-if="req.processing" disabled style="background: #e2e8f0; border: none; padding: 4px 12px; border-radius: 4px; font-size: 0.75rem; font-weight: 600; cursor: wait; color: #475569;">Processing...</button>
+                        
+                        <button v-if="req.status === 'PAID'" disabled style="background: #dcfce7; border: none; padding: 4px 12px; border-radius: 4px; font-size: 0.75rem; font-weight: 600; color: #166534;"><i class="fas fa-check"></i> Paid</button>
+                        <button v-if="req.status === 'REJECTED'" disabled style="background: #fee2e2; border: none; padding: 4px 12px; border-radius: 4px; font-size: 0.75rem; font-weight: 600; color: #ef4444;">Rejected</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div style="background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.05);">
+            <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 1.5rem; color: #1e293b;"><i class="fas fa-arrow-up" style="color: #22c55e; margin-right: 0.5rem;"></i> Requested by You</h3>
+            
+            <div style="display: flex; flex-direction: column; gap: 1rem;">
+                <div v-for="req in sentRequests" :key="req.id" style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 1rem; border-bottom: 1px solid #f1f5f9;">
+                    <div style="display: flex; gap: 1rem; align-items: center;">
+                        <div style="width: 40px; height: 40px; border-radius: 50%; background: #dcfce7; color: #166534; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.2rem;">
+                            [[ (req.receiver.username || 'U').charAt(0).toUpperCase() ]]
+                        </div>
+                        <div>
+                            <div style="font-weight: 700; color: #334155;">[[ req.receiver.username ]]</div>
+                            <div style="font-size: 0.8rem; color: #64748b;">[[ req.status ]] • [[ formatDate(req.created_at) ]]</div>
+                        </div>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="font-weight: 700; font-size: 1.1rem; color: #1e293b;">₹[[ req.amount ]]</div>
+                        <div v-if="req.status === 'PENDING'" style="font-size: 0.7rem; color: #f59e0b; font-weight: 700; text-transform: uppercase;">Awaiting</div>
+                        <div v-if="req.status === 'PAID'" style="font-size: 0.7rem; color: #22c55e; font-weight: 700; text-transform: uppercase;">Paid</div>
+                    </div>
+                </div>
+
+                <div v-if="sentRequests.length === 0" style="text-align: center; padding: 1.5rem 0; color: #94a3b8; font-size: 0.9rem;">
+                    No more pending requests sent.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .animate-up {
+        animation: fadeInUp 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+
+<script>
+    const { createApp, ref, onMounted, computed } = Vue;
+
+    createApp({
+        delimiters: ['[[', ']]'],
+        setup() {
+            const user = ref({});
+            const pendingRequests = ref([]);
+            const sentRequests = ref([]);
+            const notifications = ref([]);
+            const unreadCount = computed(() => notifications.value.filter(n => !n.is_read).length);
+            const showNotifs = ref(false);
+
+            const fetchRequests = async () => {
+                try {
+                    const [reqRes, notifRes] = await Promise.all([
+                        axios.get('/api/payment-requests/'),
+                        axios.get('/api/notifications/')
+                    ]);
+                    const allReqs = reqRes.data;
+                    notifications.value = notifRes.data;
+                    // Incoming requests where user is receiver
+                    pendingRequests.value = allReqs.filter(r => r.receiver.id === user.value.id);
+                    // Outgoing requests where user is requester
+                    sentRequests.value = allReqs.filter(r => r.requester.id === user.value.id);
+                } catch (e) {
+                    console.error("Error fetching data:", e);
+                }
+            };
+
+            const processPayment = async (req) => {
+                req.processing = true;
+                try {
+                    const res = await axios.post(`/api/payment-requests/${req.id}/pay/`);
+                    if (res.data.status === 'success') {
+                        alert(`Successfully paid ₹${req.amount} to ${req.requester.username}!`);
+                        fetchRequests();
+                    }
+                } catch (e) {
+                    console.error("Payment error:", e);
+                    alert(e.response?.data?.error || "Payment failed. Please check your balance.");
+                } finally {
+                    req.processing = false;
+                }
+            };
+
+            const rejectRequest = async (req) => {
+                if (!confirm("Are you sure you want to reject this request?")) return;
+                try {
+                    const res = await axios.post(`/api/payment-requests/${req.id}/reject/`);
+                    if (res.data.status === 'success') {
+                        req.status = 'REJECTED';
+                        await fetchRequests();
+                    }
+                } catch (e) {
+                    console.error(e);
+                }
+            };
+
+            const newRequest = async () => {
+                const username = prompt("Enter the USERNAME of the person you want to request money from:");
+                if (!username) return;
+                const amount = prompt("Enter the amount:");
+                if (!amount) return;
+                const desc = prompt("Enter a description (optional):", "Money Request");
+
+                try {
+                    const res = await axios.post('/api/payment-requests/', {
+                        receiver_username: username,
+                        amount: amount,
+                        description: desc
+                    });
+                    if (res.data.id) {
+                        alert(`Request of ₹${amount} sent to ${username}!`);
+                        await fetchRequests();
+                    }
+                } catch (e) {
+                    alert(e.response?.data?.error || "Failed to send request. Check the username.");
+                }
+            };
+
+            const formatDate = (dateStr) => {
+                if (!dateStr) return '';
+                const date = new Date(dateStr);
+                if (isNaN(date)) return dateStr;
+                return date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+            };
+
+            const markAsRead = async (id) => {
+                try {
+                    await axios.post(`/api/notifications/${id}/read/`);
+                    const n = notifications.value.find(notif => notif.id === id);
+                    if (n) n.is_read = true;
+                } catch (e) { console.error(e); }
+            };
+
+            const markAllAsRead = async () => {
+                for (let n of notifications.value) {
+                    if (!n.is_read) await markAsRead(n.id);
+                }
+            };
+            
+            onMounted(async () => {
+                try {
+                    const sessionRes = await axios.get('/api/session/');
+                    if (sessionRes.data && sessionRes.data.user) {
+                        user.value = sessionRes.data.user;
+                        await fetchRequests();
+                    }
+                } catch (e) {
+                    console.error(e);
+                }
+            });
+
+            return { user, pendingRequests, sentRequests, processPayment, rejectRequest, newRequest, formatDate, notifications, unreadCount, showNotifs, markAsRead, markAllAsRead };
+        }
+    }).mount('#app');
+</script>
+{% endblock %}

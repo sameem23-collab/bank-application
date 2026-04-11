@@ -1,0 +1,148 @@
+{% extends 'dashboard_base.html' %}
+{% load static %}
+
+{% block page_title %}Account Statement{% endblock %}
+
+{% block title %}Account Statement | Indie Bank{% endblock %}
+
+{% block content %}
+<div class="animate-up">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+        <div>
+            <h2 style="margin: 0; color: var(--color-text-dark); font-weight: 800;">Account Statement</h2>
+            <p style="margin: 0; color: var(--color-text-muted); font-size: 0.9rem;">View and download your latest transactions</p>
+        </div>
+        <button onclick="downloadPDF()" class="quick-action-btn" style="width: auto; padding: 0.75rem 1.5rem; flex-direction: row; gap: 0.5rem; background: var(--color-ib-blue); color: white;">
+            <i class="fas fa-file-pdf"></i>
+            <span style="color: white; font-weight: 700;">Download PDF</span>
+        </button>
+    </div>
+
+    <div id="statement-area" style="background: white; padding: 3rem; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); color: #0f172a;">
+        <!-- Header for PDF -->
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 3rem; border-bottom: 2px solid #f1f5f9; padding-bottom: 2rem;">
+            <div>
+                <img src="{% static 'img/logo.jpeg' %}" alt="Indie Bank" style="height: 40px; margin-bottom: 1rem;">
+                <h3 style="margin: 0; font-size: 1.5rem; font-weight: 800; color: #003366;">Account Statement</h3>
+                <div style="font-size: 0.85rem; color: #64748b; margin-top: 0.5rem;">As of {% now "Y-m-d H:i" %}</div>
+            </div>
+            <div style="text-align: right;">
+                <div style="font-weight: 800; font-size: 1.1rem; color: #003366;">{{ user.first_name }} {{ user.last_name }}</div>
+                <div style="font-size: 0.85rem; color: #64748b;">Account No: <strong>{{ account.account_number }}</strong></div>
+                <div style="font-size: 0.85rem; color: #64748b;">Current Balance: <strong>₹{{ account.balance }}</strong></div>
+            </div>
+        </div>
+
+        <!-- Transactions Table -->
+        <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
+            <thead>
+                <tr style="background: #f8fafc; text-align: left;">
+                    <th style="padding: 1rem; border-bottom: 2px solid #e2e8f0; color: #475569;">Date</th>
+                    <th style="padding: 1rem; border-bottom: 2px solid #e2e8f0; color: #475569;">Description</th>
+                    <th style="padding: 1rem; border-bottom: 2px solid #e2e8f0; color: #475569; text-align: right;">Withdrawal</th>
+                    <th style="padding: 1rem; border-bottom: 2px solid #e2e8f0; color: #475569; text-align: right;">Deposit</th>
+                    <th style="padding: 1rem; border-bottom: 2px solid #e2e8f0; color: #475569; text-align: center;">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for txn in transactions %}
+                <tr style="border-bottom: 1px solid #f1f5f9;">
+                    <td style="padding: 1rem; color: #64748b;">{{ txn.date|date:"M d, Y" }}</td>
+                    <td style="padding: 1rem; font-weight: 600; color: #1e293b;">{{ txn.description }}</td>
+                    <td style="padding: 1rem; text-align: right; color: #991b1b; font-weight: 700;">
+                        {% if txn.transaction_type == 'DEBIT' %}₹{{ txn.amount }}{% endif %}
+                    </td>
+                    <td style="padding: 1rem; text-align: right; color: #166534; font-weight: 700;">
+                        {% if txn.transaction_type == 'CREDIT' %}₹{{ txn.amount }}{% endif %}
+                    </td>
+                    <td style="padding: 1rem; text-align: center;">
+                        {% if txn.status == 'APPROVED' %}
+                            <span style="font-size: 0.7rem; font-weight: 700; padding: 2px 8px; border-radius: 4px; background: #dcfce7; color: #166534;">{{ txn.status }}</span>
+                        {% elif txn.status == 'PENDING' %}
+                            <span style="font-size: 0.7rem; font-weight: 700; padding: 2px 8px; border-radius: 4px; background: #fef9c3; color: #854d0e;">{{ txn.status }}</span>
+                        {% else %}
+                            <span style="font-size: 0.7rem; font-weight: 700; padding: 2px 8px; border-radius: 4px; background: #fee2e2; color: #991b1b;">{{ txn.status }}</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" style="padding: 2rem; text-align: center; color: #94a3b8;">No transactions found for this account.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+        <div style="margin-top: 4rem; padding-top: 1.5rem; border-top: 1px solid #f1f5f9; text-align: center; font-size: 0.75rem; color: #94a3b8;">
+            <p>This is a computer generated statement and does not require a signature.</p>
+            <p>Indie Bank Ltd. &copy; {% now "Y" %}</p>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script>
+    function downloadPDF() {
+        const element = document.getElementById('statement-area');
+        const opt = {
+            margin:       [0.5, 0.5, 0.5, 0.5],
+            filename:     'Indie_Bank_Statement.pdf',
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { scale: 2, useCORS: true },
+            jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
+        };
+        html2pdf().set(opt).from(element).save();
+    }
+
+    const { createApp, ref, onMounted, computed } = Vue;
+    createApp({
+        delimiters: ['[[', ']]'],
+        setup() {
+            const user = ref({});
+            const notifications = ref([]);
+            const unreadCount = computed(() => notifications.value.filter(n => !n.is_read).length);
+            const showNotifs = ref(false);
+
+            const fetchData = async () => {
+                try {
+                    const sessionRes = await axios.get('/api/session/');
+                    if (sessionRes.data && sessionRes.data.user) {
+                        user.value = sessionRes.data.user;
+                    }
+                    const notifRes = await axios.get('/api/notifications/');
+                    notifications.value = notifRes.data;
+                } catch (e) {
+                    console.error("Data fetch failed", e);
+                }
+            };
+            
+            const formatDate = (dateStr) => {
+                if (!dateStr) return '';
+                const date = new Date(dateStr);
+                return date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+            };
+
+            const markAsRead = async (id) => {
+                try {
+                    await axios.post(`/api/notifications/${id}/read/`);
+                    const n = notifications.value.find(notif => notif.id === id);
+                    if (n) n.is_read = true;
+                } catch (e) { console.error(e); }
+            };
+
+            const markAllAsRead = async () => {
+                for (let n of notifications.value) {
+                    if (!n.is_read) await markAsRead(n.id);
+                }
+            };
+
+            onMounted(fetchData);
+
+            return {
+                user, notifications, unreadCount, showNotifs,
+                formatDate, markAsRead, markAllAsRead
+            };
+        }
+    }).mount('#app');
+</script>
+{% endblock %}

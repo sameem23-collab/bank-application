@@ -1,0 +1,195 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Digital Deposits | Indie Bank{% endblock %}
+{% block content %}
+<style>
+    /* Premium Digital Deposits Internal Styles */
+    .premium-card-container {
+        perspective: 1000px;
+        cursor: pointer;
+        margin-bottom: 2rem;
+    }
+
+    .premium-card-body {
+        min-height: 250px;
+        border-radius: 24px;
+        position: relative;
+        overflow: hidden;
+        padding: 1rem;
+        color: white !important;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.6s ease;
+        backdrop-filter: blur(8px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .premium-card-container:hover .premium-card-body {
+        transform: translateY(-10px) rotateX(5deg);
+        box-shadow: 0 40px 80px rgba(0, 0, 0, 0.4);
+    }
+
+    .card-shine {
+        position: absolute;
+        top: 0;
+        left: -150%;
+        width: 80%;
+        height: 100%;
+        background: linear-gradient(to right,
+                rgba(255, 255, 255, 0) 0%,
+                rgba(255, 255, 255, 0.2) 50%,
+                rgba(255, 255, 255, 0) 100%);
+        transform: skewX(-25deg);
+        z-index: 1;
+    }
+
+    .premium-card-container:hover .card-shine {
+        left: 200%;
+        transition: 1s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .card-variant-savings {
+        background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+    }
+
+    .card-variant-fd {
+        background: linear-gradient(135deg, #134e4a 0%, #0d9488 100%);
+    }
+
+    .deposit-rate {
+        font-size: 3.5rem;
+        font-weight: 900;
+        line-height: 1;
+        margin-bottom: 0.5rem;
+        text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .deposit-badge {
+        display: inline-block;
+        padding: 0.4rem 1rem;
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: 50px;
+        font-weight: 700;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        margin-bottom: 1.5rem;
+    }
+
+    /* Premium Button Styles */
+    .btn-gold {
+        background: linear-gradient(135deg, #d4af37 0%, #f9e27d 50%, #b8860b 100%);
+        color: #1a202c !important;
+        border: none;
+        padding: 1.25rem 2.5rem;
+        border-radius: 12px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+    }
+
+    .btn-gold:hover {
+        background: linear-gradient(135deg, #f9e27d 0%, #d4af37 50%, #f9e27d 100%);
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(212, 175, 55, 0.5);
+    }
+
+    .glass-btn-dark {
+        background: rgba(26, 32, 44, 0.05);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(26, 32, 44, 0.1);
+        padding: 1.25rem 2.5rem;
+        border-radius: 12px;
+        font-weight: 700;
+        color: #1a202c;
+        transition: all 0.4s ease;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+    }
+
+    .glass-btn-dark:hover {
+        background: rgba(26, 32, 44, 0.1);
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+    }
+</style>
+<section style="padding: 4rem 0; background: linear-gradient(135deg, #f0f4f8 0%, #ffffff 100%);">
+    <div class="container">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5rem;">
+            <div style="max-width: 600px;">
+                <h1
+                    style="font-size: 3.5rem; font-weight: 900; color: var(--color-ib-blue-dark); line-height: 1.1; margin-bottom: 1.5rem;">
+                    Digital Deposits <br>Smart Savings.</h1>
+                <p style="font-size: 1.25rem; color: #555; margin-bottom: 2.5rem;">Grow your wealth with India's most
+                    efficient digital storage. Opening an account takes less than 3 minutes.</p>
+                <div style="display: flex; gap: 1rem;">
+                    <a href="{% url 'register' %}" class="btn-gold">Open Savings Account</a>
+                    <a href="{% url 'calculate_roi' %}" class="glass-btn-dark">Calculate ROI</a>
+                </div>
+            </div>
+            <div style="position: relative;">
+                <div
+                    style="width: 400px; height: 400px; background: var(--color-ib-blue-dark); border-radius: 40px; transform: rotate(10deg); overflow: hidden; box-shadow: 0 40px 80px rgba(0,0,0,0.2);">
+                    <img src="{% static 'img/hero_2.png' %}" alt="Digital Banking"
+                        style="width: 100%; height: 100%; object-fit: cover; opacity: 0.8; transform: rotate(-10deg) scale(1.2);">
+                </div>
+            </div>
+        </div>
+
+        <div
+            style="display: grid; grid-template-columns: 1.1fr 1fr; gap: 4rem; margin-bottom: 4rem; align-items: center;">
+            
+            <div class="premium-card-container">
+                <div class="premium-card-body card-variant-savings"
+                    style="padding: 1rem 3.5rem; transform: scale(1.05); box-shadow: 0 30px 60px rgba(30, 58, 138, 0.3); border: 2px solid rgba(255, 255, 255, 0.2);">
+                    <div
+                        style="position: absolute; top: 1.5rem; right: -2.5rem; background: #fbbf24; color: #78350f; padding: 0.5rem 3rem; transform: rotate(45deg); font-weight: 900; font-size: 0.75rem; letter-spacing: 1px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); z-index: 10;">
+                        RECOMMENDED</div>
+                    <div class="card-shine"></div>
+                    <div class="deposit-badge">High Liquidity</div>
+                    <h2 style="font-weight: 800; margin-bottom: 0.5rem; color: white; margin-top: 0;">Savings Max</h2>
+                    <div class="deposit-rate">7.5%* <span style="font-size: 1.2rem; opacity: 0.8;">p.a.</span></div>
+                    <p style="opacity: 0.9; margin-bottom: 2rem; line-height: 1.6;">Enjoy zero balance requirements and
+                        monthly interest credits directly to your account.</p>
+                    <ul style="padding: 0; list-style: none; font-weight: 600; font-size: 0.95rem;">
+                        <li style="margin-bottom: 0.75rem; display: flex; align-items: center;"><i class="fas fa-check"
+                                style="margin-right: 12px; color: #4ade80;"></i> Free Platinum Debit Card</li>
+                        <li style="margin-bottom: 0.75rem; display: flex; align-items: center;"><i class="fas fa-check"
+                                style="margin-right: 12px; color: #4ade80;"></i> Unlimited ATM Withdrawals</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="premium-card-container">
+                <div class="premium-card-body card-variant-fd">
+                    <div class="card-shine"></div>
+                    <div class="deposit-badge">Maximum Returns</div>
+                    <h2 style="font-weight: 800; margin-bottom: 0.5rem; color: white; margin-top: 0;">Indie FD Plus</h2>
+                    <div class="deposit-rate">8.9%* <span style="font-size: 1.2rem; opacity: 0.8;">p.a.</span></div>
+                    <p style="opacity: 0.9; margin-bottom: 2rem; line-height: 1.6;">Fixed deposits that grow faster.
+                        Lock in your savings for 399 days.</p>
+                    <ul style="padding: 0; list-style: none; font-weight: 600; font-size: 0.95rem;">
+                        <li style="margin-bottom: 0.75rem; display: flex; align-items: center;"><i class="fas fa-check"
+                                style="margin-right: 12px; color: #4ade80;"></i> No Penalty for Premature Withdrawal
+                        </li>
+                        <li style="margin-bottom: 0.75rem; display: flex; align-items: center;"><i class="fas fa-check"
+                                style="margin-right: 12px; color: #4ade80;"></i> Overdraft Facility up to 90%</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,259 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Admin Console | Indie Bank{% endblock %}</title>
+    <link rel="icon" type="image/png" href="{% static 'img/bank_logo.png' %}">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}?v=1.3">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        .admin-bg {
+            background-color: #0f172a;
+        }
+
+        .sidebar {
+            background: #0f172a !important;
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .sidebar-link {
+            color: #94a3b8;
+        }
+
+        .sidebar-link:hover,
+        .sidebar-link.active {
+            color: #f1f5f9;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .sidebar-link.active i {
+            color: #38bdf8;
+        }
+
+        .top-bar {
+            background: rgba(15, 23, 42, 0.8) !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* Premium Tables */
+        .admin-table-container {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .admin-table th {
+            text-align: left;
+            padding: 1.25rem 1.5rem;
+            color: #64748b;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-weight: 700;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .admin-table td {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+            color: #e2e8f0;
+        }
+
+        .admin-table tr:hover td {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .btn-admin-action {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-admin-action:hover {
+            background: white;
+            color: #0f172a;
+        }
+
+        .btn-admin-danger {
+            background: rgba(239, 68, 68, 0.15);
+            color: #fca5a5;
+            border-color: rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-admin-danger:hover {
+            background: #ef4444;
+            color: white;
+        }
+    </style>
+</head>
+
+<body class="admin-bg">
+    <div class="dashboard-wrapper">
+        <aside class="sidebar">
+            <div class="sidebar-brand" style="margin-bottom: 1rem;">
+                <img src="{% static 'img/logo.jpeg' %}" alt="Logo"
+                    style="height: 32px; filter: brightness(1) invert(1);">
+                <span class="logo-text"
+                    style="color: white; font-size: 1.1rem; font-weight: 900; letter-spacing: 1px;">ADMIN PORTAL</span>
+            </div>
+
+            <nav class="sidebar-menu">
+                <ul>
+                    <li>
+                        <a href="{% url 'admin_dashboard' %}"
+                            class="sidebar-link {% if request.resolver_match.url_name == 'admin_dashboard' %}active{% endif %}">
+                            <i class="fa-solid fa-gauge"></i><span>Override Console</span>
+                        </a>
+                    </li>
+                    <li
+                        style="margin: 1.5rem 1.5rem 0.5rem; font-size: 0.65rem; color: #475569; text-transform: uppercase; font-weight: 800; letter-spacing: 1.5px;">
+                        Core Data</li>
+                    <li>
+                        <a href="{% url 'admin_users_list' %}"
+                            class="sidebar-link {% if 'users' in request.path and 'transactions' not in request.path %}active{% endif %}">
+                            <i class="fa-solid fa-users-gear"></i><span>User Identities</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'admin_accounts_list' %}"
+                            class="sidebar-link {% if 'accounts' in request.path %}active{% endif %}">
+                            <i class="fa-solid fa-building-columns"></i><span>User Accounts</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'admin_transactions_list' %}"
+                            class="sidebar-link {% if 'transactions' in request.path %}active{% endif %}">
+                            <i class="fa-solid fa-money-bill-transfer"></i><span>User Transactions</span>
+                        </a>
+                    </li>
+
+                    <li
+                        style="margin: 1.5rem 1.5rem 0.5rem; font-size: 0.65rem; color: #475569; text-transform: uppercase; font-weight: 800; letter-spacing: 1.5px;">
+                        Approvals & Support</li>
+                    <li>
+                        <a href="{% url 'admin_credit_card_list' %}"
+                            class="sidebar-link {% if 'credit-cards' in request.path %}active{% endif %}">
+                            <i class="fa-solid fa-credit-card"></i><span>Credit Cards</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'admin_loan_list' %}"
+                            class="sidebar-link {% if 'loans' in request.path %}active{% endif %}">
+                            <i class="fa-solid fa-landmark"></i><span>Loan Origination</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'admin_complaints' %}"
+                            class="sidebar-link {% if 'complaints' in request.path %}active{% endif %}">
+                            <i class="fa-solid fa-headset"></i><span>Support Tickets</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+
+            <div style="padding: 2rem; border-top: 1px solid rgba(255, 255, 255, 0.05); margin-top: auto;">
+                <a href="{% url 'logout' %}" class="sidebar-link" style="color: #fca5a5;">
+                    <i class="fa-solid fa-right-from-bracket"></i><span>Logout</span>
+                </a>
+            </div>
+        </aside>
+
+        <main class="main-dashboard" style="margin-top: 0; min-height: 100vh;">
+            <header class="top-bar">
+                <div class="top-bar-left">
+                    <h2 style="color: white; font-weight: 800; letter-spacing: -0.5px;">{% block page_title %}Admin
+                        Console{% endblock %}</h2>
+                </div>
+                <div class="top-bar-right" style="display: flex; gap: 1rem; align-items: center;">
+                    <div class="user-profile"
+                        style="background: rgba(255,255,255,0.05); padding: 0.5rem 1rem; border-radius: 50px; border: 1px solid rgba(255,255,255,0.05);">
+                        <div class="user-avatar"
+                            style="background: #10b981; color: white; width: 32px; height: 32px; font-size: 0.8rem;">
+                            <i class="fas fa-shield-check"></i>
+                        </div>
+                        <div style="text-align: left; margin-left: 0.5rem;">
+                            <div
+                                style="font-size: 0.8rem; font-weight: 800; color: #f8fafc; text-transform: uppercase;">
+                                System Admin</div>
+                            <div style="font-size: 0.65rem; color: #10b981; font-weight: 700; letter-spacing: 1px;">GOD
+                                MODE</div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="dashboard-content" style="padding: 2rem;">
+                {% if messages %}
+                <div class="messages" style="margin-bottom: 2rem;">
+                    {% for message in messages %}
+                    <div class="alert {{ message.tags }}"
+                        style="padding: 1rem 1.5rem; border-radius: 12px; margin-bottom: 1rem; font-weight: 600; font-size: 0.9rem; border-left: 4px solid; background: rgba(30,41,59,0.8); backdrop-filter: blur(10px); color: white;">
+                        {% if message.tags == 'success' %}
+                        <i class="fas fa-check-circle" style="color: #10b981; margin-right: 0.5rem;"></i>
+                        {% elif message.tags == 'error' %}
+                        <i class="fas fa-exclamation-circle" style="color: #ef4444; margin-right: 0.5rem;"></i>
+                        {% endif %}
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                {% block content %}{% endblock %}
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function getCsrfToken() {
+            const name = 'csrftoken';
+            const cookies = document.cookie.split(';');
+            for (let cookie of cookies) {
+                cookie = cookie.trim();
+                if (cookie.startsWith(name + '=')) {
+                    return decodeURIComponent(cookie.substring(name.length + 1));
+                }
+            }
+            return null;
+        }
+        if (typeof axios !== 'undefined') {
+            axios.defaults.xsrfCookieName = 'csrftoken';
+            axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+            axios.defaults.headers.common['X-CSRFToken'] = getCsrfToken();
+        }
+    </script>
+</body>
+
+</html>

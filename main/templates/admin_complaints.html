@@ -1,0 +1,138 @@
+{% extends 'admin_base.html' %}
+{% load static %}
+
+{% block title %}Support Tickets | Indie Bank Admin{% endblock %}
+{% block page_title %}Support Tickets{% endblock %}
+
+{% block content %}
+<style>
+    .glass-panel {
+        background: rgba(30, 41, 59, 0.7);
+        backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.07);
+        border-radius: 20px;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    }
+    .complaint-table { width: 100%; border-collapse: collapse; }
+    .complaint-table th {
+        padding: 1.25rem 1.5rem;
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        color: #64748b;
+        font-weight: 700;
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+        text-align: left;
+    }
+    .complaint-table td {
+        padding: 1.5rem;
+        border-bottom: 1px solid rgba(255,255,255,0.04);
+        vertical-align: middle;
+    }
+    .complaint-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+    .status-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.35rem 0.9rem;
+        border-radius: 20px;
+        font-size: 0.7rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    .pill-pending     { background: rgba(239, 68, 68, 0.1); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.2); }
+    .pill-in_progress { background: rgba(245, 158, 11, 0.1); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.2); }
+    .pill-resolved    { background: rgba(16, 185, 129, 0.1); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.2); }
+
+    .status-select {
+        background: rgba(15, 23, 42, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: white;
+        padding: 0.4rem 0.6rem;
+        border-radius: 8px;
+        font-size: 0.8rem;
+        cursor: pointer;
+        outline: none;
+        transition: border-color 0.2s;
+    }
+    .status-select:focus { border-color: #38bdf8; }
+
+    .update-btn {
+        background: #38bdf8;
+        color: #0f172a;
+        border: none;
+        padding: 0.4rem 0.8rem;
+        border-radius: 8px;
+        font-weight: 800;
+        font-size: 0.75rem;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    .update-btn:hover { background: #7dd3fc; transform: translateY(-1px); }
+</style>
+
+<div style="margin-bottom: 2rem;">
+    <h1 style="font-weight: 900; color: #f8fafc; font-size: 2.5rem; margin-bottom: 0.5rem; letter-spacing: -1px;">Customer Resolution Center</h1>
+    <p style="color: #94a3b8; font-size: 1rem;">Manage support tickets, investigate complaints, and provide customer feedback.</p>
+</div>
+
+<div class="glass-panel" style="overflow: hidden;">
+    <table class="complaint-table">
+        <thead>
+            <tr>
+                <th>Reference ID</th>
+                <th>User Details</th>
+                <th>Statement of Complaint</th>
+                <th>Status</th>
+                <th style="text-align: right;">Resolution</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for complaint in complaints %}
+            <tr>
+                <td>
+                    <div style="font-weight: 800; color: #38bdf8; font-size: 0.9rem; font-family: monospace;">#{{ complaint.complaint_id }}</div>
+                    <div style="color: #64748b; font-size: 0.75rem; margin-top: 0.2rem;">{{ complaint.created_at|date:"d M Y, H:i" }}</div>
+                </td>
+                <td>
+                    <div style="font-weight: 700; color: #f1f5f9;">{{ complaint.full_name }}</div>
+                    <div style="color: #64748b; font-size: 0.8rem; font-family: monospace;">{{ complaint.email }}</div>
+                </td>
+                <td>
+                    <div style="color: #cbd5e1; font-size: 0.9rem; line-height: 1.5; max-width: 500px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;" title="{{ complaint.message }}">
+                        {{ complaint.message }}
+                    </div>
+                </td>
+                <td>
+                    <span class="status-pill pill-{{ complaint.status|lower }}">
+                        <i class="fas {% if complaint.status == 'PENDING' %}fa-hourglass-half{% elif complaint.status == 'IN_PROGRESS' %}fa-spinner fa-spin{% else %}fa-check-double{% endif %}"></i>
+                        {{ complaint.get_status_display }}
+                    </span>
+                </td>
+                <td style="text-align: right;">
+                    <form method="POST" action="{% url 'update_complaint_status' complaint.pk %}" style="display: flex; gap: 0.5rem; justify-content: flex-end; align-items: center;">
+                        {% csrf_token %}
+                        <select name="status" class="status-select">
+                            <option value="PENDING" {% if complaint.status == 'PENDING' %}selected{% endif %}>Pending</option>
+                            <option value="IN_PROGRESS" {% if complaint.status == 'IN_PROGRESS' %}selected{% endif %}>In Progress</option>
+                            <option value="RESOLVED" {% if complaint.status == 'RESOLVED' %}selected{% endif %}>Resolved</option>
+                        </select>
+                        <button type="submit" class="update-btn">Update</button>
+                    </form>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" style="padding: 5rem; text-align: center; color: #475569;">
+                    <i class="fas fa-comment-slash" style="font-size: 4rem; opacity: 0.1; margin-bottom: 1.5rem;"></i>
+                    <p style="font-weight: 700; font-size: 1.1rem;">No customer complaints recorded.</p>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

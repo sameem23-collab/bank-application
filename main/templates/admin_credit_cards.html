@@ -1,0 +1,434 @@
+{% extends 'admin_base.html' %}
+{% load static %}
+
+{% block title %}Credit Card Applications | Indie Bank Admin{% endblock %}
+{% block page_title %}Credit Card Applications{% endblock %}
+
+{% block content %}
+
+<style>
+    [v-cloak] { display: none; }
+    body { background: #0f172a; }
+
+    .cc-admin-section {
+        min-height: 100vh;
+        background: #0f172a;
+        color: #f8fafc;
+        font-family: 'Inter', sans-serif;
+        padding: 2.5rem 0;
+    }
+
+    .glass-panel {
+        background: rgba(30, 41, 59, 0.7);
+        backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.07);
+        border-radius: 20px;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    }
+
+    .status-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.35rem 0.9rem;
+        border-radius: 20px;
+        font-size: 0.72rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    .pill-pending  { background: rgba(245,158,11,0.15); color: #fbbf24; border: 1px solid rgba(245,158,11,0.3); }
+    .pill-approved { background: rgba(16,185,129,0.15); color: #34d399; border: 1px solid rgba(16,185,129,0.3); }
+    .pill-rejected { background: rgba(239,68,68,0.15);  color: #f87171; border: 1px solid rgba(239,68,68,0.3); }
+
+    .card-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.3rem 0.8rem;
+        border-radius: 8px;
+        font-size: 0.78rem;
+        font-weight: 700;
+    }
+    .badge-platinum { background: linear-gradient(135deg, #6366f1, #818cf8); color: #fff; }
+    .badge-gold     { background: linear-gradient(135deg, #f59e0b, #fbbf24); color: #1e1200; }
+    .badge-silver   { background: linear-gradient(135deg, #64748b, #94a3b8); color: #fff; }
+
+    .action-btn {
+        padding: 0.5rem 1.25rem;
+        border-radius: 10px;
+        font-weight: 700;
+        font-size: 0.78rem;
+        letter-spacing: 0.5px;
+        cursor: pointer;
+        border: none;
+        transition: all 0.2s ease;
+        text-transform: uppercase;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+    }
+    .btn-approve { background: rgba(16,185,129,0.15); color: #34d399; border: 1px solid rgba(16,185,129,0.3); }
+    .btn-approve:hover { background: #10b981; color: #fff; box-shadow: 0 0 15px rgba(16,185,129,0.4); }
+    .btn-reject  { background: rgba(239,68,68,0.15);  color: #f87171; border: 1px solid rgba(239,68,68,0.3); }
+    .btn-reject:hover  { background: #ef4444; color: #fff; box-shadow: 0 0 15px rgba(239,68,68,0.4); }
+    .btn-back    { background: rgba(99,102,241,0.15); color: #a5b4fc; border: 1px solid rgba(99,102,241,0.3); }
+    .btn-back:hover    { background: #6366f1; color: #fff; }
+
+    .app-table { width: 100%; border-collapse: collapse; }
+    .app-table th {
+        padding: 1rem 1.5rem;
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        color: #64748b;
+        font-weight: 700;
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+        text-align: left;
+    }
+    .app-table td {
+        padding: 1.25rem 1.5rem;
+        border-bottom: 1px solid rgba(255,255,255,0.04);
+        vertical-align: middle;
+    }
+    .app-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+    /* Modal */
+    .modal-overlay {
+        display: none;
+        position: fixed; inset: 0;
+        background: rgba(0,0,0,0.75);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+        backdrop-filter: blur(4px);
+    }
+    .modal-overlay.active { display: flex; }
+    .modal-box {
+        background: #1e293b;
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 20px;
+        padding: 2.5rem;
+        width: 100%;
+        max-width: 500px;
+        box-shadow: 0 40px 80px rgba(0,0,0,0.6);
+        animation: modalIn 0.3s ease;
+    }
+    @keyframes modalIn { from { opacity:0; transform: scale(0.95) translateY(20px); } to { opacity:1; transform: scale(1) translateY(0); } }
+
+    .form-group { margin-bottom: 1.25rem; }
+    .form-label { display: block; font-size: 0.8rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.5rem; }
+    .form-control {
+        width: 100%; padding: 0.85rem 1rem;
+        background: rgba(15,23,42,0.6);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 10px;
+        color: #f1f5f9;
+        font-size: 0.95rem;
+        font-family: 'Inter', sans-serif;
+        transition: border-color 0.2s;
+        box-sizing: border-box;
+    }
+    .form-control:focus { outline: none; border-color: #38bdf8; }
+    .form-control option { background: #1e293b; }
+
+    .stats-bar {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+    .stat-card {
+        padding: 1.5rem;
+        border-radius: 16px;
+        text-align: center;
+    }
+    .stat-number { font-size: 2.5rem; font-weight: 900; letter-spacing: -1px; }
+    .stat-label  { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 1.5px; color: #94a3b8; margin-top: 0.25rem; font-weight: 600; }
+
+    /* Alert Styles */
+    .alert-box {
+        padding: 1rem 1.5rem;
+        border-radius: 12px;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        font-size: 0.9rem;
+        border: 1px solid transparent;
+    }
+    .alert-success { background: rgba(16,185,129,0.15); color: #34d399; border-color: rgba(16,185,129,0.3); }
+    .alert-warning { background: rgba(245,158,11,0.15); color: #fbbf24; border-color: rgba(245,158,11,0.3); }
+    .alert-error   { background: rgba(239,68,68,0.15);  color: #f87171; border-color: rgba(239,68,68,0.3); }
+</style>
+
+<section class="cc-admin-section">
+    <div class="container" style="max-width: 1300px;">
+
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 2rem;">
+            <div>
+                <h1 style="font-size: 2.25rem; font-weight: 900; letter-spacing: -1px;
+                    background: linear-gradient(135deg, #38bdf8, #818cf8);
+                    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">
+                    💳 Credit Card Applications
+                </h1>
+                <p style="color: #64748b; font-size: 0.9rem; margin-top: 0.4rem;">
+                    Review, approve, and assign credit limits to customer applications.
+                </p>
+            </div>
+            <a href="{% url 'admin_dashboard' %}" class="action-btn btn-back">
+                <i class="fas fa-arrow-left"></i> Back to Console
+            </a>
+        </div>
+
+        {% if messages %}
+        <div style="margin-bottom: 1.5rem;">
+            {% for message in messages %}
+            <div class="alert-box alert-{{ message.tags }}">
+                <i class="fas {% if message.tags == 'success' %}fa-check-circle{% elif message.tags == 'warning' %}fa-exclamation-circle{% else %}fa-times-circle{% endif %}" style="margin-right: 0.5rem;"></i>
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="stats-bar">
+            <div class="stat-card glass-panel">
+                <div class="stat-number" style="color: #fbbf24;">{{ pending_count }}</div>
+                <div class="stat-label">⏳ Pending Review</div>
+            </div>
+            <div class="stat-card glass-panel">
+                <div class="stat-number" style="color: #34d399;">{{ applications|length }}</div>
+                <div class="stat-label">📋 Total Applications</div>
+            </div>
+            <div class="stat-card glass-panel">
+                <div class="stat-number" style="color: #a5b4fc;">
+                    {% with approved_count=applications|length %}
+                        {% for app in applications %}{% if app.status == 'APPROVED' %}+{% endif %}{% endfor %}
+                    {% endwith %}
+                    {{ applications|dictsort:"status"|dictsortreversed:"status" | length }}
+                </div>
+                <div class="stat-label">✅ Approved</div>
+            </div>
+        </div>
+
+        <div class="glass-panel">
+            <div style="padding: 1.5rem 2rem; border-bottom: 1px solid rgba(255,255,255,0.05); display:flex; justify-content:space-between; align-items:center;">
+                <h2 style="font-size: 1.25rem; font-weight: 800; color: #f1f5f9;">All Applications</h2>
+                <span style="font-size: 0.8rem; color: #64748b;">{{ applications|length }} total</span>
+            </div>
+
+            {% if applications %}
+            <div style="overflow-x: auto;">
+                <table class="app-table">
+                    <thead>
+                        <tr>
+                            <th>#ID</th>
+                            <th>Applicant</th>
+                            <th>Requested Card</th>
+                            <th>Full Name / PAN</th>
+                            <th>Annual Income</th>
+                            <th>Applied On</th>
+                            <th>Status</th>
+                            <th style="text-align:right;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for app in applications %}
+                        <tr>
+                            <td style="color: #64748b; font-family: monospace; font-size: 0.85rem;">#{{ app.id }}</td>
+                            <td>
+                                <div style="display:flex; align-items:center; gap: 0.75rem;">
+                                    <div style="width:38px; height:38px; border-radius:10px; background: linear-gradient(135deg, #0ea5e9, #6366f1);
+                                        display:flex; align-items:center; justify-content:center; font-weight:800; font-size:1rem; color:#fff;
+                                        box-shadow: 0 0 12px rgba(99,102,241,0.4);">
+                                        {{ app.user.username|slice:":1"|upper }}
+                                    </div>
+                                    <div>
+                                        <div style="font-weight:700; color:#f1f5f9;">{{ app.user.username }}</div>
+                                        <div style="font-size:0.78rem; color:#64748b;">{{ app.user.email }}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                {% if app.requested_card_type == 'PLATINUM' %}
+                                    <span class="card-badge badge-platinum"><i class="fas fa-gem"></i> Platinum</span>
+                                {% elif app.requested_card_type == 'GOLD' %}
+                                    <span class="card-badge badge-gold"><i class="fas fa-star"></i> Gold</span>
+                                {% else %}
+                                    <span class="card-badge badge-silver"><i class="fas fa-credit-card"></i> Silver</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div style="font-weight:600; color:#e2e8f0;">{{ app.full_name }}</div>
+                                <div style="font-size:0.78rem; color:#64748b; font-family:monospace;">{{ app.pan_number }}</div>
+                            </td>
+                            <td style="color:#94a3b8; font-size:0.88rem;">{{ app.annual_income }}</td>
+                            <td style="color:#64748b; font-size:0.82rem; font-family:monospace;">{{ app.applied_at|date:"d M Y, H:i" }}</td>
+                            <td>
+                                {% if app.status == 'PENDING' %}
+                                    <span class="status-pill pill-pending"><i class="fas fa-clock"></i> Pending</span>
+                                {% elif app.status == 'APPROVED' %}
+                                    <span class="status-pill pill-approved"><i class="fas fa-check-circle"></i> Approved</span>
+                                    {% if app.assigned_card_type %}
+                                    <div style="font-size:0.75rem; color:#34d399; margin-top:0.3rem;">
+                                        {{ app.assigned_card_type }} · ₹{{ app.credit_limit|floatformat:0 }}
+                                    </div>
+                                    {% endif %}
+                                {% else %}
+                                    <span class="status-pill pill-rejected"><i class="fas fa-times-circle"></i> Rejected</span>
+                                {% endif %}
+                            </td>
+                            <td style="text-align:right;">
+                                {% if app.status == 'PENDING' %}
+                                <div style="display:flex; gap:0.5rem; justify-content:flex-end;">
+                                    <button class="action-btn btn-approve"
+                                        data-id="{{ app.id }}"
+                                        data-user="{{ app.user.username|escapejs }}"
+                                        data-type="{{ app.requested_card_type|escapejs }}"
+                                        onclick="openApproveModal(this.dataset.id, this.dataset.user, this.dataset.type)">
+                                        <i class="fas fa-check"></i> Approve
+                                    </button>
+                                    <button class="action-btn btn-reject"
+                                        data-id="{{ app.id }}"
+                                        data-user="{{ app.user.username|escapejs }}"
+                                        onclick="openRejectModal(this.dataset.id, this.dataset.user)">
+                                        <i class="fas fa-times"></i> Reject
+                                    </button>
+                                </div>
+                                {% else %}
+                                <span style="font-size:0.8rem; color:#475569;">
+                                    {% if app.admin_remarks %}{{ app.admin_remarks|truncatechars:40 }}{% else %}—{% endif %}
+                                </span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div style="text-align:center; padding: 5rem 2rem; color: #475569;">
+                <i class="fas fa-credit-card" style="font-size: 3.5rem; margin-bottom: 1rem; opacity: 0.3;"></i>
+                <p style="font-size: 1.1rem; font-weight: 600;">No credit card applications yet.</p>
+                <p style="font-size: 0.9rem; margin-top: 0.5rem;">Applications submitted by customers will appear here.</p>
+            </div>
+            {% endif %}
+        </div>
+
+    </div>
+</section>
+
+<div class="modal-overlay" id="approveModal">
+    <div class="modal-box">
+        <h2 style="font-size:1.5rem; font-weight:900; color:#f1f5f9; margin-bottom:0.5rem;">
+            <i class="fas fa-check-circle" style="color:#34d399; margin-right:0.5rem;"></i> Approve Application
+        </h2>
+        <p id="approveSubtitle" style="color:#94a3b8; font-size:0.88rem; margin-bottom:1.75rem;"></p>
+
+        <form id="approveForm" method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <label class="form-label">Assign Card Type</label>
+                <select name="assigned_card_type" id="approveCardType" class="form-control" required>
+                    <option value="PLATINUM">💜 Platinum</option>
+                    <option value="GOLD" selected>⭐ Gold</option>
+                    <option value="SILVER">🩶 Silver</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Set Credit Limit (₹)</label>
+                <select name="credit_limit" class="form-control" required>
+                    <option value="100000">₹1,00,000 (1 Lakh)</option>
+                    <option value="200000">₹2,00,000 (2 Lakhs)</option>
+                    <option value="300000" selected>₹3,00,000 (3 Lakhs)</option>
+                    <option value="500000">₹5,00,000 (5 Lakhs)</option>
+                    <option value="750000">₹7,50,000 (7.5 Lakhs)</option>
+                    <option value="1000000">₹10,00,000 (10 Lakhs)</option>
+                    <option value="1500000">₹15,00,000 (15 Lakhs)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Admin Remarks (optional)</label>
+                <textarea name="admin_remarks" class="form-control" rows="2"
+                    placeholder="e.g. Excellent credit profile, approved for Platinum tier."></textarea>
+            </div>
+
+            <div style="display:flex; gap:0.75rem; margin-top:1.5rem;">
+                <button type="submit" class="action-btn btn-approve" style="flex:1; justify-content:center; padding: 0.85rem;">
+                    <i class="fas fa-check"></i> Confirm Approval
+                </button>
+                <button type="button" class="action-btn btn-back" onclick="closeModal('approveModal')" style="justify-content:center; padding: 0.85rem;">
+                    Cancel
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="modal-overlay" id="rejectModal">
+    <div class="modal-box">
+        <h2 style="font-size:1.5rem; font-weight:900; color:#f1f5f9; margin-bottom:0.5rem;">
+            <i class="fas fa-times-circle" style="color:#f87171; margin-right:0.5rem;"></i> Reject Application
+        </h2>
+        <p id="rejectSubtitle" style="color:#94a3b8; font-size:0.88rem; margin-bottom:1.75rem;"></p>
+
+        <form id="rejectForm" method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <label class="form-label">Reason for Rejection</label>
+                <textarea name="admin_remarks" class="form-control" rows="3"
+                    placeholder="e.g. Insufficient income documents, low credit score..." required></textarea>
+            </div>
+
+            <div style="display:flex; gap:0.75rem; margin-top:1.5rem;">
+                <button type="submit" class="action-btn btn-reject" style="flex:1; justify-content:center; padding: 0.85rem;">
+                    <i class="fas fa-times"></i> Confirm Rejection
+                </button>
+                <button type="button" class="action-btn btn-back" onclick="closeModal('rejectModal')" style="justify-content:center; padding: 0.85rem;">
+                    Cancel
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function openApproveModal(appId, username, requestedType) {
+    document.getElementById('approveSubtitle').textContent =
+        `Approving application for ${username}. Assign the final card type and credit limit.`;
+    document.getElementById('approveForm').action = `/admin-dashboard/credit-cards/${appId}/approve/`;
+    // Pre-select the requested card type
+    const sel = document.getElementById('approveCardType');
+    for (let opt of sel.options) {
+        if (opt.value === requestedType) { opt.selected = true; break; }
+    }
+    document.getElementById('approveModal').classList.add('active');
+}
+
+function openRejectModal(appId, username) {
+    document.getElementById('rejectSubtitle').textContent =
+        `You are about to reject the application from ${username}. The user will be notified.`;
+    document.getElementById('rejectForm').action = `/admin-dashboard/credit-cards/${appId}/reject/`;
+    document.getElementById('rejectModal').classList.add('active');
+}
+
+function closeModal(id) {
+    document.getElementById(id).classList.remove('active');
+}
+
+// Close modal on overlay click
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+    overlay.addEventListener('click', function(e) {
+        if (e.target === this) closeModal(this.id);
+    });
+});
+
+// Close on Escape key
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        document.querySelectorAll('.modal-overlay.active').forEach(m => m.classList.remove('active'));
+    }
+});
+</script>
+
+{% endblock %}

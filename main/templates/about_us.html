@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}About Us | Indie Bank{% endblock %}
+{% block content %}
+{% include 'ticker.html' %}
+
+<section
+    style="position: relative; padding: 13rem 0; background: url('{% static 'img/bank1.jpg' %}') center/cover no-repeat; margin-bottom: 4rem; border-radius:0 0 0px 0px; overflow:hidden;">
+    <div
+        style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to right, rgba(15, 23, 42, 0.88), rgba(15, 23, 42, 0.35));">
+    </div>
+    <div class="container" style="position: relative; z-index: 1; text-align: center; color: white;">
+        <h1 style="font-size: 3.5rem; font-weight: 800;color: white; margin-bottom: 1rem;">About Indie Bank</h1>
+        <p style="font-size: 1.1rem; opacity: 0.9;">Your trusted partner in financial growth and prosperity since 1995.
+        </p>
+    </div>
+</section>
+
+<section style="padding: 4rem 0; background: linear-gradient(to bottom, #ffffff, #f0f7ff);">
+    <div class="container">
+
+        <div
+            style="display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; margin-bottom: 6rem;">
+            <div>
+                <h2 style="font-size: 2rem; font-weight: 700; color: var(--color-ib-blue); margin-bottom: 1.5rem;">Our
+                    Mission</h2>
+                <p style="color: #444; line-height: 1.7; margin-bottom: 1.5rem;">To empower individuals and businesses
+                    through innovative financial solutions, fostering economic growth and prosperity in every community
+                    we serve. We are committed to transparency, excellence, and unwavering customer focus.</p>
+                <ul style="list-style: none; padding: 0;">
+                    <li style="margin-bottom: 1rem; display: flex; align-items: center; gap: 0.75rem;">
+                        <i class="fas fa-check-circle" style="color: var(--color-success);"></i>
+                        <span style="font-weight: 600;">Customer-Centric Approach</span>
+                    </li>
+                    <li style="margin-bottom: 1rem; display: flex; align-items: center; gap: 0.75rem;">
+                        <i class="fas fa-check-circle" style="color: var(--color-success);"></i>
+                        <span style="font-weight: 600;">Cutting-Edge Digital Infrastructure</span>
+                    </li>
+                    <li style="margin-bottom: 1rem; display: flex; align-items: center; gap: 0.75rem;">
+                        <i class="fas fa-check-circle" style="color: var(--color-success);"></i>
+                        <span style="font-weight: 600;">Global Standard Infrastructure</span>
+                    </li>
+                </ul>
+            </div>
+            <div class="glass-panel"
+                style="padding: 2rem; border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.1);">
+                <img src="{% static 'img/aboutus.jpg' %}" alt="Modern Banking Office"
+                    style="width: 100%; border-radius: 12px; margin-bottom: 1.5rem; box-shadow: 0 10px 20px rgba(0,0,0,0.05);">
+                <div style="text-align: center;">
+                    <h4 style="color: var(--color-ib-blue-dark); font-weight: 800;">Global Headquarters</h4>
+                    <p style="font-size: 0.9rem; color: #666;">Banking District, Financial Center, City-01</p>
+                </div>
+            </div>
+        </div>
+
+        <div style="text-align: center;">
+            <a href="{% url 'register' %}" class="btn btn-primary"
+                style="padding: 1.25rem 3rem; font-weight: 800; border-radius: 50px; font-size: 1.1rem; box-shadow: 0 10px 20px rgba(44, 82, 130, 0.2);">Join
+                Our Family Today</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

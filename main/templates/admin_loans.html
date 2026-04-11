@@ -1,0 +1,234 @@
+{% extends 'admin_base.html' %}
+{% load static %}
+
+{% block title %}Loan Origination | Indie Bank Admin{% endblock %}
+{% block page_title %}Loan Origination{% endblock %}
+
+{% block content %}
+<style>
+    .glass-panel {
+        background: rgba(30, 41, 59, 0.7);
+        backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.07);
+        border-radius: 20px;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    }
+    .loan-table { width: 100%; border-collapse: collapse; }
+    .loan-table th {
+        padding: 1.25rem 1.5rem;
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        color: #64748b;
+        font-weight: 700;
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+        text-align: left;
+    }
+    .loan-table td {
+        padding: 1.5rem;
+        border-bottom: 1px solid rgba(255,255,255,0.04);
+        vertical-align: middle;
+    }
+    .loan-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+    .status-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.35rem 0.9rem;
+        border-radius: 20px;
+        font-size: 0.72rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    .pill-pending  { background: rgba(245,158,11,0.15); color: #fbbf24; border: 1px solid rgba(245,158,11,0.3); }
+    .pill-approved { background: rgba(16,185,129,0.15); color: #34d399; border: 1px solid rgba(16,185,129,0.3); }
+    .pill-rejected { background: rgba(239,68,68,0.15);  color: #f87171; border: 1px solid rgba(239,68,68,0.3); }
+
+    .type-badge {
+        display: inline-flex;
+        padding: 0.25rem 0.6rem;
+        border-radius: 6px;
+        font-size: 0.65rem;
+        font-weight: 800;
+        text-transform: uppercase;
+    }
+    .type-home { background: rgba(56, 189, 248, 0.1); color: #38bdf8; }
+    .type-personal { background: rgba(167, 139, 250, 0.1); color: #a78bfa; }
+    .type-vehicle { background: rgba(52, 211, 153, 0.1); color: #34d399; }
+
+    .action-btn {
+        padding: 0.6rem 1.25rem;
+        border-radius: 10px;
+        font-weight: 700;
+        font-size: 0.8rem;
+        cursor: pointer;
+        border: none;
+        transition: all 0.2s;
+    }
+    .btn-approve { background: #10b981; color: white; }
+    .btn-approve:hover { background: #059669; box-shadow: 0 0 15px rgba(16, 185, 129, 0.4); }
+    .btn-reject { background: #ef4444; color: white; }
+    .btn-reject:hover { background: #dc2626; box-shadow: 0 0 15px rgba(239, 68, 68, 0.4); }
+
+    /* Modal */
+    .modal-overlay {
+        display: none;
+        position: fixed; inset: 0;
+        background: rgba(0,0,0,0.8);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+        backdrop-filter: blur(8px);
+    }
+    .modal-box {
+        background: #1e293b;
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 24px;
+        padding: 2.5rem;
+        width: 100%;
+        max-width: 500px;
+        box-shadow: 0 40px 100px rgba(0,0,0,0.5);
+    }
+</style>
+
+<div style="margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: flex-end;">
+    <div>
+        <h1 style="font-weight: 900; color: #f8fafc; font-size: 2.5rem; margin-bottom: 0.5rem; letter-spacing: -1px;">Loan Origination</h1>
+        <p style="color: #94a3b8; font-size: 1rem;">Review and disburse funds for high-value credit applications.</p>
+    </div>
+    <div class="glass-panel" style="padding: 1rem 2rem; display: flex; align-items: center; gap: 1rem;">
+        <div style="width: 12px; height: 12px; border-radius: 50%; background: #fbbf24; box-shadow: 0 0 10px #fbbf24;"></div>
+        <span style="font-weight: 800; color: #f1f5f9;">{{ pending_count }} Pending Review</span>
+    </div>
+</div>
+
+<div class="glass-panel" style="overflow: hidden;">
+    <table class="loan-table">
+        <thead>
+            <tr>
+                <th>Borrower</th>
+                <th>Application Data</th>
+                <th>Financial Profile</th>
+                <th>Status</th>
+                <th style="text-align: right;">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for app in applications %}
+            <tr>
+                <td>
+                    <div style="font-weight: 800; color: #f8fafc; font-size: 1.05rem;">{{ app.full_name }}</div>
+                    <div style="color: #64748b; font-size: 0.85rem; font-family: monospace;">@{{ app.user.username }}</div>
+                </td>
+                <td>
+                    <div style="margin-bottom: 0.5rem;">
+                        <span class="type-badge type-{{ app.loan_type|lower }}">
+                            <i class="fas {% if app.loan_type == 'HOME' %}fa-house-user{% elif app.loan_type == 'PERSONAL' %}fa-user-tag{% else %}fa-car{% endif %}"></i>
+                            {{ app.loan_type }} LOAN
+                        </span>
+                    </div>
+                    <div style="font-weight: 900; color: #38bdf8; font-size: 1.2rem;">₹{{ app.amount|floatformat:2 }}</div>
+                    <div style="color: #64748b; font-size: 0.75rem; text-transform: uppercase; font-weight: 700; margin-top: 0.2rem;">{{ app.tenure_years }} YEAR TERM</div>
+                </td>
+                <td>
+                    <div style="font-size: 0.85rem; color: #e2e8f0; margin-bottom: 0.3rem;"><span style="color: #64748b; font-weight: 800; font-size: 0.7rem; text-transform: uppercase;">PAN:</span> <span style="font-family: monospace;">{{ app.pan_number }}</span></div>
+                    <div style="font-size: 0.85rem; color: #e2e8f0;"><span style="color: #64748b; font-weight: 800; font-size: 0.7rem; text-transform: uppercase;">Income:</span> {{ app.annual_income }}</div>
+                </td>
+                <td>
+                    {% if app.status == 'PENDING' %}
+                        <span class="status-pill pill-pending"><i class="fas fa-clock"></i> PENDING</span>
+                    {% elif app.status == 'APPROVED' %}
+                        <span class="status-pill pill-approved"><i class="fas fa-check-circle"></i> APPROVED</span>
+                    {% else %}
+                        <span class="status-pill pill-rejected"><i class="fas fa-times-circle"></i> REJECTED</span>
+                    {% endif %}
+                </td>
+                <td style="text-align: right;">
+                    {% if app.status == 'PENDING' %}
+                        <div style="display: flex; justify-content: flex-end; gap: 0.75rem;">
+                            <button class="action-btn btn-approve" onclick="openActionModal('approve', '{{ app.id }}', '{{ app.full_name|escapejs }}', '₹{{ app.amount|floatformat:2 }}')">
+                                <i class="fas fa-check"></i> Approve
+                            </button>
+                            <button class="action-btn btn-reject" onclick="openActionModal('reject', '{{ app.id }}', '{{ app.full_name|escapejs }}', '₹{{ app.amount|floatformat:2 }}')">
+                                <i class="fas fa-times"></i> Reject
+                            </button>
+                        </div>
+                    {% else %}
+                        <div style="color: #475569; font-size: 0.75rem; text-transform: uppercase; font-weight: 800; letter-spacing: 1px;">Processed: {{ app.updated_at|date:"d M Y" }}</div>
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" style="padding: 5rem; text-align: center; color: #475569;">
+                    <i class="fas fa-file-invoice-dollar" style="font-size: 4rem; opacity: 0.1; margin-bottom: 1.5rem;"></i>
+                    <p style="font-weight: 700; font-size: 1.1rem;">No active loan applications.</p>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div id="actionModal" class="modal-overlay">
+    <div class="modal-box">
+        <h3 id="modalTitle" style="font-weight: 900; font-size: 1.75rem; color: #f1f5f9; margin-bottom: 0.5rem; letter-spacing: -0.5px;">Process Application</h3>
+        <p id="modalUser" style="color: #94a3b8; margin-bottom: 2rem; font-size: 0.95rem;"></p>
+        
+        <form id="actionForm" method="post" action="">
+            {% csrf_token %}
+            <div style="margin-bottom: 2rem;">
+                <label style="display: block; font-weight: 800; color: #64748b; margin-bottom: 0.75rem; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1.5px;">Internal Remarks</label>
+                <textarea name="admin_remarks" placeholder="Enter processing remarks for the customer..." 
+                style="width: 100%; height: 120px; padding: 1.25rem; background: rgba(15,23,42,0.6); border: 1px solid rgba(255,255,255,0.1); border-radius: 15px; color: white; resize: none; font-family: inherit; font-size: 0.95rem;"></textarea>
+            </div>
+            
+            <div style="display: flex; gap: 1rem;">
+                <button type="button" onclick="closeModal()" style="flex: 1; padding: 1rem; background: rgba(255,255,255,0.05); color: #94a3b8; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; transition: all 0.2s;">Cancel</button>
+                <button type="submit" id="submitBtn" style="flex: 2; padding: 1rem; color: white; border: none; border-radius: 12px; font-weight: 900; cursor: pointer; transition: all 0.2s; font-size: 1rem;">Confirm</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function openActionModal(action, id, user, amount) {
+        const modal = document.getElementById('actionModal');
+        const title = document.getElementById('modalTitle');
+        const userText = document.getElementById('modalUser');
+        const form = document.getElementById('actionForm');
+        const submitBtn = document.getElementById('submitBtn');
+        
+        modal.style.display = 'flex';
+        userText.innerHTML = `Customer: <span style="color:white; font-weight:700;">${user}</span> · Amount: <span style="color:#38bdf8; font-weight:700;">${amount}</span>`;
+        
+        if (action === 'approve') {
+            title.innerText = 'Approve Loan';
+            title.style.color = '#10b981';
+            submitBtn.innerText = 'Authorize Disbursement';
+            submitBtn.style.background = '#10b981';
+            submitBtn.style.boxShadow = '0 10px 25px -5px rgba(16, 185, 129, 0.4)';
+            form.action = `/admin-dashboard/loans/${id}/approve/`;
+        } else {
+            title.innerText = 'Reject Application';
+            title.style.color = '#ef4444';
+            submitBtn.innerText = 'Confirm Rejection';
+            submitBtn.style.background = '#ef4444';
+            submitBtn.style.boxShadow = '0 10px 25px -5px rgba(239, 68, 68, 0.4)';
+            form.action = `/admin-dashboard/loans/${id}/reject/`;
+        }
+    }
+
+    function closeModal() {
+        document.getElementById('actionModal').style.display = 'none';
+    }
+
+    window.onclick = function(event) {
+        if (event.target == document.getElementById('actionModal')) {
+            closeModal();
+        }
+    }
+</script>
+{% endblock %}

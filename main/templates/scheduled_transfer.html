@@ -1,0 +1,192 @@
+{% extends 'dashboard_base.html' %}
+{% load static %}
+
+{% block page_title %}Scheduled Fund Transfers{% endblock %}
+
+{% block content %}
+<div class="animate-up">
+    <div class="row" style="display: flex; gap: 2rem; flex-wrap: wrap;">
+        
+        <div style="flex: 1; min-width: 350px;">
+            <div class="premium-card">
+                <div style="margin-bottom: 2rem;">
+                    <h3 style="font-size: 1.25rem; font-weight: 800; color: var(--color-ib-blue-dark); margin-bottom: 0.5rem;">Schedule a New Payment</h3>
+                    <p style="color: var(--color-text-muted); font-size: 0.9rem;">Set up automatic transfers for future dates or recurring needs.</p>
+                </div>
+
+                <form method="POST" class="auth-form" style="display: flex; flex-direction: column; gap: 1.25rem;">
+                    {% csrf_token %}
+                    
+                    <div class="form-group">
+                        <label style="display: block; font-weight: 700; font-size: 0.85rem; margin-bottom: 0.5rem; color: #64748b;">RECIPIENT ACCOUNT NUMBER</label>
+                        {{ form.receiver_account_number }}
+                    </div>
+
+                    <div style="display: flex; gap: 1rem;">
+                        <div class="form-group" style="flex: 1;">
+                            <label style="display: block; font-weight: 700; font-size: 0.85rem; margin-bottom: 0.5rem; color: #64748b;">AMOUNT (₹)</label>
+                            {{ form.amount }}
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                            <label style="display: block; font-weight: 700; font-size: 0.85rem; margin-bottom: 0.5rem; color: #64748b;">FREQUENCY</label>
+                            {{ form.frequency }}
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label style="display: block; font-weight: 700; font-size: 0.85rem; margin-bottom: 0.5rem; color: #64748b;">START DATE & TIME</label>
+                        {{ form.scheduled_at }}
+                    </div>
+
+                    <div class="form-group">
+                        <label style="display: block; font-weight: 700; font-size: 0.85rem; margin-bottom: 0.5rem; color: #64748b;">DESCRIPTION / PURPOSE</label>
+                        {{ form.description }}
+                    </div>
+
+                    <button type="submit" class="btn-primary" style="width: 100%; padding: 1rem; margin-top: 1rem; font-size: 1rem;">
+                        <i class="fas fa-calendar-check" style="margin-right: 0.5rem;"></i> Confirm Schedule
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div style="flex: 1.5; min-width: 450px;">
+            <div class="premium-card" style="padding: 0; overflow: hidden;">
+                <div style="padding: 2rem; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center;">
+                    <h3 style="font-size: 1.25rem; font-weight: 800; color: var(--color-ib-blue-dark); margin: 0;">Active Schedules</h3>
+                    <span style="background: var(--color-ib-blue-light); color: var(--color-ib-blue); padding: 0.25rem 0.75rem; border-radius: 50px; font-size: 0.75rem; font-weight: 800;">
+                        {{ schedules|length }} Total
+                    </span>
+                </div>
+
+                <div style="max-height: 600px; overflow-y: auto;">
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead style="background: #f8fafc; position: sticky; top: 0; z-index: 10;">
+                            <tr>
+                                <th style="padding: 1rem 1.5rem; text-align: left; font-size: 0.75rem; color: #94a3b8; text-transform: uppercase;">Next Date & Time</th>
+                                <th style="padding: 1rem 1.5rem; text-align: left; font-size: 0.75rem; color: #94a3b8; text-transform: uppercase;">Recipient</th>
+                                <th style="padding: 1rem 1.5rem; text-align: right; font-size: 0.75rem; color: #94a3b8; text-transform: uppercase;">Amount</th>
+                                <th style="padding: 1rem 1.5rem; text-align: center; font-size: 0.75rem; color: #94a3b8; text-transform: uppercase;">Frequency</th>
+                                <th style="padding: 1rem 1.5rem; text-align: center; font-size: 0.75rem; color: #94a3b8; text-transform: uppercase;">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for s in schedules %}
+                            <tr style="border-bottom: 1px solid #f8fafc; transition: all 0.2s;">
+                                <td style="padding: 1.25rem 1.5rem;">
+                                    <div style="font-weight: 700; font-size: 0.9rem; color: var(--color-ib-blue-dark);">{{ s.scheduled_at|date:"d M Y, h:i A" }}</div>
+                                    <div style="font-size: 0.7rem; color: var(--color-text-muted);">{{ s.description|truncatechars:20 }}</div>
+                                </td>
+                                <td style="padding: 1.25rem 1.5rem;">
+                                    <div style="font-weight: 600; font-size: 0.85rem;">{{ s.receiver_account_number }}</div>
+                                </td>
+                                <td style="padding: 1.25rem 1.5rem; text-align: right;">
+                                    <div style="font-weight: 800; color: var(--color-primary); font-size: 0.9rem;">₹{{ s.amount }}</div>
+                                </td>
+                                <td style="padding: 1.25rem 1.5rem; text-align: center;">
+                                    <span style="font-size: 0.75rem; font-weight: 600; color: var(--color-text-muted);">{{ s.get_frequency_display }}</span>
+                                </td>
+                                <td style="padding: 1.25rem 1.5rem; text-align: center;">
+                                    <span class="status-pill {{ s.status|lower }}" style="font-size: 0.65rem; padding: 0.2rem 0.6rem; border-radius: 4px; font-weight: 800;">
+                                        {{ s.get_status_display }}
+                                    </span>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="5" style="padding: 4rem 2rem; text-align: center;">
+                                    <div style="opacity: 0.3; margin-bottom: 1rem;">
+                                        <i class="fas fa-calendar-times" style="font-size: 3rem;"></i>
+                                    </div>
+                                    <h4 style="color: #94a3b8; margin: 0;">No scheduled transfers found</h4>
+                                    <p style="color: #cbd5e1; font-size: 0.85rem; margin-top: 0.5rem;">Start by scheduling your first payment on the left.</p>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .status-pill.pending { background: #fff7ed; color: #c2410c; }
+    .status-pill.completed { background: #f0fdf4; color: #15803d; }
+    .status-pill.cancelled { background: #fef2f2; color: #b91c1c; }
+    
+    .row > div { animation: slideIn 0.5s ease-out forwards; }
+    @keyframes slideIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    input, select {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 0.75rem;
+        font-size: 0.9rem;
+        transition: all 0.2s;
+        background: #f8fafc;
+    }
+
+    input:focus, select:focus {
+        outline: none;
+        border-color: var(--color-ib-blue);
+        background: white;
+        box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+    }
+</style>
+
+<script>
+    const { createApp, ref, onMounted, computed } = Vue;
+
+    createApp({
+        delimiters: ['[[', ']]'],
+        setup() {
+            const user = ref({});
+            const notifications = ref([]);
+            const showNotifs = ref(false);
+            const unreadCount = computed(() => notifications.value.filter(n => !n.is_read).length);
+
+            const fetchData = async () => {
+                try {
+                    const sessionRes = await axios.get('/api/session/');
+                    if (sessionRes.data && sessionRes.data.user) {
+                        user.value = sessionRes.data.user;
+                    }
+                    const notifRes = await axios.get('/api/notifications/');
+                    notifications.value = notifRes.data;
+                } catch (e) {
+                    console.error(e);
+                }
+            };
+
+            const markAsRead = async (id) => {
+                try {
+                    await axios.post(`/api/notifications/${id}/read/`);
+                    const n = notifications.value.find(notif => notif.id === id);
+                    if (n) n.is_read = true;
+                } catch (e) { console.error(e); }
+            };
+
+            const markAllAsRead = async () => {
+                for (let n of notifications.value) {
+                    if (!n.is_read) await markAsRead(n.id);
+                }
+            };
+            
+            const formatDate = (d) => new Date(d).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
+
+            onMounted(fetchData);
+
+            return {
+                user, notifications, showNotifs, unreadCount, markAsRead, markAllAsRead, formatDate
+            };
+        }
+    }).mount('#app');
+</script>
+
+{% endblock %}

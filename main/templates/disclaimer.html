@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Disclaimer | Indie Bank{% endblock %}
+{% block content %}
+<section style="padding: 4rem 0; background: linear-gradient(to bottom, #ffffff, #f0f7ff); min-height: 60vh;">
+    <div class="container">
+        <h1 style="color: var(--color-ib-blue-dark); margin-bottom: 2rem;">Disclaimer</h1>
+        <div class="glass-panel" style="padding: 3rem; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+            <p style="color: #555; line-height: 1.8; margin-bottom: 1.5rem;">
+                The information contained in this website is for general information purposes only. The information is provided by Indie Bank and while we endeavour to keep the information up to date and correct, we make no representations or warranties of any kind.
+            </p>
+            <h3 style="color: var(--color-ib-blue); margin-bottom: 1rem;">No Professional Advice</h3>
+            <p style="color: #555; line-height: 1.8; margin-bottom: 1.5rem;">
+                The materials on this site do not constitute legal, tax, accounting, or professional financial advice. Always consult a qualified professional before making significant financial decisions.
+            </p>
+            <h3 style="color: var(--color-ib-blue); margin-bottom: 1rem;">Service Limitations</h3>
+            <p style="color: #555; line-height: 1.8; margin-bottom: 1.5rem;">
+                Indie Bank does not warrant that the functions contained in the material will be uninterrupted or error-free, that defects will be corrected, or that this site or the server that makes it available are free of viruses or bugs.
+            </p>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,181 @@
+{% extends 'dashboard_base.html' %}
+{% load static %}
+
+{% block page_title %}Bill Payments{% endblock %}
+
+{% block title %}Pay Bills | Indie Bank{% endblock %}
+{% block content %}
+<div class="animate-up">
+    
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+        <div>
+            <h2 style="font-size: 1.8rem; font-weight: 800; color: var(--color-primary-dark); margin-bottom: 0.5rem;">
+                Upcoming Bills</h2>
+            <p style="color: var(--color-text-muted);">Manage and pay your utility and credit bills instantly</p>
+        </div>
+        <button @click="addBiller" class="btn"
+            style="background: var(--color-ib-blue); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 8px; font-weight: 600; cursor: pointer;">
+            <i class="fas fa-plus" style="margin-right: 0.5rem;"></i> Add Biller
+        </button>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;">
+        
+        <div v-for="bill in bills" :key="bill.id"
+            style="background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.05); position: relative; overflow: hidden; transition: 0.3s;">
+            <div style="position: absolute; top: 0; left: 0; width: 4px; height: 100%;"
+                :style="{background: bill.color}"></div>
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.5rem;">
+                <div style="background: #f1f5f9; padding: 0.75rem; border-radius: 8px; color: #475569;">
+                    <i :class="bill.icon" style="font-size: 1.5rem;"></i>
+                </div>
+                <div :style="{background: bill.status === 'PAID' ? '#dcfce7' : '#fee2e2', color: bill.status === 'PAID' ? '#166534' : '#ef4444'}"
+                    style="font-size: 0.7rem; font-weight: 700; padding: 2px 8px; border-radius: 4px; text-transform: uppercase;">
+                    [[ bill.status === 'PAID' ? 'Paid' : 'Due ' + formatDate(bill.due_date) ]]</div>
+            </div>
+            <h3 style="font-size: 1.1rem; font-weight: 700; color: #1e293b; margin-bottom: 0.25rem;">[[ bill.name ]]
+            </h3>
+            <p style="font-size: 0.8rem; color: #64748b; margin-bottom: 1rem;">[[ bill.detail ]]</p>
+            <div style="font-size: 1.5rem; font-weight: 800; color: #0f172a; margin-bottom: 1rem;">₹[[ bill.amount ]]
+            </div>
+
+            <button v-if="bill.status === 'UNPAID' && !bill.processing" @click="payBill(bill)"
+                style="width: 100%; background: var(--color-ib-blue); color: white; border: none; padding: 0.75rem; border-radius: 6px; font-weight: 700; cursor: pointer;">Pay
+                Bill</button>
+            <button v-if="bill.processing" disabled
+                style="width: 100%; background: #e2e8f0; color: #475569; border: none; padding: 0.75rem; border-radius: 6px; font-weight: 700; cursor: wait;">Processing...</button>
+            <button v-if="bill.status === 'PAID'" disabled
+                style="width: 100%; background: #dcfce7; color: #166534; border: none; padding: 0.75rem; border-radius: 6px; font-weight: 700;"><i
+                    class="fas fa-check-circle" style="margin-right: 0.5rem;"></i> Paid Successfully</button>
+        </div>
+        
+        <div v-if="bills.length === 0" style="grid-column: span 3; text-align: center; padding: 3rem; color: #94a3b8;">
+            No bills found. Add a biller to get started!
+        </div>
+    </div>
+</div>
+
+<style>
+    .animate-up {
+        animation: fadeInUp 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+
+<script>
+    const { createApp, ref, onMounted, computed } = Vue;
+
+    createApp({
+        delimiters: ['[[', ']]'],
+        setup() {
+            const user = ref({});
+            const bills = ref([]);
+            const notifications = ref([]);
+            const unreadCount = computed(() => notifications.value.filter(n => !n.is_read).length);
+            const showNotifs = ref(false);
+
+            const fetchBills = async () => {
+                try {
+                    const [billRes, notifRes] = await Promise.all([
+                        axios.get('/api/bills/'),
+                        axios.get('/api/notifications/')
+                    ]);
+                    bills.value = billRes.data;
+                    notifications.value = notifRes.data;
+                } catch (e) {
+                    console.error("Error fetching data:", e);
+                }
+            };
+
+            const payBill = async (bill) => {
+                bill.processing = true;
+                try {
+                    const res = await axios.post(`/api/bills/${bill.id}/pay/`);
+                    if (res.data.status === 'success') {
+                        bill.status = 'PAID';
+                        alert(`Payment of ₹${bill.amount} successfully processed for ${bill.name}!`);
+                        await fetchBills();
+                    }
+                } catch (e) {
+                    alert(e.response?.data?.error || "Payment failed. Please check your balance.");
+                } finally {
+                    bill.processing = false;
+                }
+            };
+
+            const addBiller = async () => {
+                const name = prompt("Enter Biller Name (e.g. Electricity, Water):");
+                if (!name) return;
+                const detail = prompt("Enter Consumer No / Detail:");
+                if (!detail) return;
+                const amount = prompt("Enter typical amount:");
+                if (!amount) return;
+
+                try {
+                    const res = await axios.post('/api/bills/', {
+                        name: name,
+                        detail: detail,
+                        amount: amount,
+                        due_date: new Date().toISOString().split('T')[0], // Today as default
+                        status: 'UNPAID',
+                        icon: 'fas fa-file-invoice-dollar',
+                        color: '#3b82f6'
+                    });
+                    if (res.data.id) {
+                        alert(`Successfully added ${name} as a new biller!`);
+                        await fetchBills();
+                    }
+                } catch (e) {
+                    alert("Failed to add biller.");
+                }
+            };
+
+            const formatDate = (dateStr) => {
+                if (!dateStr) return '';
+                const date = new Date(dateStr);
+                if (isNaN(date)) return dateStr;
+                return date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+            };
+
+            const markAsRead = async (id) => {
+                try {
+                    await axios.post(`/api/notifications/${id}/read/`);
+                    const n = notifications.value.find(notif => notif.id === id);
+                    if (n) n.is_read = true;
+                } catch (e) { console.error(e); }
+            };
+
+            const markAllAsRead = async () => {
+                for (let n of notifications.value) {
+                    if (!n.is_read) await markAsRead(n.id);
+                }
+            };
+
+            onMounted(async () => {
+                try {
+                    const sessionRes = await axios.get('/api/session/');
+                    if (sessionRes.data && sessionRes.data.user) {
+                        user.value = sessionRes.data.user;
+                        await fetchBills();
+                    }
+                } catch (e) {
+                    console.error(e);
+                }
+            });
+
+            return { user, bills, payBill, addBiller, formatDate, notifications, unreadCount, showNotifs, markAsRead, markAllAsRead };
+        }
+    }).mount('#app');
+</script>
+{% endblock %}

@@ -1,0 +1,147 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Personal Loans | Indie Bank{% endblock %}
+{% block content %}
+<style>
+    .btn-purple {
+        background: linear-gradient(135deg, #7c3aed 0%, #a78bfa 50%, #6d28d9 100%);
+        color: white !important;
+        border: none;
+        padding: 1.25rem 2.5rem;
+        border-radius: 12px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);
+    }
+
+    .btn-purple:hover {
+        background: linear-gradient(135deg, #a78bfa 0%, #7c3aed 50%, #a78bfa 100%);
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(124, 58, 237, 0.5);
+    }
+
+    .glass-panel {
+        border-radius: 20px;
+        transition: all 0.3s ease;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .glass-panel:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        border-color: rgba(124, 58, 237, 0.2);
+    }
+</style>
+
+<section style="padding: 4rem 0; background: #fff;">
+    <div class="container">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; margin-bottom: 4rem;">
+            <div>
+                <span style="color: #7c3aed; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; font-size: 0.85rem; display: block; margin-bottom: 1rem;">Instant Credit</span>
+                <h1 style="font-size: 3.5rem; font-weight: 900; color: var(--color-ib-blue-dark); line-height: 1.1; margin-bottom: 1.5rem;">Life's Moments, <br>Funded Instantly.</h1>
+                <p style="font-size: 1.2rem; color: #555; line-height: 1.6; margin-bottom: 2rem;">Collateral-free personal loans up to ₹40 Lakhs. Whether it's a dream wedding, global travel, or an emergency, we've got you covered.</p>
+
+                <div style="display: flex; gap: 2rem; margin-bottom: 3rem;">
+                    <div>
+                        <div style="font-size: 1.5rem; font-weight: 800; color: #7c3aed;">10.50%*</div>
+                        <div style="font-size: 0.75rem; color: #777; font-weight: 700; text-transform: uppercase;">Interest Rate</div>
+                    </div>
+                    <div style="border-left: 1px solid #ddd; padding-left: 2rem;">
+                        <div style="font-size: 1.5rem; font-weight: 800; color: #7c3aed;">7 Years</div>
+                        <div style="font-size: 0.75rem; color: #777; font-weight: 700; text-transform: uppercase;">Max Tenure</div>
+                    </div>
+                    <div style="border-left: 1px solid #ddd; padding-left: 2rem;">
+                        <div style="font-size: 1.5rem; font-weight: 800; color: #7c3aed;">10 Mins</div>
+                        <div style="font-size: 0.75rem; color: #777; font-weight: 700; text-transform: uppercase;">Instant Sanction</div>
+                    </div>
+                </div>
+
+                <a href="{% url 'apply_loan' 'Personal Loan' %}" class="btn-purple">Apply Now</a>
+            </div>
+            <div>
+                <img src="https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?auto=format&fit=crop&w=800&q=80" alt="Personal Finance" style="width: 100%; border-radius: 24px; box-shadow: 0 30px 60px rgba(0,0,0,0.15);">
+            </div>
+        </div>
+
+        <div style="padding: 4rem; background: #f8fafc; border-radius: 30px; margin-bottom: 4rem;">
+            <h2 style="text-align: center; font-weight: 800; margin-bottom: 3rem;">Indie Personal Loan Advantage</h2>
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 2.5rem;">
+                <div class="glass-panel" style="padding: 2rem; text-align: center; background: white;">
+                    <i class="fas fa-bolt" style="font-size: 2rem; color: #7c3aed; margin-bottom: 1.5rem;"></i>
+                    <h4 style="font-weight: 800; margin-bottom: 1rem;">Lightning Speed</h4>
+                    <p style="font-size: 0.9rem; color: #666;">End-to-end digital process with funds in your account within minutes.</p>
+                </div>
+                <div class="glass-panel" style="padding: 2rem; text-align: center; background: white;">
+                    <i class="fas fa-shield-alt" style="font-size: 2rem; color: #7c3aed; margin-bottom: 1.5rem;"></i>
+                    <h4 style="font-weight: 800; margin-bottom: 1rem;">No Collateral</h4>
+                    <p style="font-size: 0.9rem; color: #666;">Zero security or guarantor required for loans up to ₹40 Lakhs.</p>
+                </div>
+                <div class="glass-panel" style="padding: 2rem; text-align: center; background: white;">
+                    <i class="fas fa-calendar-alt" style="font-size: 2rem; color: #7c3aed; margin-bottom: 1.5rem;"></i>
+                    <h4 style="font-weight: 800; margin-bottom: 1rem;">Flexible EMIs</h4>
+                    <p style="font-size: 0.9rem; color: #666;">Choose a repayment plan that fits your monthly budget perfectly.</p>
+                </div>
+            </div>
+        </div>
+
+        {% if user.is_authenticated and applications %}
+        <div style="background: white; border-radius: 30px; padding: 4rem; box-shadow: 0 10px 40px rgba(0,0,0,0.03); border: 1px solid #f1f5f9;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2.5rem;">
+                <h2 style="font-weight: 900; color: #0f172a; margin: 0; font-size: 2rem;">Application Status</h2>
+                <span style="background: #f5f3ff; color: #7c3aed; padding: 0.5rem 1.25rem; border-radius: 50px; font-weight: 700; font-size: 0.85rem;">LIVE TRACKING</span>
+            </div>
+            
+            <div style="display: grid; gap: 1.5rem;">
+                {% for app in applications %}
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 2rem; background: #fff; border: 1px solid #eef2f6; border-radius: 20px; transition: transform 0.2s ease;">
+                    <div style="display: flex; align-items: center; gap: 1.5rem;">
+                        <div style="width: 50px; height: 50px; background: #f5f3ff; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #7c3aed;">
+                            <i class="fas fa-user-tie" style="font-size: 1.25rem;"></i>
+                        </div>
+                        <div>
+                            <div style="font-weight: 800; color: #1e293b; font-size: 1.1rem;">₹{{ app.amount|floatformat:2 }} Personal Credit</div>
+                            <div style="color: #64748b; font-size: 0.85rem;">Applied on {{ app.applied_at|date:"d M, Y" }} | ID: IND-PL-{{ app.id }}</div>
+                        </div>
+                    </div>
+                    <div>
+                        {% if app.status == 'PENDING' %}
+                            <div style="display: flex; align-items: center; gap: 0.5rem; background: #fffbeb; color: #d97706; padding: 0.6rem 1.25rem; border-radius: 12px; font-weight: 700; font-size: 0.85rem;">
+                                <span class="pulse" style="width: 8px; height: 8px; border-radius: 50%; background: #d97706;"></span>
+                                Pending Verification
+                            </div>
+                        {% elif app.status == 'APPROVED' %}
+                            <div style="background: #f0fdf4; color: #16a34a; padding: 0.6rem 1.25rem; border-radius: 12px; font-weight: 700; font-size: 0.85rem;">
+                                <i class="fas fa-check-circle" style="margin-right: 0.4rem;"></i> Disbursed
+                            </div>
+                        {% else %}
+                            <div style="background: #fef2f2; color: #dc2626; padding: 0.6rem 1.25rem; border-radius: 12px; font-weight: 700; font-size: 0.85rem;">
+                                <i class="fas fa-times-circle" style="margin-right: 0.4rem;"></i> Rejected
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<style>
+    @keyframes pulse {
+        0% { transform: scale(1); opacity: 1; }
+        50% { transform: scale(1.5); opacity: 0.5; }
+        100% { transform: scale(1); opacity: 1; }
+    }
+    .pulse {
+        animation: pulse 2s infinite;
+    }
+</style>
+{% endblock %}

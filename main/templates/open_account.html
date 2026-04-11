@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Open a New Account | Indie Bank{% endblock %}
+{% block content %}
+<div class="open-account-page" style="padding: 6rem 0; min-height: 100vh; background: url('{% static 'img/image.jpg' %}') center/cover no-repeat; position: relative;">
+    
+    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.85); z-index: 1;"></div>
+    <div class="container" style="position: relative; z-index: 2;">
+        <div class="glass-panel" style="max-width: 800px; margin: 0 auto; padding: 3rem; border-radius: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.3);">
+            
+            <div style="text-align: center; margin-bottom: 3rem;">
+                <h1 style="color: var(--color-ib-blue-dark); font-weight: 800; font-size: 2.5rem; margin-bottom: 1rem;">Open Your Indie Account</h1>
+                <p style="color: #666; font-size: 1.1rem;">Join the future of banking in just a few minutes. Complete the form below to start your application.</p>
+            </div>
+
+            <form method="POST" style="display: grid; gap: 1.5rem;">
+                {% csrf_token %}
+                
+                {% if form.errors %}
+                <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-left: 4px solid #ef4444; padding: 1rem; margin-bottom: 0.5rem; border-radius: 8px;">
+                    <h4 style="color: #ef4444; margin: 0 0 0.5rem 0; font-size: 1rem; font-weight: 700;">Please correct the following errors:</h4>
+                    <ul style="color: #991b1b; font-size: 0.9rem; margin: 0; padding-left: 1.5rem;">
+                        {% for field, errors in form.errors.items %}
+                            {% for error in errors %}
+                                <li><strong>{{ field|title }}:</strong> {{ error }}</li>
+                            {% endfor %}
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                    <div class="form-group">
+                        <label style="font-weight: 600; color: #333; margin-bottom: 0.5rem; display: block;">First Name</label>
+                        {{ form.first_name }}
+                    </div>
+                    <div class="form-group">
+                        <label style="font-weight: 600; color: #333; margin-bottom: 0.5rem; display: block;">Last Name</label>
+                        {{ form.last_name }}
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                    <div class="form-group">
+                        <label style="font-weight: 600; color: #333; margin-bottom: 0.5rem; display: block;">Username</label>
+                        {{ form.username }}
+                    </div>
+                    <div class="form-group">
+                        <label style="font-weight: 600; color: #333; margin-bottom: 0.5rem; display: block;">Email Address</label>
+                        {{ form.email }}
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                    <div class="form-group">
+                        <label style="font-weight: 600; color: #333; margin-bottom: 0.5rem; display: block;">Password</label>
+                        {{ form.password }}
+                    </div>
+                    <div class="form-group">
+                        <label style="font-weight: 600; color: #333; margin-bottom: 0.5rem; display: block;">Confirm Password</label>
+                        {{ form.password_confirm }}
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                    <div class="form-group">
+                        <label style="font-weight: 600; color: #333; margin-bottom: 0.5rem; display: block;">Phone Number</label>
+                        {{ form.phone_number }}
+                    </div>
+                    <div class="form-group">
+                        <label style="font-weight: 600; color: #333; margin-bottom: 0.5rem; display: block;">Account Type</label>
+                        {{ form.account_type }}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label style="font-weight: 600; color: #333; margin-bottom: 0.5rem; display: block;">Residential Address</label>
+                    {{ form.address }}
+                </div>
+
+                <div style="margin-top: 2rem; display: flex; gap: 1rem;">
+                    <button type="submit" class="btn-primary" style="flex: 1; padding: 1rem; border-radius: 12px; font-weight: 700; font-size: 1.1rem; background: var(--color-ib-blue); color: white; border: none; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 10px 20px rgba(0, 102, 204, 0.2);">
+                        Submit Application
+                    </button>
+                    <button type="reset" class="btn-secondary" style="flex: 1; padding: 1rem; border-radius: 12px; font-weight: 700; font-size: 1.1rem; background: rgba(15, 23, 42, 0.1); color: #333; border: 1px solid rgba(0,0,0,0.1); cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);">
+                        Reset Form
+                    </button>
+                </div>
+
+                <div style="text-align: center; margin-top: 1.5rem;">
+                    <p style="color: #666;">Already have an account? <a href="{% url 'login' %}" style="color: var(--color-ib-blue); font-weight: 600; text-decoration: none;">Login here</a></p>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    .form-group input, .form-group textarea, .form-group select {
+        width: 100%;
+        padding: 0.8rem 1rem;
+        border-radius: 10px;
+        border: 1px solid #ddd;
+        background: rgba(255, 255, 255, 0.9);
+        font-family: inherit;
+        font-size: 1rem;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+        outline: none;
+        border-color: var(--color-ib-blue);
+        box-shadow: 0 0 0 4px rgba(0, 102, 204, 0.1);
+    }
+
+    .btn-primary:hover {
+        background: var(--color-ib-blue-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 15px 30px rgba(0, 102, 204, 0.3);
+    }
+</style>
+{% endblock %}

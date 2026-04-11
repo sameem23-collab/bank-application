@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Wealth Management | Indie Bank{% endblock %}
+{% block content %}
+<section style="padding: 4rem 0; background: #1a202c; color: white; overflow: hidden; position: relative;">
+
+    <div
+        style="position: absolute; width: 600px; height: 600px; background: rgba(66, 153, 225, 0.1); border-radius: 50%; top: -200px; right: -200px; filter: blur(100px);">
+    </div>
+    <div
+        style="position: absolute; width: 400px; height: 400px; background: rgba(237, 137, 54, 0.1); border-radius: 50%; bottom: -100px; left: -100px; filter: blur(80px);">
+    </div>
+
+    <div class="container" style="position: relative; z-index: 1;">
+        <div style="max-width: 800px; margin-bottom: 6rem;">
+            <h1
+                style="font-size: 4rem; font-weight: 900; line-height: 1; margin-bottom: 2rem; background: linear-gradient(135deg, #fff 0%, #cbd5e0 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">
+                Wealth Management Portfolio.</h1>
+            <p style="font-size: 1.5rem; color: #a0aec0; line-height: 1.4; margin-bottom: 3rem;">Experience bespoke
+                financial planning and global investment advisory designed exclusively for high Net-worth individuals.
+            </p>
+            <div style="display: flex; gap: 1.5rem;">
+                <a href="{% url 'wealth_management_strategies' %}" class="btn btn-gold"
+                    style="background: linear-gradient(135deg, #d4af37 0%, #f9e27d 50%, #b8860b 100%); color: #1a202c !important; padding: 1.25rem 2.5rem; text-decoration: none; border-radius: 12px; display: inline-flex; align-items: center; justify-content: center; font-weight: 800; box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4); text-transform: uppercase;">
+                    View Strategies
+                </a>
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 2rem; margin-bottom: 6rem;">
+            <div
+                style="padding: 2.5rem; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+                <div style="font-size: 2rem; color: #63b3ed; margin-bottom: 1.5rem;"><i class="fas fa-chart-line"></i>
+                </div>
+                <h4 style="font-weight: 800; margin-bottom: 1rem;">Asset Allocation</h4>
+                <p style="font-size: 0.85rem; color: #e2e8f0; line-height: 1.6;">Diversified portfolios across equity,
+                    debt, and global markets.</p>
+            </div>
+            <div
+                style="padding: 2.5rem; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+                <div style="font-size: 2rem; color: #63b3ed; margin-bottom: 1.5rem;"><i class="fas fa-umbrella"></i>
+                </div>
+                <h4 style="font-weight: 800; margin-bottom: 1rem;">Risk Hedging</h4>
+                <p style="font-size: 0.85rem; color: #e2e8f0; line-height: 1.6;">Sophisticated protection strategies for
+                    capital preservation.</p>
+            </div>
+            <div
+                style="padding: 2.5rem; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+                <div style="font-size: 2rem; color: #63b3ed; margin-bottom: 1.5rem;"><i class="fas fa-landmark"></i>
+                </div>
+                <h4 style="font-weight: 800; margin-bottom: 1rem;">Tax Planning</h4>
+                <p style="font-size: 0.85rem; color: #e2e8f0; line-height: 1.6;">Optimal tax structures for efficient
+                    wealth accumulation.</p>
+            </div>
+            <div
+                style="padding: 2.5rem; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+                <div style="font-size: 2rem; color: #63b3ed; margin-bottom: 1.5rem;"><i
+                        class="fas fa-users-viewfinder"></i></div>
+                <h4 style="font-weight: 800; margin-bottom: 1rem;">Estate Legacy</h4>
+                <p style="font-size: 0.85rem; color: #e2e8f0; line-height: 1.6;">Comprehensive trust and succession
+                    services for families.</p>
+            </div>
+        </div>
+
+        <div
+            style="padding: 5rem; background: white; color: #1a202c; border-radius: 40px; margin-bottom: 4rem; display: flex; align-items: center; gap: 4rem;">
+            <div style="flex: 1;">
+                <h2 style="font-size: 2.5rem; font-weight: 900; color: var(--color-ib-blue-dark); margin-bottom: 2rem;">
+                    Private Banking Reimagined.</h2>
+                <p style="color: #4a5568; font-size: 1.1rem; line-height: 1.7; margin-bottom: 2rem;">Our dedicated
+                    relationship managers provide the high-touch service and specialized expertise needed to navigate
+                    complex financial landscapes.</p>
+                <div style="display: flex; gap: 2rem;">
+                    <div>
+                        <div style="font-size: 2.5rem; font-weight: 900; color: var(--color-ib-blue);">24/7</div>
+                        <div style="font-size: 0.8rem; font-weight: 700; color: #718096; text-transform: uppercase;">
+                            Customer Support</div>
+                    </div>
+                    <div style="border-left: 1px solid #e2e8f0; padding-left: 2rem;">
+                        <div style="font-size: 2.5rem; font-weight: 900; color: var(--color-ib-blue);">15+</div>
+                        <div style="font-size: 0.8rem; font-weight: 700; color: #718096; text-transform: uppercase;">
+                            Global Markets</div>
+                    </div>
+                </div>
+            </div>
+            <div style="flex: 1;">
+                <img src="{% static 'img/wealth_management.png' %}" alt="Executive Meeting"
+                    style="width: 100%; border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.2);">
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

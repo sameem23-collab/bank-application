@@ -1,0 +1,175 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Wealth Management Strategies | Indie Bank{% endblock %}
+
+{% block content %}
+<section style="padding: 4rem 0; background: #0a1128; color: white; min-height: 100vh;">
+    <div class="container">
+        
+        <div style="text-align: center; margin-bottom: 5rem;">
+            <h1 style="font-size: 3.5rem; font-weight: 900; background: linear-gradient(135deg, #d4af37 0%, #f9e27d 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 1.5rem;">
+                Strategic Wealth Preservation
+            </h1>
+            <p style="font-size: 1.25rem; color: #a0aec0; max-width: 800px; margin: 0 auto; line-height: 1.6;">
+                Our sophisticated investment strategies are designed to navigate complex market environments while ensuring long-term capital growth and multi-generational legacy protection.
+            </p>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 3rem; margin-bottom: 6rem;">
+
+            <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); padding: 3rem; border-radius: 30px; transition: all 0.4s ease;" class="strategy-card">
+                <div style="color: #d4af37; font-size: 2.5rem; margin-bottom: 1.5rem;"><i class="fas fa-layer-group"></i></div>
+                <h3 style="color: white; font-size: 1.75rem; margin-bottom: 1rem; font-weight: 800;">Asset Allocation & Diversification</h3>
+                <p style="color: #cbd5e0; line-height: 1.7; margin-bottom: 1.5rem;">
+                    Beyond simple stock-bond splits, we employ dynamic allocation models that adjust across global equities, fixed income, real estate, and commodities. 
+                </p>
+                <ul style="color: #a0aec0; font-size: 0.95rem; list-style: disc; padding-left: 1.25rem;">
+                    <li>Global Market Exposure</li>
+                    <li>Sector Rotation Strategies</li>
+                    <li>Rebalancing Discipline</li>
+                </ul>
+            </div>
+
+            <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); padding: 3rem; border-radius: 30px; transition: all 0.4s ease;" class="strategy-card">
+                <div style="color: #d4af37; font-size: 2.5rem; margin-bottom: 1.5rem;"><i class="fas fa-gem"></i></div>
+                <h3 style="color: white; font-size: 1.75rem; margin-bottom: 1rem; font-weight: 800;">Alternative Investments</h3>
+                <p style="color: #cbd5e0; line-height: 1.7; margin-bottom: 1.5rem;">
+                    Access institutional-grade opportunities including Private Equity, Venture Capital, and Hedge Funds designed for non-correlated market returns.
+                </p>
+                <ul style="color: #a0aec0; font-size: 0.95rem; list-style: disc; padding-left: 1.25rem;">
+                    <li>Exclusive Private Equity Access</li>
+                    <li>Hedge Fund Selection</li>
+                    <li>Structured Product Solutions</li>
+                </ul>
+            </div>
+
+            <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); padding: 3rem; border-radius: 30px; transition: all 0.4s ease;" class="strategy-card">
+                <div style="color: #d4af37; font-size: 2.5rem; margin-bottom: 1.5rem;"><i class="fas fa-hand-holding-usd"></i></div>
+                <h3 style="color: white; font-size: 1.75rem; margin-bottom: 1rem; font-weight: 800;">Tax-Efficient Investing</h3>
+                <p style="color: #cbd5e0; line-height: 1.7; margin-bottom: 1.5rem;">
+                    It’s not just about what you earn, but what you keep. We integrate advanced tax-loss harvesting and tax-optimized location strategies.
+                </p>
+                <ul style="color: #a0aec0; font-size: 0.95rem; list-style: disc; padding-left: 1.25rem;">
+                    <li>Tax-Loss Harvesting</li>
+                    <li>Asset Location Optimization</li>
+                    <li>Income Shifting Strategies</li>
+                </ul>
+            </div>
+
+            <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); padding: 3rem; border-radius: 30px; transition: all 0.4s ease;" class="strategy-card">
+                <div style="color: #d4af37; font-size: 2.5rem; margin-bottom: 1.5rem;"><i class="fas fa-family-cottage"></i></div>
+                <h3 style="color: white; font-size: 1.75rem; margin-bottom: 1rem; font-weight: 800;">Estate & Legacy Planning</h3>
+                <p style="color: #cbd5e0; line-height: 1.7; margin-bottom: 1.5rem;">
+                    Ensuring your wealth reaches the next generation efficiently through multi-generational trusts and comprehensive succession planning.
+                </p>
+                <ul style="color: #a0aec0; font-size: 0.95rem; list-style: disc; padding-left: 1.25rem;">
+                    <li>Trust Administration</li>
+                    <li>Philanthropic Advisory</li>
+                    <li>Business Succession</li>
+                </ul>
+            </div>
+
+            <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); padding: 3rem; border-radius: 30px; transition: all 0.4s ease;" class="strategy-card">
+                <div style="color: #d4af37; font-size: 2.5rem; margin-bottom: 1.5rem;"><i class="fas fa-shield-alt"></i></div>
+                <h3 style="color: white; font-size: 1.75rem; margin-bottom: 1rem; font-weight: 800;">Risk & Asset Protection</h3>
+                <p style="color: #cbd5e0; line-height: 1.7; margin-bottom: 1.5rem;">
+                    Sophisticated hedging using derivatives and tactical insurance solutions to protect capital against unforeseen market volatility.
+                </p>
+                <ul style="color: #a0aec0; font-size: 0.95rem; list-style: disc; padding-left: 1.25rem;">
+                    <li>Portfolio Hedging</li>
+                    <li>Liability Management</li>
+                    <li>Custom Insurance Solutions</li>
+                </ul>
+            </div>
+
+            <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); padding: 3rem; border-radius: 30px; transition: all 0.4s ease;" class="strategy-card">
+                <div style="color: #d4af37; font-size: 2.5rem; margin-bottom: 1.5rem;"><i class="fas fa-leaf"></i></div>
+                <h3 style="color: white; font-size: 1.75rem; margin-bottom: 1rem; font-weight: 800;">Sustainable & Impact Investing</h3>
+                <p style="color: #cbd5e0; line-height: 1.7; margin-bottom: 1.5rem;">
+                    Aligning your capital with your values through ESG-integrated portfolios and high-impact environmental or social ventures.
+                </p>
+                <ul style="color: #a0aec0; font-size: 0.95rem; list-style: disc; padding-left: 1.25rem;">
+                    <li>ESG Portfolio Integration</li>
+                    <li>Community Impact Investing</li>
+                    <li>Values-Based Reporting</li>
+                </ul>
+            </div>
+
+        </div>
+
+        <div style="background: linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(212, 175, 55, 0.02) 100%); padding: 5rem; border-radius: 40px; text-align: center; border: 1px solid rgba(212, 175, 55, 0.2);">
+            <h2 style="font-size: 2.5rem; color: #f9e27d; margin-bottom: 1.5rem; font-weight: 900;">Ready to optimize your portfolio?</h2>
+            <p style="color: #cbd5e0; font-size: 1.1rem; margin-bottom: 3rem; max-width: 600px; margin-inline: auto;">
+                Schedule a private consultation with our Relationship Managers to build a strategy tailored specifically to your objectives.
+            </p>
+            <a href="{% url 'contact_us' %}" class="glass-btn btn-gold" style="padding: 1.25rem 3rem; border-radius: 50px; font-weight: 900; display: inline-block;">Consult an Expert</a>
+        </div>
+    </div>
+</section>
+
+<style>
+    .strategy-card:hover {
+        background: rgba(255,255,255,0.06) !important;
+        transform: translateY(-10px);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        border-color: rgba(212, 175, 55, 0.3) !important;
+    }
+
+    /* Premium Button Styles */
+    .glass-btn {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        padding: 1rem 2.5rem;
+        border-radius: 12px;
+        font-weight: 700;
+        color: white;
+        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .glass-btn::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+        transition: 0.5s;
+    }
+
+    .glass-btn:hover::after {
+        left: 100%;
+    }
+
+    .glass-btn:hover {
+        background: rgba(255, 255, 255, 0.15);
+        transform: translateY(-5px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        border-color: rgba(255, 255, 255, 0.4);
+        color: white;
+    }
+
+    .btn-gold {
+        background: linear-gradient(135deg, #d4af37 0%, #f9e27d 50%, #b8860b 100%);
+        color: #1a202c !important;
+        border: none;
+        box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+    }
+
+    .btn-gold:hover {
+        background: linear-gradient(135deg, #f9e27d 0%, #d4af37 50%, #f9e27d 100%);
+        box-shadow: 0 15px 35px rgba(212, 175, 55, 0.5);
+    }
+</style>
+{% endblock %}

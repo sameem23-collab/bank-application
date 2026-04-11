@@ -1,0 +1,187 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Apply for {{ loan_type_display }} | Indie Bank{% endblock %}
+
+{% block content %}
+<section style="padding: 6rem 0; background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%), url('https://www.toptal.com/designers/subtlepatterns/uploads/double_lined.png'); background-blend-mode: overlay; min-height: 100vh; display: flex; align-items: center;">
+    <div class="container" style="max-width: 1200px; margin: 0 auto; padding: 0 1.5rem;">
+        
+        <div style="display: grid; grid-template-columns: 1.3fr 0.9fr; gap: 4rem; align-items: start;">
+            
+            <div>
+                
+                <div style="text-align: left; margin-bottom: 2rem;">
+                    <div style="position: relative; display: inline-flex; align-items: center; justify-content: center; width: 80px; height: 80px; background: white; border-radius: 20px; box-shadow: 0 15px 30px rgba(0,0,0,0.06); margin-bottom: 2rem; border: 1px solid rgba(0,0,0,0.03);">
+                        <div style="position: absolute; inset: -8px; border: 2px dashed rgba(0,0,0,0.05); border-radius: 26px; animation: rotate 20s linear infinite;"></div>
+                        {% if 'Home' in loan_type_display %}
+                            <i class="fas fa-house-chimney-window" style="font-size: 2.5rem; color: var(--color-ib-blue); filter: drop-shadow(0 4px 10px rgba(59, 130, 246, 0.3));"></i>
+                        {% elif 'Personal' in loan_type_display %}
+                            <i class="fas fa-user-tie" style="font-size: 2.5rem; color: #7c3aed; filter: drop-shadow(0 4px 10px rgba(124, 58, 237, 0.3));"></i>
+                        {% else %}
+                            <i class="fas fa-car-side" style="font-size: 2.5rem; color: #10b981; filter: drop-shadow(0 4px 10px rgba(16, 185, 129, 0.3));"></i>
+                        {% endif %}
+                    </div>
+                    
+                    <h1 style="font-size: 3rem; font-weight: 950; color: #0f172a; margin-bottom: 1rem; letter-spacing: -0.04em; line-height: 1.1;">
+                        {{ loan_type_display }} Application
+                    </h1>
+                    <p style="font-size: 1.1rem; color: #64748b; max-width: 500px; font-weight: 500; line-height: 1.6;">Secure your digital sanction in minutes. Experience a world-class borrowing experience with Indie Bank.</p>
+                </div>
+
+                <div style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-radius: 32px; padding: 3rem; box-shadow: 0 40px 100px rgba(0,0,0,0.1); border: 1px solid rgba(255,255,255,0.7); position: relative; overflow: hidden; margin-bottom: 2rem;">
+                    
+                    <div style="position: absolute; top: -100px; right: -100px; width: 300px; height: 300px; background: radial-gradient(circle, rgba(59, 130, 246, 0.05) 0%, transparent 70%); pointer-events: none;"></div>
+
+                    <form method="post" class="premium-form" style="display: grid; gap: 2rem;">
+                        {% csrf_token %}
+                        <div style="display: none;">{{ form.loan_type }}</div>
+                        
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                            
+                            <div class="form-group">
+                                <label style="display: block; font-weight: 900; color: #1e293b; margin-bottom: 0.75rem; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1.5px; opacity: 0.8;">Full Legal Name</label>
+                                <div style="position: relative;">
+                                    <i class="fas fa-signature" style="position: absolute; left: 1.25rem; top: 50%; transform: translateY(-50%); color: #94a3b8; font-size: 1rem;"></i>
+                                    <input type="text" name="full_name" required placeholder="John Doe" {% if user.is_authenticated %}value="{{ user.get_full_name|default:user.username }}"{% endif %} style="width: 100%; padding: 1.1rem 1.1rem 1.1rem 3.2rem; border: 2px solid #f8fafc; background: #f8fafc; border-radius: 14px; font-size: 0.95rem; font-weight: 700; color: #1e293b; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-sizing: border-box;">
+                                </div>
+                                {% if form.full_name.errors %}<div style="color: #ef4444; font-size: 0.8rem; margin-top: 0.5rem; font-weight: 700;">{{ form.full_name.errors }}</div>{% endif %}
+                            </div>
+
+                            <div class="form-group">
+                                <label style="display: block; font-weight: 900; color: #1e293b; margin-bottom: 0.75rem; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1.5px; opacity: 0.8;">PAN Identity Number</label>
+                                <div style="position: relative;">
+                                    <i class="fas fa-id-card-clip" style="position: absolute; left: 1.25rem; top: 50%; transform: translateY(-50%); color: #94a3b8; font-size: 1rem;"></i>
+                                    {{ form.pan_number }}
+                                </div>
+                                {% if form.pan_number.errors %}<div style="color: #ef4444; font-size: 0.8rem; margin-top: 0.5rem; font-weight: 700;">{{ form.pan_number.errors }}</div>{% endif %}
+                            </div>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                            
+                            <div class="form-group">
+                                <label style="display: block; font-weight: 900; color: #1e293b; margin-bottom: 0.75rem; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1.5px; opacity: 0.8;">Sanction Principal (₹)</label>
+                                <div style="position: relative;">
+                                    <i class="fas fa-indian-rupee-sign" style="position: absolute; left: 1.25rem; top: 50%; transform: translateY(-50%); color: #94a3b8; font-size: 1rem;"></i>
+                                    {{ form.amount }}
+                                </div>
+                                {% if form.amount.errors %}<div style="color: #ef4444; font-size: 0.8rem; margin-top: 0.5rem; font-weight: 700;">{{ form.amount.errors }}</div>{% endif %}
+                            </div>
+
+                            <div class="form-group">
+                                <label style="display: block; font-weight: 900; color: #1e293b; margin-bottom: 0.75rem; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1.5px; opacity: 0.8;">Repayment Tenure (Years)</label>
+                                <div style="position: relative;">
+                                    <i class="fas fa-calendar-check" style="position: absolute; left: 1.25rem; top: 50%; transform: translateY(-50%); color: #94a3b8; font-size: 1rem;"></i>
+                                    {{ form.tenure_years }}
+                                </div>
+                                {% if form.tenure_years.errors %}<div style="color: #ef4444; font-size: 0.8rem; margin-top: 0.5rem; font-weight: 700;">{{ form.tenure_years.errors }}</div>{% endif %}
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label style="display: block; font-weight: 900; color: #1e293b; margin-bottom: 0.75rem; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1.5px; opacity: 0.8;">Gross Annual Revenue / Income</label>
+                            <div style="position: relative;">
+                                <i class="fas fa-wallet" style="position: absolute; left: 1.25rem; top: 50%; transform: translateY(-50%); color: #94a3b8; font-size: 1rem; z-index: 10;"></i>
+                                {{ form.annual_income }}
+                            </div>
+                            <small style="color: #94a3b8; display: block; margin-top: 0.5rem; font-weight: 600; font-size: 0.8rem;">Linked with your Verified ITR or Form 16</small>
+                            {% if form.annual_income.errors %}<div style="color: #ef4444; font-size: 0.8rem; margin-top: 0.5rem; font-weight: 700;">{{ form.annual_income.errors }}</div>{% endif %}
+                        </div>
+
+                        <div style="padding: 1.5rem; background: rgba(248, 250, 252, 0.5); border-radius: 16px; border: 1.5px dashed #e2e8f0; display: flex; gap: 1rem; align-items: center;">
+                            <div style="width: 40px; height: 40px; border-radius: 12px; background: #f0fdf4; color: #10b981; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                <i class="fas fa-file-shield" style="font-size: 1.1rem;"></i>
+                            </div>
+                            <div style="flex: 1;">
+                                <div style="font-weight: 900; color: #1e293b; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.5px;">E-KYC Auto-Sync</div>
+                                <div style="color: #64748b; font-size: 0.85rem; font-weight: 500;">Identity data is securely synced via AES-256.</div>
+                            </div>
+                        </div>
+
+                        <button type="submit" style="width: 100%; padding: 1.25rem; background: var(--color-ib-blue-dark); color: white; border: none; border-radius: 16px; font-size: 1.1rem; font-weight: 900; cursor: pointer; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 10px 25px rgba(15, 23, 42, 0.2); text-transform: uppercase; letter-spacing: 1px;">
+                            Finalize Digital Sanction
+                        </button>
+                    </form>
+                </div>
+
+                <div style="display: flex; flex-wrap: wrap; gap: 2rem;">
+                    <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.8rem; font-weight: 900; color: #475569; letter-spacing: 0.5px;">
+                        <i class="fas fa-certificate" style="color: #10b981; font-size: 1rem;"></i> ISO 27001 SECURED
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.8rem; font-weight: 900; color: #475569; letter-spacing: 0.5px;">
+                        <i class="fas fa-server" style="color: #10b981; font-size: 1rem;"></i> VAULT DEPLOYMENT
+                    </div>
+                </div>
+            </div>
+
+            <div style="position: relative; align-self: center;">
+                <div style="position: relative; border-radius: 32px; overflow: hidden; box-shadow: 0 40px 80px rgba(0,0,0,0.15); transform: perspective(1000px) rotateY(-5deg); transition: transform 0.5s ease;">
+                    {% if 'Home' in loan_type_display %}
+                        <img src="{% static 'img/home_loan_detail.png' %}" alt="Home Loan" style="width: 100%; height: auto; display: block; object-fit: cover; min-height: 500px;">
+                    {% elif 'Personal' in loan_type_display %}
+                        <img src="{% static 'img/personal_loan_detail.png' %}" alt="Personal Loan" style="width: 100%; height: auto; display: block; object-fit: cover; min-height: 500px;">
+                    {% else %}
+                        <img src="{% static 'img/vehicle_loan_detail.png' %}" alt="Vehicle Loan" style="width: 100%; height: auto; display: block; object-fit: cover; min-height: 500px;">
+                    {% endif %}
+                    
+                    <div style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(15,23,42,0.8), rgba(0,0,0,0.2) 60%);"></div>
+                    <div style="position: absolute; bottom: 2rem; left: 2rem; right: 2rem; color: white;">
+                        <span style="background: rgba(255,255,255,0.2); backdrop-filter: blur(10px); color: white; padding: 0.4rem 1rem; border-radius: 50px; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;">Instant Approval</span>
+                        <h3 style="font-size: 1.8rem; font-weight: 900; margin-top: 1rem; line-height: 1.2;">
+                            {% if 'Home' in loan_type_display %}Own Your Dream Space.{% elif 'Personal' in loan_type_display %}Fund Your Aspirations.{% else %}Drive The Future.{% endif %}
+                        </h3>
+                        <p style="font-size: 0.95rem; opacity: 0.9; margin-top: 0.5rem; line-height: 1.5;">Experience lowest-in-class interest rates and zero hidden charges processing.</p>
+                    </div>
+                </div>
+
+                <div style="position: absolute; top: -2rem; right: -2rem; background: white; padding: 1.5rem; width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; border-radius: 50%; box-shadow: 0 20px 40px rgba(0,0,0,0.1); animation: float 6s ease-in-out infinite;">
+                    <i class="fas fa-bolt" style="font-size: 2rem; color: #10b981;"></i>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<style>
+    @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    @keyframes float {
+        0% { transform: translateY(0px); }
+        50% { transform: translateY(-15px); }
+        100% { transform: translateY(0px); }
+    }
+    
+    .premium-form input, .premium-form select {
+        padding: 1.1rem 1.1rem 1.1rem 3.2rem !important;
+        border: 2px solid #f8fafc !important;
+        background: #f8fafc !important;
+        border-radius: 14px !important;
+        font-size: 0.95rem !important;
+        font-weight: 700 !important;
+        color: #1e293b !important;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        box-sizing: border-box !important;
+    }
+
+    .premium-form input:focus, .premium-form select:focus {
+        outline: none !important;
+        border-color: var(--color-ib-blue) !important;
+        background: white !important;
+        box-shadow: 0 10px 25px rgba(59, 130, 246, 0.1) !important;
+        transform: translateY(-2px) !important;
+    }
+    
+    .premium-form button:hover {
+        transform: translateY(-4px) scale(1.02);
+        box-shadow: 0 25px 50px rgba(15, 23, 42, 0.4) !important;
+        background: #000 !important;
+    }
+    
+    .premium-form button:active {
+        transform: scale(0.97);
+    }
+    
+    .premium-form input::placeholder { color: #cbd5e1; font-weight: 500; }
+</style>
+{% endblock %}

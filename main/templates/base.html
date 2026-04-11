@@ -1,0 +1,372 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Indie Bank - Your Trusted Financial Partner{% endblock %}</title>
+    <style>
+        /* Premium Google Translate Hidden Logic & Modal */
+        #google_translate_element {
+            display: none !important;
+        }
+        .goog-logo-link {
+            display:none !important;
+        }
+        .goog-te-gadget {
+            color: transparent !important;
+            font-size: 0 !important;
+        }
+        body { top: 0 !important; }
+        .skiptranslate iframe { display: none !important; }
+
+        /* Custom Language Modal Styles */
+        .language-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.85);
+            z-index: 10000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+        .language-modal-content {
+            background: var(--color-ib-blue-dark, #0f172a);
+            width: 90%;
+            max-width: 650px;
+            text-align: center;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+        .language-header {
+            background: white;
+            padding: 1.25rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            position: relative;
+        }
+        .language-header img {
+            height: 45px;
+        }
+        .language-header h2 {
+            color: var(--color-ib-blue-dark, #0f172a);
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin: 0;
+            letter-spacing: 1px;
+        }
+        .language-body {
+            padding: 2.5rem 2rem 3.5rem;
+            background-image: linear-gradient(180deg, rgba(255,255,255,0.05) 0%, transparent 100%);
+        }
+        .lang-greeting {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        .lang-prompt {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            color: rgba(255, 255, 255, 0.85);
+        }
+        .lang-btn-container {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+            margin-top: 2.5rem;
+        }
+        .lang-btn {
+            background: var(--color-ib-yellow, #facc15);
+            color: #000;
+            border: none;
+            padding: 0.8rem 3rem;
+            font-size: 1.25rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+        .lang-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            background: #eab308;
+        }
+        .close-modal-btn {
+            position: absolute;
+            right: 1.5rem;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #94a3b8;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .close-modal-btn:hover {
+            color: #0f172a;
+        }
+    </style>
+    
+    <link rel="icon" type="image/png" href="{% static 'img/bank_logo.png' %}">
+    <link rel="shortcut icon" href="{% static 'img/bank_logo.png' %}" type="image/x-icon">
+    <link rel="apple-touch-icon" href="{% static 'img/bank_logo.png' %}">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}?v=1.3">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+    <header id="main-header">
+        
+        <div class="top-header">
+            <div class="container top-header-content">
+                <div class="top-nav-links">
+
+                </div>
+                <div class="top-header-right" style="display: flex; align-items: center; gap: 1.5rem;">
+                    <span>Helpline No: <strong>1800 123 4567</strong></span>
+                    <button onclick="document.getElementById('language-overlay-modal').style.display='flex';" style="background:none; border:none; color: var(--color-ib-blue-dark); cursor:pointer; font-weight: 700; display:flex; align-items:center; gap: 0.5rem; font-size: 0.85rem; padding: 0;">
+                        <i class="fas fa-language" style="font-size: 1.3rem; color: var(--color-ib-blue);"></i> Language
+                    </button>
+                    <div id="google_translate_element"></div>
+                    <div class="search-box" style="position: relative;">
+                        <form action="{% url 'search' %}" method="GET" style="margin: 0;">
+                            <input type="text" name="q" placeholder="Search..." required
+                                style="padding: 0.3rem 0.5rem; border-radius: 4px; border: none; font-size: 0.8rem; width: 100%;">
+                            <button type="submit"
+                                style="background: none; border: none; position: absolute; right: 5px; top: 50%; transform: translateY(-50%); cursor: pointer;">
+                                <i class="fas fa-search" style="color: #666;"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container header-container">
+            <div class="logo">
+                <a href="{% url 'index' %}"
+                    style="display: flex; align-items: center; gap: 0.75rem; text-decoration: none;">
+                    <img src="{% static 'img/bank_logo.png' %}" alt="Indie Bank Logo"
+                        style="height: 52px; object-fit: contain;">
+                    <div style="display: flex; flex-direction: column;">
+                        <span class="logo-text"
+                            style="color: var(--color-ib-blue-dark); font-size: 1.6rem; font-weight: 800; line-height: 1;">INDIE
+                            BANK</span>
+                        <span style="font-size: 0.7rem; color: #666; font-weight: 600; letter-spacing: 1px;">YOUR OWN
+                            TRUSTED PARTNER</span>
+                    </div>
+                </a>
+            </div>
+
+            <nav class="main-nav">
+                <ul style="display: flex; align-items: center; gap: 1.25rem;">
+                    <li><a href="{% url 'index' %}" class="nav-link"
+                            style="color: var(--color-ib-blue-dark); font-weight: 700; text-transform: uppercase; font-size: 0.85rem;">Home</a>
+                    </li>
+                    <li><a href="{% url 'about_us' %}" class="nav-link"
+                            style="color: var(--color-ib-blue-dark); font-weight: 700; text-transform: uppercase; font-size: 0.85rem;">About
+                            Us</a></li>
+                    <li><a href="{% url 'products' %}" class="nav-link"
+                            style="color: var(--color-ib-blue-dark); font-weight: 700; text-transform: uppercase; font-size: 0.85rem;">Products</a>
+                    </li>
+                    <li><a href="{% url 'rates' %}" class="nav-link"
+                            style="color: var(--color-ib-blue-dark); font-weight: 700; text-transform: uppercase; font-size: 0.85rem;">Rates</a>
+                    </li>
+                    <li><a href="{% url 'submit_complaint' %}" class="nav-link"
+                            style="color: var(--color-ib-blue-dark); font-weight: 700; text-transform: uppercase; font-size: 0.85rem;">
+                            Customer Support</a>
+                    </li>
+
+                </ul>
+            </nav>
+            <div class="header-actions" style="display: flex; gap: 1rem; align-items: center;">
+                <a href="{% url 'admin_dashboard' %}" class="btn-primary"
+                    style="background: var(--color-ib-yellow); color: var(--color-ib-blue-dark);padding: 0.6rem 1.5rem; border-radius: 50px; font-weight: 700; font-size: 0.85rem; text-decoration: none; display: flex; align-items: center; gap: 0.5rem; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.15);">
+                    <i class="fa-solid fa-shield-halved" style="font-size: 1.1em;"></i> ADMIN LOGIN
+                </a>
+            </div>
+            <div class="header-actions" style="display: flex; gap: 1rem; align-items: center;">
+                <a href="{% url 'login' %}" class="btn-primary"
+                    style="padding: 0.6rem 1.5rem; border-radius: 50px; font-weight: 700; font-size: 0.85rem; text-decoration: none; display: flex; align-items: center; gap: 0.5rem; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.15);">
+                    <i class="fa-solid fa-circle-user" style="font-size: 1.1em;"></i> USER LOGIN
+                </a>
+            </div>
+
+            <button class="mobile-menu-toggle" aria-label="Toggle Menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </header>
+
+    <main>
+        <div class="container" style="margin-top: 1rem;">
+            {% if messages %}
+            {% for message in messages %}
+            <div class="glass-panel"
+                style="padding: 1rem; margin-bottom: 1rem; border-left: 5px solid {% if message.tags == 'error' %}var(--color-danger){% elif message.tags == 'warning' %}var(--color-warning){% else %}var(--color-success){% endif %}; animation: fadeIn 0.5s ease-in;">
+                <i class="fas {% if message.tags == 'error' %}fa-exclamation-circle{% elif message.tags == 'warning' %}fa-exclamation-triangle{% else %}fa-check-circle{% endif %}"
+                    style="margin-right: 10px; color: {% if message.tags == 'error' %}var(--color-danger){% elif message.tags == 'warning' %}var(--color-warning){% else %}var(--color-success){% endif %};"></i>
+                <strong>{{ message|capfirst }}</strong>
+            </div>
+            {% endfor %}
+            {% endif %}
+        </div>
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <footer id="main-footer">
+        <div class="container footer-container">
+            <div class="footer-brand">
+                <div class="logo footer-logo"
+                    style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
+                    <img src="{% static 'img/bank_logo.png' %}" alt="Indie Bank Logo"
+                        style="height: 40px; object-fit: contain;">
+                    <span class="logo-text" style="color: white; font-size: 1.5rem; font-weight: 700;">Indie
+                        Bank</span>
+                </div>
+                <p>Empowering your financial journey with trust, innovation, and premium service.</p>
+            </div>
+
+            <div class="footer-links-group">
+                <h4>Support</h4>
+                <ul>
+                    <li><a href="{% url 'submit_complaint' %}">Customer Care</a></li>
+                    <li><a href="{% url 'locate_us' %}">Locate Us</a></li>
+                    <li><a href="{% url 'rates' %}">Rates & Charges</a></li>
+                    <li><a href="{% url 'security_tips' %}">Security Tips</a></li>
+                </ul>
+            </div>
+            <div class="footer-contact">
+                <h4>Contact Us</h4>
+                <p class="phone-number">1800-200-XXXX</p>
+                <p class="email-address">support@indiebank.com</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div class="container">
+                <p>&copy; 2026 Indie Bank. All rights reserved.</p>
+                <ul class="legal-links">
+                    <li><a href="{% url 'terms' %}">Terms of Service</a></li>
+                    <li><a href="{% url 'privacy' %}">Privacy Policy</a></li>
+                    <li><a href="{% url 'disclaimer' %}">Disclaimer</a></li>
+                </ul>
+            </div>
+        </div>
+    </footer>
+
+    <script src="{% static 'js/script.js' %}"></script>
+    
+    <script>
+        function getCsrfToken() {
+            const name = 'csrftoken';
+            const cookies = document.cookie.split(';');
+            for (let cookie of cookies) {
+                cookie = cookie.trim();
+                if (cookie.startsWith(name + '=')) {
+                    return decodeURIComponent(cookie.substring(name.length + 1));
+                }
+            }
+            return null;
+        }
+        if (typeof axios !== 'undefined') {
+            axios.defaults.xsrfCookieName = 'csrftoken';
+            axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+            axios.defaults.headers.common['X-CSRFToken'] = getCsrfToken();
+        }
+    </script>
+    
+    <a href="{% url 'chatbot' %}" id="chatbot-icon" class="chatbot-btn" title="Chat with SARA, your AI Assistant!">
+        <span class="chatbot-label">Ask Sara</span>
+        <img src="{% static 'img/sara.png' %}" alt="AI Assistant" style="width: 100%; height: 100%; object-fit: cover;">
+    </a>
+
+    <!-- Google Translate Script -->
+    <script type="text/javascript">
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({
+                pageLanguage: 'en', 
+                includedLanguages: 'en,hi,ta',
+                layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+            }, 'google_translate_element');
+        }
+    </script>
+    <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+    <!-- Language Selection Modal -->
+    <div id="language-overlay-modal" class="language-modal-overlay">
+        <div class="language-modal-content">
+            <div class="language-header">
+                <img src="{% static 'img/bank_logo.png' %}" alt="Indie Bank">
+                <h2>INDIE BANK</h2>
+                <button class="close-modal-btn" onclick="document.getElementById('language-overlay-modal').style.display='none'">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="language-body">
+                <p class="lang-greeting">इंडी बैंक में आपका स्वागत है</p>
+                <p class="lang-greeting">Welcome to Indie Bank</p>
+                <p class="lang-greeting">இண்டி வங்கிக்கு உங்களை வரவேற்கிறோம்</p>
+                
+                <p class="lang-prompt" style="margin-top: 1.5rem;">वेबसाइट में प्रवेश करने के लिए अपनी पसंदीदा भाषा का चयन करें</p>
+                <p class="lang-prompt">Select your preferred language to enter the website</p>
+                <p class="lang-prompt">இணையதளத்தில் நுழைய உங்கள் விருப்பமான மொழியைத் தேர்ந்தெடுக்கவும்</p>
+                
+                <div class="lang-btn-container">
+                    <button class="lang-btn" onclick="selectLanguage('hi')">हिंदी</button>
+                    <button class="lang-btn" onclick="selectLanguage('en')">English</button>
+                    <button class="lang-btn" onclick="selectLanguage('ta')">தமிழ்</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Language Selection Logic
+        function selectLanguage(langCode) {
+            var selectField = document.querySelector(".goog-te-combo");
+            if (selectField) {
+                selectField.value = langCode;
+                selectField.dispatchEvent(new Event('change'));
+            }
+            document.getElementById('language-overlay-modal').style.display = 'none';
+            localStorage.setItem('ib_lang_selected', 'true');
+        }
+
+        // Show modal on first load if no language is selected
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(function() {
+                if (!localStorage.getItem('ib_lang_selected')) {
+                    document.getElementById('language-overlay-modal').style.display = 'flex';
+                }
+            }, 1000); 
+        });
+    </script>
+
+</body>
+
+</html>

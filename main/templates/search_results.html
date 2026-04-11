@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Search Results | Indie Bank{% endblock %}
+{% block content %}
+<section style="padding: 4rem 0; min-height: 60vh;">
+    <div class="container animate-up">
+        <h1 style="color: var(--color-ib-blue-dark); margin-bottom: 2rem;">Search Results for "{{ query }}"</h1>
+
+        {% if results %}
+        <div style="display: grid; grid-template-columns: 1fr; gap: 1.5rem;">
+            {% for result in results %}
+            <div class="glass-panel"
+                style="padding: 1.5rem; border-left: 4px solid var(--color-ib-blue); transition: transform 0.2s;"
+                onmouseover="this.style.transform='translateX(5px)'" onmouseout="this.style.transform='translateX(0)'">
+                <h3 style="margin-bottom: 0.5rem;"><a href="{% url result.url %}"
+                        style="color: var(--color-ib-blue-dark); text-decoration: none;">{{ result.title }}</a></h3>
+                <p style="color: var(--color-text-muted); margin-bottom: 1rem;">{{ result.desc }}</p>
+                <a href="{% url result.url %}" class="btn btn-secondary"
+                    style="padding: 0.5rem 1rem; font-size: 0.9rem;">View <i class="fas fa-arrow-right"
+                        style="margin-left: 0.5rem; font-size: 0.8rem;"></i></a>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="glass-panel" style="padding: 4rem 2rem; text-align: center; border-radius: 12px;">
+            <i class="fas fa-search" style="font-size: 4rem; color: #cbd5e0; margin-bottom: 1.5rem;"></i>
+            <h3 style="color: var(--color-primary-light); margin-bottom: 0.5rem; font-size: 1.5rem;">No results found
+            </h3>
+            <p style="color: var(--color-text-muted); font-size: 1.1rem;">We couldn't find any matches for "{{ query
+                }}".</p>
+            <p style="color: var(--color-text-muted); margin-bottom: 2rem;">Try modifying your search or browse our
+                Quick Links.</p>
+            <a href="{% url 'index' %}" class="btn btn-primary">Return to Home</a>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

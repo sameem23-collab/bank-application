@@ -1,0 +1,197 @@
+{% extends 'dashboard_base.html' %}
+{% load static %}
+
+{% block page_title %}My Accounts{% endblock %}
+
+{% block title %}My Accounts | Indie Bank{% endblock %}
+{% block content %}
+<div class="animate-up">
+    
+    <div class="page-hero-banner">
+        <img src="{% static 'img/accounts_hero.png' %}" alt="Accounts Background">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <h2><i class="fas fa-wallet" style="margin-right: 0.75rem; font-size: 1.5rem;"></i>My Accounts</h2>
+            <p>Manage and monitor all your financial assets in one place.</p>
+        </div>
+        <i class="fas fa-university hero-icon"></i>
+    </div>
+
+    <div v-if="loading"
+        style="display: flex; justify-content: center; align-items: center; min-height: 40vh; flex-direction: column; gap: 1rem;">
+        <div class="premium-loader"
+            style="width: 40px; height: 40px; border: 3px solid rgba(0, 51, 102, 0.1); border-top-color: var(--color-ib-blue); border-radius: 50%; animation: spin 1s infinite linear;">
+        </div>
+        <p style="color: var(--color-text-muted); font-weight: 500;">Retrieving your accounts...</p>
+    </div>
+
+    <div v-else>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+            <div>
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                    <h3 style="margin: 0; font-size: 1.5rem; font-weight: 800; color: var(--color-ib-blue-dark);">Your Bank
+                        Accounts</h3>
+                    <button @click="toggleBalances"
+                        style="background: none; border: none; color: var(--color-ib-blue-dark); cursor: pointer; opacity: 0.8; font-size: 1.2rem; padding: 0.5rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: opacity 0.2s;"
+                        onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.8'">
+                        <i :class="showBalances ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+                    </button>
+                </div>
+                <p style="color: var(--color-text-muted); font-size: 0.9rem; margin-top: 0.25rem;">Manage and monitor
+                    your financial assets</p>
+            </div>
+            <a href="{% url 'open_account' %}" class="quick-action-btn" style="width: auto; padding: 0.75rem 1.5rem;">
+                <i class="fas fa-plus"></i>
+                <span>Open New Account</span>
+            </a>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 2rem;">
+            <div v-for="acc in accounts" :key="acc.id" class="balance-card-premium"
+                style="min-height: 220px; transition: transform 0.3s ease; cursor: pointer;"
+                onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                    <div>
+                        <div
+                            style="font-size: 0.75rem; font-weight: 700; opacity: 0.8; letter-spacing: 1px; text-transform: uppercase;">
+                            [[ acc.account_type || 'Savings Account' ]]</div>
+                        <div style="font-size: 2.25rem; font-weight: 800; margin-top: 0.5rem;">
+                            <span v-if="showBalances">₹[[ formatCurrency(acc.balance) ]]</span>
+                            <span v-else>₹ XXXX.XX</span>
+                        </div>
+                    </div>
+                    <div class="badge-pill approved"
+                        style="background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3);">
+                        ACTIVE</div>
+                </div>
+
+                <div style="margin-top: auto; display: flex; justify-content: space-between; align-items: flex-end;">
+                    <div>
+                        <div
+                            style="font-family: 'Courier New', Courier, monospace; font-weight: 700; letter-spacing: 2px; font-size: 1.1rem;">
+                            •••• •••• •••• [[ String(acc.account_number).slice(-4) ]]
+                        </div>
+                        <div style="font-size: 0.7rem; opacity: 0.7; margin-top: 0.4rem;">Acc No: [[ acc.account_number
+                            ]]</div>
+                    </div>
+                    <img src="{% static 'img/bank_logo.png' %}" alt="Logo"
+                        style="height: 25px; filter: brightness(0) invert(1);">
+                </div>
+            </div>
+        </div>
+
+        <div v-if="accounts.length === 0"
+            style="text-align: center; padding: 5rem; background: white; border-radius: 1.5rem; border: 1px solid #e2e8f0;">
+            <div style="font-size: 3rem; color: #cbd5e1; margin-bottom: 1rem;">
+                <i class="fas fa-university"></i>
+            </div>
+            <h4 style="font-size: 1.25rem; font-weight: 700; color: var(--color-ib-blue-dark);">No Accounts Found</h4>
+            <p style="color: var(--color-text-muted); margin-bottom: 2rem;">You don't have any active bank accounts with
+                us yet.</p>
+            <a href="{% url 'open_account' %}" class="btn-primary" style="display: inline-block;">Get Started</a>
+        </div>
+    </div>
+</div>
+
+<style>
+    @keyframes spin {
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
+    .animate-up {
+        animation: fadeInUp 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .badge-pill {
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-weight: 700;
+        font-size: 0.65rem;
+    }
+</style>
+
+<script>
+    const { createApp, ref, onMounted, computed } = Vue;
+
+    createApp({
+        delimiters: ['[[', ']]'],
+        setup() {
+            const loading = ref(true);
+            const accounts = ref([]);
+            const user = ref({});
+            const notifications = ref([]);
+            const unreadCount = computed(() => notifications.value.filter(n => !n.is_read).length);
+            const showNotifs = ref(false);
+            const showBalances = ref(false);
+
+            const fetchData = async () => {
+                try {
+                    const sessionRes = await axios.get('/api/session/');
+                    if (sessionRes.data && sessionRes.data.user) {
+                        user.value = sessionRes.data.user;
+                    }
+
+                    const [accRes, notifRes] = await Promise.all([
+                        axios.get('/api/accounts/'),
+                        axios.get('/api/notifications/')
+                    ]);
+                    if (accRes.data) {
+                        accounts.value = accRes.data;
+                    }
+                    notifications.value = notifRes.data;
+                } catch (e) {
+                    console.error('Error fetching data:', e);
+                } finally {
+                    loading.value = false;
+                }
+            };
+
+            const formatCurrency = (v) => parseFloat(v || 0).toLocaleString(undefined, { minimumFractionDigits: 2 });
+
+            const formatDate = (dateStr) => {
+                if (!dateStr) return '';
+                const date = new Date(dateStr);
+                return date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+            };
+
+            const markAsRead = async (id) => {
+                try {
+                    await axios.post(`/api/notifications/${id}/read/`);
+                    const n = notifications.value.find(notif => notif.id === id);
+                    if (n) n.is_read = true;
+                } catch (e) { console.error(e); }
+            };
+
+            const markAllAsRead = async () => {
+                for (let n of notifications.value) {
+                    if (!n.is_read) await markAsRead(n.id);
+                }
+            };
+
+            const toggleBalances = () => {
+                showBalances.value = !showBalances.value;
+            };
+
+            onMounted(fetchData);
+            return { 
+                loading, accounts, user, formatCurrency, formatDate,
+                notifications, unreadCount, showNotifs, markAsRead, markAllAsRead, showBalances, toggleBalances
+            };
+        }
+    }).mount('#app');
+</script>
+{% endblock %}

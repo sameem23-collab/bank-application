@@ -1,0 +1,493 @@
+{% extends 'dashboard_base.html' %}
+{% load static %}
+
+{% block page_title %}Dashboard Overview{% endblock %}
+
+{% block title %}My Dashboard | Indie Bank{% endblock %}
+{% block content %}
+<div>
+
+    <div v-if="loading"
+        style="display: flex; justify-content: center; align-items: center; min-height: 60vh; flex-direction: column; gap: 1rem;">
+        <div class="premium-loader"
+            style="width: 50px; height: 50px; border: 3px solid rgba(0, 51, 102, 0.1); border-top-color: var(--color-ib-blue); border-radius: 50%; animation: spin 1s infinite linear;">
+        </div>
+        <p style="color: var(--color-text-muted); font-weight: 500;">Loading your session...</p>
+    </div>
+
+    <div v-else class="animate-up">
+
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2.5rem;">
+
+            <div style="display: flex; flex-direction: column; gap: 2.5rem;">
+
+                <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 2rem;">
+                    <div style="display: flex; flex-direction: column; gap: 1.5rem; margin-bottom: 2rem;">
+
+                        <div class="balance-card-premium"
+                            style="min-height: 180px; background: linear-gradient(135deg, #003366, #004080);">
+                            <div>
+                                <div style="display: flex; align-items: center; gap: 0.6rem;">
+                                    <div
+                                        style="font-size: 0.8rem; font-weight: 700; opacity: 0.8; letter-spacing: 1.5px;">
+                                        AGGREGATE ACCOUNT BALANCE</div>
+                                    <button type="button" @click.stop="toggleBalance" class="balance-toggle-btn"
+                                        style="background: rgba(255,255,255,0.15); color: white; cursor: pointer; font-size: 0.85rem; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; outline: none;">
+                                        <i :class="showBalance ? 'fas fa-eye-slash' : 'fas fa-eye'"
+                                            style="pointer-events: none;"></i>
+                                    </button>
+                                </div>
+                                <div
+                                    style="display: flex; align-items: flex-end; gap: 0.75rem; font-size: 3rem; font-weight: 900; margin-top: 0.5rem; letter-spacing: -1.5px; min-height: 4rem; flex-wrap: nowrap;">
+                                    <span v-if="showBalance">₹[[ formatCurrency(totalBalance) ]]</span>
+                                    <span v-else style="letter-spacing: 2px; opacity: 0.9;">₹••••••</span>
+                                </div>
+                            </div>
+                            <div
+                                style="display: flex; justify-content: space-between; align-items: center; opacity: 0.7; font-size: 0.75rem; font-weight: 600;">
+                                <div>SAVINGS & CHECKING COMBINED</div>
+                                <img src="{% static 'img/logo.jpeg' %}" alt="Logo"
+                                    style="height: 24px; filter: brightness(0) invert(1);">
+                            </div>
+                        </div>
+
+                        <div
+                            style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem;">
+                            <div v-for="acc in accounts" :key="acc.id" class="account-item-card"
+                                :class="acc.account_type === 'CREDIT' ? 'credit-mode' : ''" :style="{
+                                padding: '1.5rem', 
+                                borderRadius: '24px', 
+                                background: acc.account_type === 'CREDIT' 
+                                    ? (acc.card_type === 'PLATINUM' ? 'linear-gradient(135deg, #1e1b4b 0%, #312e81 100%)' : (acc.card_type === 'GOLD' ? 'linear-gradient(135deg, #451a03 0%, #78350f 100%)' : 'linear-gradient(135deg, #0f172a 0%, #334155 100%)'))
+                                    : 'white',
+                                color: acc.account_type === 'CREDIT' ? 'white' : '#0f172a',
+                                boxShadow: acc.account_type === 'CREDIT' ? '0 10px 30px rgba(0,0,0,0.15)' : '0 10px 25px rgba(0,0,0,0.05)',
+                                border: acc.account_type === 'CREDIT' ? 'none' : '1px solid #f1f5f9',
+                                position: 'relative',
+                                overflow: 'hidden'
+                            }">
+
+                                <div v-if="acc.account_type === 'CREDIT'" style="position: absolute; inset: 0; opacity: 0.1; pointer-events: none;
+                                background-image: radial-gradient(circle at 20% 30%, white 1px, transparent 1px);
+                                background-size: 20px 20px;"></div>
+
+                                <div
+                                    style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.5rem; position: relative; z-index: 1;">
+                                    <div>
+                                        <div
+                                            :style="{fontSize: '0.7rem', fontWeight: '800', color: acc.account_type === 'CREDIT' ? 'rgba(255,255,255,0.7)' : '#64748b', letterSpacing: '1px', textTransform: 'uppercase'}">
+                                            [[ acc.account_type === 'CREDIT' ? acc.card_type :
+                                            acc.account_type.replace('_', ' ') ]]
+                                            [[ acc.account_type === 'CREDIT' ? 'CREDIT CARD' : 'ACCOUNT' ]]
+                                        </div>
+                                        <div
+                                            :style="{fontSize: '0.85rem', fontWeight: '700', color: acc.account_type === 'CREDIT' ? 'white' : '#1e293b', marginTop: '0.2rem', fontFamily: acc.account_type === 'CREDIT' ? 'monospace' : 'inherit'}">
+                                            [[ acc.account_number ]]
+                                        </div>
+                                    </div>
+                                    <div v-if="acc.account_type === 'CREDIT'">
+                                        <i class="fas fa-microchip"
+                                            style="font-size: 1.8rem; color: #fbbf24; opacity: 0.9;"></i>
+                                    </div>
+                                    <div v-else style="color: var(--color-ib-blue); opacity: 0.6;">
+                                        <i class="fas fa-university" style="font-size: 1.2rem;"></i>
+                                    </div>
+                                </div>
+
+                                <div style="margin-bottom: 1rem; position: relative; z-index: 1;">
+                                    <div
+                                        :style="{fontSize: '0.65rem', color: acc.account_type === 'CREDIT' ? 'rgba(255,255,255,0.6)' : '#94a3b8', fontWeight: '700', marginBottom: '2px'}">
+                                        [[ acc.account_type === 'CREDIT' ? 'AVAILABLE CREDIT' : 'AVAILABLE BALANCE' ]]
+                                    </div>
+                                    <div
+                                        :style="{fontSize: '1.75rem', fontWeight: '900', color: acc.account_type === 'CREDIT' ? 'white' : '#0f172a', letterSpacing: '-0.5px'}">
+                                        <span v-if="showBalance">₹[[ formatCurrency(acc.balance) ]]</span>
+                                        <span v-else>₹•••••</span>
+                                    </div>
+                                </div>
+
+                                <div v-if="acc.account_type === 'CREDIT'"
+                                    :style="{borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '1rem', marginTop: '0.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative', zIndex: 1}">
+                                    <div style="font-size: 0.7rem; color: rgba(255,255,255,0.5); font-weight: 600;">
+                                        CREDIT LIMIT</div>
+                                    <div style="font-size: 0.95rem; font-weight: 800; color: white;">
+                                        <span v-if="showBalance">₹[[ formatCurrency(acc.credit_limit) ]]</span>
+                                        <span v-else>₹•••••</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div v-if="loans.length > 0" style="margin-top: 2rem;">
+                            <div
+                                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+                                <div
+                                    style="font-size: 0.8rem; font-weight: 800; color: #64748b; letter-spacing: 1.5px; text-transform: uppercase;">
+                                    Active Loan Sanctions</div>
+                                <a href="{% url 'details' %}"
+                                    style="font-size: 0.75rem; font-weight: 700; color: var(--color-ib-blue); text-decoration: none; display: flex; align-items: center; gap: 0.4rem;">
+                                    DETAILS <i class="fas fa-chevron-right" style="font-size: 0.6rem;"></i>
+                                </a>
+                            </div>
+                            <div
+                                style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem;">
+                                <div v-for="loan in loans" :key="loan.id"
+                                    style="padding: 1.25rem; border-radius: 20px; background: white; border: 1px solid #f1f5f9; box-shadow: 0 4px 12px rgba(0,0,0,0.02); display: flex; align-items: center; gap: 1rem;">
+                                    <div
+                                        :style="{width: '44px', height: '44px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: loan.loan_type === 'HOME' ? '#eff6ff' : (loan.loan_type === 'PERSONAL' ? '#f5f3ff' : '#f0fdf4'), color: loan.loan_type === 'HOME' ? '#3b82f6' : (loan.loan_type === 'PERSONAL' ? '#8b5cf6' : '#10b981'), flexShrink: 0}">
+                                        <i :class="['fas', loan.loan_type === 'HOME' ? 'fa-home' : (loan.loan_type === 'PERSONAL' ? 'fa-user-tie' : 'fa-car')]"
+                                            style="font-size: 1.1rem;"></i>
+                                    </div>
+                                    <div style="flex-grow: 1; min-width: 0;">
+                                        <div
+                                            style="font-size: 0.9rem; font-weight: 800; color: #1e293b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                            [[ loan.get_loan_type_display ]]</div>
+                                        <div style="font-size: 0.65rem; color: #94a3b8; font-weight: 700;">PRINCIPAL
+                                        </div>
+                                        <div
+                                            style="font-size: 1.15rem; font-weight: 900; color: #0f172a; letter-spacing: -0.5px;">
+                                            <span v-if="showBalance">₹[[ formatCurrency(loan.amount) ]]</span>
+                                            <span v-else>₹•••••</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr ; gap: 1rem;">
+                        <a href="{% url 'transfer' %}" class="quick-action-btn">
+                            <i class="fas fa-paper-plane"></i>
+                            <span>Send Money</span>
+                        </a>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem;">
+                            <a href="{% url 'requests' %}" class="quick-action-btn" style="padding: 1rem;">
+                                <i class="fas fa-hand-holding-usd"></i>
+                                <span>Request</span>
+                            </a>
+                            <a href="{% url 'bills' %}" class="quick-action-btn" style="padding: 1rem;">
+                                <i class="fas fa-file-invoice-dollar"></i>
+                                <span>Bills</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="txn-list">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                        <h3 style="margin: 0; font-size: 1.25rem; font-weight: 800;">Recent Transactions</h3>
+                        <a href="{% url 'transactions' %}"
+                            style="color: var(--color-ib-blue); font-weight: 700; font-size: 0.85rem;">View
+                            All</a>
+                    </div>
+
+                    <div v-if="transactions.length > 0">
+                        <div v-for="txn in transactions.slice(0, 5)" :key="txn.id" class="txn-row">
+                            <div class="txn-icon-box"
+                                :style="{background: txn.transaction_type === 'CREDIT' ? '#dcfce7' : '#fee2e2', color: txn.transaction_type === 'CREDIT' ? '#166534' : '#991b1b'}">
+                                <i
+                                    :class="['fas', txn.transaction_type === 'CREDIT' ? 'fa-arrow-down' : 'fa-arrow-up']"></i>
+                            </div>
+                            <div>
+                                <div style="font-weight: 700; color: var(--color-ib-blue-dark);">[[ txn.description ]]
+                                </div>
+                                <div style="font-size: 0.75rem; color: var(--color-text-muted); font-weight: 600;">[[
+                                    formatDate(txn.date) ]] • [[ txn.transaction_type ]]</div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div
+                                    :style="{fontWeight: 800, fontSize: '1.1rem', color: txn.transaction_type === 'CREDIT' ? '#166534' : '#1e293b'}">
+                                    [[ txn.transaction_type === 'CREDIT' ? '+' : '-' ]]₹[[ formatCurrency(txn.amount) ]]
+                                </div>
+                                <span :class="['badge-pill', txn.status.toLowerCase()]" style="font-size: 0.6rem;">[[
+                                    txn.status ]]</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div v-else style="text-align: center; padding: 3rem; color: var(--color-text-muted);">
+                        No transactions found.
+                    </div>
+                </div>
+
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 2.5rem;">
+
+                <div class="premium-card-ui">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-size: 0.75rem; font-weight: 700; letter-spacing: 2px;">INDIE PLATINUM</span>
+                        <i class="fas fa-wifi" style="transform: rotate(90deg); opacity: 0.5;"></i>
+                    </div>
+                    <div
+                        style="font-size: 1.4rem; font-family: 'Courier New', Courier, monospace; letter-spacing: 3px; font-weight: 700;">
+                        4521 88•• •••• 9012
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+                        <div>
+                            <div style="font-size: 0.65rem; opacity: 0.6; margin-bottom: 2px;">CARD HOLDER</div>
+                            <div style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase;">[[
+                                user.first_name ]] [[ user.last_name ]]</div>
+                        </div>
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Mastercard-logo.svg/1280px-Mastercard-logo.svg.png"
+                            alt="Mastercard" style="height: 35px; opacity: 0.9;">
+                    </div>
+                </div>
+
+                <div class="txn-list" style="padding: 2rem;">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                        <h3 style="margin: 0; font-size: 1.1rem; font-weight: 800;">Spending Analysis</h3>
+                        <select v-model="chartView" @change="initCharts"
+                            style="padding: 0.25rem 0.5rem; font-size: 0.8rem; border-radius: 6px; border: 1px solid #e2e8f0; outline: none;">
+                            <option value="category">Category-wise</option>
+                            <option value="month">Month-wise (This Year)</option>
+                            <option value="date">Date-wise (This Month)</option>
+                        </select>
+                    </div>
+                    <div style="height: 200px;">
+                        <canvas id="spendingChart"></canvas>
+                    </div>
+                    <div style="margin-top: 1.5rem; display: flex; justify-content: space-between;">
+                        <div>
+                            <div style="font-size: 0.7rem; color: var(--color-text-muted); font-weight: 700;">INFLOW
+                            </div>
+                            <div style="font-weight: 800; color: #166534;">₹[[ formatCurrency(stats.inflow) ]]</div>
+                        </div>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="font-size: 0.7rem; color: var(--color-text-muted); font-weight: 700;">OUTFLOW
+                        </div>
+                        <div style="font-weight: 800; color: #991b1b;">₹[[ formatCurrency(stats.outflow) ]]</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+<style>
+    @keyframes spin {
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
+    .animate-up {
+        animation: fadeInUp 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .badge-pill {
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.6rem;
+    }
+
+    .badge-pill.approved {
+        background: #dcfce7;
+        color: #166534;
+    }
+
+    .badge-pill.pending {
+        background: #fef9c3;
+        color: #854d0e;
+    }
+</style>
+
+<script>
+    const { createApp, ref, onMounted, computed, nextTick } = Vue;
+
+    createApp({
+        delimiters: ['[[', ']]'],
+        setup() {
+            const loading = ref(true);
+            const user = ref({});
+            const accounts = ref([]);
+            const loans = ref([]);
+            const transactions = ref([]);
+            const notifications = ref([]);
+            const showNotifs = ref(false);
+            const showBalance = ref(false);
+            const chartView = ref('category');
+            let chartInstance = null;
+
+            const unreadCount = computed(() => notifications.value.filter(n => !n.is_read).length);
+
+            const stats = computed(() => {
+                const now = new Date();
+                const thisMonthTxns = transactions.value.filter(t => new Date(t.date).getMonth() === now.getMonth());
+                return {
+                    inflow: thisMonthTxns.filter(t => t.transaction_type === 'CREDIT').reduce((s, t) => s + parseFloat(t.amount || 0), 0),
+                    outflow: thisMonthTxns.filter(t => t.transaction_type === 'DEBIT').reduce((s, t) => s + parseFloat(t.amount || 0), 0)
+                };
+            });
+
+            const fetchData = async () => {
+                try {
+                    const sessionRes = await axios.get('/api/session/');
+                    if (sessionRes.data && sessionRes.data.user) {
+                        user.value = sessionRes.data.user;
+                    }
+
+                    const [accRes, lnRes, txRes, notifRes] = await Promise.allSettled([
+                        axios.get('/api/accounts/'),
+                        axios.get('/api/loans/'),
+                        axios.get('/api/transactions/'),
+                        axios.get('/api/notifications/'),
+                    ]);
+
+                    if (accRes.status === 'fulfilled') {
+                        accounts.value = accRes.value.data;
+                    }
+                    if (lnRes.status === 'fulfilled') {
+                        loans.value = lnRes.value.data.filter(l => l.status === 'APPROVED');
+                    }
+                    if (txRes.status === 'fulfilled') transactions.value = txRes.value.data;
+                    if (notifRes.status === 'fulfilled') notifications.value = notifRes.value.data;
+
+                } catch (e) {
+                    console.error(e);
+                } finally {
+                    loading.value = false;
+                    nextTick(initCharts);
+                }
+            };
+
+            const initCharts = () => {
+                const ctx = document.getElementById('spendingChart');
+                if (!ctx) return;
+
+                if (chartInstance) {
+                    chartInstance.destroy();
+                }
+
+                let labels = [];
+                let data = [];
+                let backgroundColor = [];
+
+                const now = new Date();
+                const debits = transactions.value.filter(t => t.transaction_type === 'DEBIT' && t.status !== 'REJECTED');
+
+                if (chartView.value === 'category') {
+                    labels = ['Food', 'Shopping', 'Travel', 'Bills', 'Fun', 'Health', 'Other'];
+                    let categoryTotals = { 'Food': 0, 'Shopping': 0, 'Travel': 0, 'Bills': 0, 'Fun': 0, 'Health': 0, 'Other': 0 };
+
+                    debits.forEach(t => {
+                        const desc = (t.description || '').toLowerCase();
+                        let amount = parseFloat(t.amount || 0);
+                        if (desc.match(/zomato|swiggy|food|restaurant|cafe|grocery/)) categoryTotals['Food'] += amount;
+                        else if (desc.match(/amazon|flipkart|myntra|shop|mall|store/)) categoryTotals['Shopping'] += amount;
+                        else if (desc.match(/uber|ola|flight|train|bus|travel|ticket/)) categoryTotals['Travel'] += amount;
+                        else if (desc.match(/bill|electricity|water|wifi|recharge|mobile/)) categoryTotals['Bills'] += amount;
+                        else if (desc.match(/movie|game|netflix|spotify|fun/)) categoryTotals['Fun'] += amount;
+                        else if (desc.match(/hospital|clinic|pharmacy|health|doctor|medical/)) categoryTotals['Health'] += amount;
+                        else categoryTotals['Other'] += amount;
+                    });
+
+                    data = labels.map(l => categoryTotals[l]);
+                    backgroundColor = [
+                        'rgba(59, 130, 246, 0.8)', 'rgba(16, 185, 129, 0.8)', 'rgba(245, 158, 11, 0.8)',
+                        'rgba(239, 68, 68, 0.8)', 'rgba(139, 92, 246, 0.8)', 'rgba(236, 72, 153, 0.8)', 'rgba(107, 114, 128, 0.8)'
+                    ];
+                } else if (chartView.value === 'month') {
+                    labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                    data = new Array(12).fill(0);
+
+                    debits.forEach(t => {
+                        const d = new Date(t.date);
+                        if (d.getFullYear() === now.getFullYear()) {
+                            data[d.getMonth()] += parseFloat(t.amount || 0);
+                        }
+                    });
+                    backgroundColor = 'rgba(59, 130, 246, 0.8)';
+                } else if (chartView.value === 'date') {
+                    const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+                    labels = Array.from({ length: daysInMonth }, (_, i) => i + 1);
+                    data = new Array(daysInMonth).fill(0);
+
+                    debits.forEach(t => {
+                        const d = new Date(t.date);
+                        if (d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth()) {
+                            data[d.getDate() - 1] += parseFloat(t.amount || 0);
+                        }
+                    });
+                    backgroundColor = 'rgba(16, 185, 129, 0.8)';
+                }
+
+                chartInstance = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            data: data,
+                            backgroundColor: backgroundColor,
+                            borderRadius: 6
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: { x: { display: true, grid: { display: false } }, y: { display: false } }
+                    }
+                });
+            };
+
+            const formatDate = (d) => new Date(d).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
+            const formatCurrency = (v) => parseFloat(v || 0).toLocaleString(undefined, { minimumFractionDigits: 2 });
+
+            const markAsRead = async (id) => {
+                try {
+                    await axios.post(`/api/notifications/${id}/read/`);
+                    const n = notifications.value.find(notif => notif.id === id);
+                    if (n) n.is_read = true;
+                } catch (e) { console.error(e); }
+            };
+
+            const markAllAsRead = async () => {
+                for (let n of notifications.value) {
+                    if (!n.is_read) await markAsRead(n.id);
+                }
+            };
+
+            const toggleBalance = () => {
+                showBalance.value = !showBalance.value;
+                console.log('Balance status:', showBalance.value ? 'Visible' : 'Hidden');
+            };
+
+            const totalBalance = computed(() => {
+                return accounts.value
+                    .filter(acc => acc.account_type !== 'CREDIT')
+                    .reduce((sum, acc) => sum + parseFloat(acc.balance || 0), 0);
+            });
+
+            onMounted(() => {
+                fetchData();
+                // AUTO-REFRESH: Poll data every 30 seconds to catch real-time bank events
+                setInterval(fetchData, 30000);
+            });
+            return {
+                loading, user, accounts, loans, totalBalance, transactions, stats, notifications, showNotifs, unreadCount,
+                formatDate, formatCurrency, markAsRead, markAllAsRead, chartView, initCharts, showBalance, toggleBalance
+            };
+
+        }
+    }).mount('#app');
+</script>
+{% endblock %}

@@ -1,0 +1,87 @@
+{% extends 'admin_base.html' %}
+{% load static %}
+
+{% block title %}User Ledger | {{ target_user.username }}{% endblock %}
+{% block page_title %}User Ledger: {{ target_user.username }}{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 2rem;">
+    <a href="{% url 'admin_edit_user' target_user.id %}" style="color: #38bdf8; text-decoration: none; font-size: 0.9rem; font-weight: 700;">
+        <i class="fas fa-arrow-left"></i> Back to User Profile
+    </a>
+</div>
+
+<div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2rem;">
+    <div>
+        <h1 style="font-weight: 900; color: #f8fafc; font-size: 2rem; margin-bottom: 0.5rem; letter-spacing: -1px;">Transaction History</h1>
+        <p style="color: #94a3b8; font-size: 0.95rem;">Auditing financial activity for <strong>{{ target_user.first_name }} {{ target_user.last_name }}</strong> (@{{ target_user.username }}).</p>
+    </div>
+    <div style="display: flex; gap: 1rem;">
+        {% for acc in accounts %}
+        <div class="glass-panel" style="padding: 0.75rem 1.25rem; border-radius: 12px; display: flex; flex-direction: column; align-items: flex-end;">
+            <div style="font-size: 0.7rem; color: #64748b; font-weight: 800; text-transform: uppercase;">{{ acc.get_account_type_display }} Balance</div>
+            <div style="font-weight: 900; color: #34d399; font-size: 1.1rem;">₹{{ acc.balance|floatformat:2 }}</div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="admin-table-container">
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>Txn ID / Date</th>
+                <th>Account</th>
+                <th>Type</th>
+                <th>Amount (₹)</th>
+                <th>Description</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for txn in transactions %}
+            <tr>
+                <td>
+                    <div style="font-family: monospace; font-size: 0.85rem; color: #f8fafc; font-weight: 700;">#{{ txn.id }}</div>
+                    <div style="font-size: 0.75rem; color: #64748b; margin-top: 0.2rem;">{{ txn.date|date:"M d, Y H:i" }}</div>
+                </td>
+                <td>
+                    <div style="color: #cbd5e1; font-weight: 700; font-size: 0.85rem;">{{ txn.account.account_number }}</div>
+                    <div style="color: #94a3b8; font-size: 0.75rem; text-transform: uppercase;">{{ txn.account.get_account_type_display }}</div>
+                </td>
+                <td>
+                    {% if txn.transaction_type == 'CREDIT' %}
+                        <span style="color: #10b981; font-size: 0.7rem; font-weight: 800;"><i class="fas fa-plus"></i> CREDIT</span>
+                    {% else %}
+                        <span style="color: #f87171; font-size: 0.7rem; font-weight: 800;"><i class="fas fa-minus"></i> DEBIT</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <div style="font-weight: 800; color: #f8fafc; font-size: 1rem;">₹{{ txn.amount|floatformat:2 }}</div>
+                </td>
+                <td>
+                    <div style="color: #94a3b8; font-size: 0.85rem; max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="{{ txn.description }}">
+                        {{ txn.description }}
+                    </div>
+                </td>
+                <td>
+                    {% if txn.status == 'APPROVED' %}
+                        <span style="color: #10b981; font-size: 0.75rem; font-weight: 800;"><i class="fas fa-check"></i> SETTLED</span>
+                    {% else %}
+                        <span style="color: #fbbf24; font-size: 0.75rem; font-weight: 800;"><i class="fas fa-clock"></i> {{ txn.status }}</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" style="padding: 4rem; text-align: center; color: #64748b;">
+                    <i class="fas fa-history" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.3;"></i>
+                    <p>No transaction history found for this user.</p>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

@@ -1,0 +1,252 @@
+{% extends 'dashboard_base.html' %}
+{% load static %}
+
+{% block page_title %}UPI Transfers{% endblock %}
+
+{% block title %}UPI | Indie Bank{% endblock %}
+
+{% block content %}
+<div class="animate-up">
+    <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 2rem;">
+        <div style="background: white; color: var(--color-text); padding: 2.5rem; border-radius: 1.5rem; box-shadow: 0 10px 25px rgba(0,0,0,0.05);">
+            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem;">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/UPI-Logo-vector.svg/1280px-UPI-Logo-vector.svg.png" alt="UPI Logo" style="height: 30px;">
+                <h3 style="margin: 0; font-size: 1.5rem; font-weight: 800; color: var(--color-ib-blue-dark);">Fast & Secure Payment</h3>
+            </div>
+
+            <div v-if="upiSuccess" style="text-align: center; padding: 3rem 0; color: #166534; animation: fadeInUp 0.5s ease forwards; background: #f0fdf4; border-radius: 1rem; border: 1px solid #bbf7d0;">
+                <i class="fas fa-check-circle" style="font-size: 4rem; margin-bottom: 1rem;"></i>
+                <h4 style="margin: 0; font-size: 1.5rem; font-weight: 800;">₹[[ formatCurrency(upiAmount) ]] Sent Successfully!</h4>
+                <p style="margin-top: 0.5rem; font-size: 1rem; color: #166534; opacity: 0.8; font-weight: 600;">to [[ upiId ]]</p>
+                <button @click="resetForm" class="btn-primary" style="margin-top: 2rem; background: #166534; border: none; padding: 0.75rem 2rem;">Send Another Payment</button>
+            </div>
+
+            <form v-else @submit.prevent="handleUpiPayment" style="display: flex; flex-direction: column; gap: 1.25rem;">
+                
+                <div class="form-group" style="margin: 0;">
+                    <label style="font-size: 0.8rem; font-weight: 700; color: var(--color-text-muted); text-transform: uppercase;">Pay From</label>
+                    <div style="position: relative;">
+                        <select v-model="selectedAccountId" 
+                            style="width: 100%; padding: 0.85rem; border: 2px solid #e2e8f0; border-radius: 10px; font-weight: 700; font-size: 1rem; color: #1e293b; outline: none; transition: border-color 0.3s; appearance: none; background: #fff;">
+                            <option v-for="acc in accounts" :key="acc.id" :value="acc.id">
+                                [[ acc.account_type.replace('_', ' ') ]] - [[ acc.account_number ]]
+                            </option>
+                        </select>
+                        <i class="fas fa-chevron-down" style="position: absolute; right: 1rem; top: 50%; transform: translateY(-50%); color: #94a3b8; pointer-events: none;"></i>
+                    </div>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: #f0f9ff; border-radius: 0.75rem; border: 1px solid #bae6fd;">
+                    <div style="font-size: 0.8rem; font-weight: 700; color: #0369a1;">[[ selectedAccount.account_type === 'CREDIT' ? 'Available Credit' : 'Available Balance' ]]</div>
+                    <div style="font-size: 1.2rem; font-weight: 800; color: #0c4a6e;">₹[[ formatCurrency(selectedAccount.balance) ]]</div>
+                </div>
+
+                <div class="form-group" style="margin: 0;">
+                    <label style="font-size: 0.85rem; font-weight: 700; color: var(--color-text-muted); text-transform: uppercase;">UPI ID or Number</label>
+                    <input type="text" v-model="upiId" required placeholder="e.g. 9876543210@upi or name@bank" style="width: 100%; padding: 1rem; border: 2px solid #e2e8f0; border-radius: 8px; font-weight: 600; font-size: 1.1rem; outline: none; transition: border-color 0.3s;" :class="{'focus-border-blue': true}">
+                    <div style="font-size: 0.75rem; color: #94a3b8; margin-top: 0.5rem; font-weight: 500;">Please ensure the UPI ID is correct before proceeding.</div>
+                </div>
+                
+                <div class="form-group" style="margin: 0;">
+                    <label style="font-size: 0.85rem; font-weight: 700; color: var(--color-text-muted); text-transform: uppercase;">Amount (₹)</label>
+                    <input type="number" v-model="upiAmount" required min="1" :max="selectedAccount.balance || 100000" placeholder="₹ 0.00" style="width: 100%; padding: 1rem; border: 2px solid #e2e8f0; border-radius: 8px; font-weight: 900; font-size: 1.5rem; color: #1e293b; outline: none;">
+                </div>
+                
+                <div class="form-group" style="margin: 0;">
+                    <label style="font-size: 0.85rem; font-weight: 700; color: var(--color-text-muted); text-transform: uppercase;">Note (Optional)</label>
+                    <input type="text" v-model="upiNote" placeholder="What's this for?" style="width: 100%; padding: 1rem; border: 2px solid #e2e8f0; border-radius: 8px; font-weight: 500; outline: none;">
+                </div>
+
+                <button type="submit" class="btn-primary" :disabled="upiLoading || !upiId || !upiAmount" style="width: 100%; padding: 1.2rem; font-size: 1.2rem; display: flex; justify-content: center; align-items: center; gap: 0.5rem; border: none; cursor: pointer; border-radius: 8px; box-shadow: 0 4px 15px rgba(0, 51, 102, 0.2);">
+                    <div v-if="upiLoading" class="premium-loader" style="width: 24px; height: 24px; border: 3px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 1s infinite linear;"></div>
+                    <span v-else>Proceed to Pay</span>
+                </button>
+            </form>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+            <div class="premium-card-ui" style="background: linear-gradient(135deg, #1e293b, #0f172a); min-height: auto; padding: 1.5rem;">
+                <div style="font-size: 0.75rem; font-weight: 700; letter-spacing: 1px; color: #94a3b8; margin-bottom: 1rem;">YOUR PRIMARY UPI ID</div>
+                <div style="display: flex; align-items: center; justify-content: space-between;">
+                    <div style="font-size: 1.1rem; font-weight: 800; font-family: monospace;">[[ user.username || 'user' ]].ib@indiebank</div>
+                    <button @click="copyUpiId" style="background: rgba(255,255,255,0.1); border: none; color: white; padding: 0.5rem; border-radius: 0.5rem; cursor: pointer; transition: all 0.2s;">
+                        <i :class="copied ? 'fas fa-check' : 'fas fa-copy'" :style="copied ? 'color: #34d399;' : ''"></i>
+                    </button>
+                </div>
+                <div style="margin-top: 1rem; text-align: right;">
+                    <img src="{% static 'img/logo.jpeg' %}" alt="Indie" style="height: 20px; filter: brightness(0) invert(1);">
+                </div>
+            </div>
+
+            <div style="background: white; border-radius: 1.5rem; padding: 1.5rem; box-shadow: 0 4px 15px rgba(0,0,0,0.02); flex-grow: 1;">
+                <h4 style="margin: 0 0 1.5rem 0; font-size: 1.1rem; font-weight: 800; color: var(--color-ib-blue-dark);">Recent Contacts</h4>
+                
+                <div style="display: flex; flex-direction: column; gap: 1rem;">
+                    <div v-for="(contact, index) in fakeContacts" :key="index" @click="selectContact(contact)" 
+                         style="display: flex; align-items: center; gap: 1rem; padding: 0.75rem; border-radius: 0.75rem; cursor: pointer; transition: background 0.2s;" class="hover-bg-slate">
+                        <div :style="{background: contact.color, width: '45px', height: '45px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: '800', fontSize: '1.2rem'}">
+                            [[ contact.initials ]]
+                        </div>
+                        <div>
+                            <div style="font-weight: 700; color: var(--color-ib-blue-dark); font-size: 0.95rem;">[[ contact.name ]]</div>
+                            <div style="font-size: 0.75rem; color: var(--color-text-muted); font-weight: 600; font-family: monospace;">[[ contact.upi ]]</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<style>
+    .hover-bg-slate:hover { background: #f8fafc; }
+    input:focus { border-color: var(--color-ib-blue) !important; }
+    
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+    .animate-up {
+        animation: fadeInUp 0.5s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+    }
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+
+<script>
+    const { createApp, ref, onMounted, computed } = Vue;
+
+    createApp({
+        delimiters: ['[[', ']]'],
+        setup() {
+            const user = ref({});
+            const accounts = ref([]);
+            const selectedAccountId = ref(null);
+            const selectedAccount = computed(() => accounts.value.find(a => a.id === selectedAccountId.value) || { balance: 0 });
+            
+            const upiId = ref('');
+            const upiAmount = ref('');
+            const upiNote = ref('');
+            const upiLoading = ref(false);
+            const upiSuccess = ref(false);
+            const copied = ref(false);
+            const notifications = ref([]);
+            const unreadCount = computed(() => notifications.value.filter(n => !n.is_read).length);
+            const showNotifs = ref(false);
+
+            // Fake data as requested
+            const fakeContacts = ref([
+                { name: 'Rahul Sharma', upi: 'rahuls@okicici', initials: 'RS', color: '#3b82f6' },
+                { name: 'Priya Patel', upi: 'priya123@okhdfc', initials: 'PP', color: '#10b981' },
+                { name: 'Amit Kumar', upi: '9876543210@paytm', initials: 'AK', color: '#f59e0b' },
+                { name: 'Mom', upi: 'mom@oksbi', initials: 'M', color: '#ec4899' },
+                { name: 'Landlord', upi: 'house.rent@ybl', initials: 'L', color: '#6366f1' }
+            ]);
+
+            const fetchData = async () => {
+                try {
+                    const sessionRes = await axios.get('/api/session/');
+                    if (sessionRes.data && sessionRes.data.user) {
+                        user.value = sessionRes.data.user;
+                    }
+                    const [accRes, notifRes] = await Promise.all([
+                        axios.get('/api/accounts/'),
+                        axios.get('/api/notifications/')
+                    ]);
+                    if (accRes.data && accRes.data.length > 0) {
+                        accounts.value = accRes.data;
+                        selectedAccountId.value = accRes.data[0].id;
+                    }
+                    notifications.value = notifRes.data;
+                } catch (e) {
+                    console.error("Data fetch failed", e);
+                }
+            };
+
+            const selectContact = (contact) => {
+                upiId.value = contact.upi;
+            };
+
+            const copyUpiId = () => {
+                const idToCopy = (user.value.username || 'user') + '.ib@indiebank';
+                navigator.clipboard.writeText(idToCopy).then(() => {
+                    copied.value = true;
+                    setTimeout(() => copied.value = false, 2000);
+                }).catch(err => {
+                    console.error("Failed to copy: ", err);
+                });
+            };
+
+            const formatCurrency = (v) => parseFloat(v || 0).toLocaleString(undefined, { minimumFractionDigits: 2 });
+
+            const formatDate = (dateStr) => {
+                if (!dateStr) return '';
+                const date = new Date(dateStr);
+                return date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+            };
+
+            const markAsRead = async (id) => {
+                try {
+                    await axios.post(`/api/notifications/${id}/read/`);
+                    const n = notifications.value.find(notif => notif.id === id);
+                    if (n) n.is_read = true;
+                } catch (e) { console.error(e); }
+            };
+
+            const markAllAsRead = async () => {
+                for (let n of notifications.value) {
+                    if (!n.is_read) await markAsRead(n.id);
+                }
+            };
+
+            const handleUpiPayment = async () => {
+                if (!upiId.value || !upiAmount.value) return;
+                
+                if (!selectedAccountId.value) {
+                    alert('No account selected or available.');
+                    return;
+                }
+
+                upiLoading.value = true;
+                
+                try {
+                    const res = await axios.post(`/api/accounts/${selectedAccountId.value}/upi_payment/`, {
+                        upi_id: upiId.value,
+                        amount: upiAmount.value,
+                        note: upiNote.value
+                    });
+                    
+                    if (res.data.status === 'APPROVED' || res.data.message) {
+                        upiSuccess.value = true;
+                        // Subtract the amount for UI simulation so it reflects immediately
+                        selectedAccount.value.balance -= parseFloat(upiAmount.value);
+                    }
+                } catch (e) {
+                    console.error(e);
+                    alert(e.response?.data?.error || 'An error occurred. Please try again.');
+                } finally {
+                    upiLoading.value = false;
+                }
+            };
+
+            const resetForm = () => {
+                upiSuccess.value = false;
+                upiId.value = '';
+                upiAmount.value = '';
+                upiNote.value = '';
+            };
+
+            onMounted(fetchData);
+            return { 
+                user, accounts, selectedAccountId, selectedAccount, 
+                upiId, upiAmount, upiNote, upiLoading, upiSuccess, 
+                fakeContacts, selectContact, copied, copyUpiId,
+                formatCurrency, handleUpiPayment, resetForm, formatDate,
+                notifications, unreadCount, showNotifs, markAsRead, markAllAsRead
+            };
+        }
+    }).mount('#app');
+</script>
+{% endblock %}

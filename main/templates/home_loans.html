@@ -1,0 +1,202 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Home Loans | Indie Bank{% endblock %}
+{% block content %}
+<style>
+    /* Premium Home Loans Internal Styles */
+    .btn-danger {
+        background: linear-gradient(135deg, #e21a22 0%, #ff4d4d 50%, #b30000 100%);
+        color: white !important;
+        border: none;
+        padding: 1.25rem 2.5rem;
+        border-radius: 12px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        box-shadow: 0 4px 15px rgba(226, 26, 34, 0.3);
+    }
+
+    .btn-danger:hover {
+        background: linear-gradient(135deg, #ff4d4d 0%, #e21a22 50%, #ff4d4d 100%);
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(226, 26, 34, 0.5);
+    }
+
+    .glass-panel {
+        border-radius: 20px;
+        transition: all 0.3s ease;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .glass-panel:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        border-color: rgba(212, 175, 55, 0.2);
+    }
+</style>
+<section style="padding: 4rem 0; background: #fff;">
+    <div class="container">
+        <div
+            style="display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; margin-bottom: 4rem;">
+            <div>
+                <span
+                    style="color: var(--color-ib-accent); font-weight: 800; text-transform: uppercase; letter-spacing: 2px; font-size: 0.85rem; display: block; margin-bottom: 1rem;">Lending
+                    Solutions</span>
+                <h1
+                    style="font-size: 3.5rem; font-weight: 900; color: var(--color-ib-blue-dark); line-height: 1.1; margin-bottom: 1.5rem;">
+                    Your Dream Home, <br>Now Within Reach.</h1>
+                <p style="font-size: 1.2rem; color: #555; line-height: 1.6; margin-bottom: 2rem;">Attractive interest
+                    rates starting at 8.35% p.a. Flexible repayment options and fast-track processing for your perfect
+                    home.</p>
+
+                <div style="display: flex; gap: 2rem; margin-bottom: 3rem;">
+                    <div>
+                        <div style="font-size: 1.5rem; font-weight: 800; color: var(--color-ib-blue);">8.35%*</div>
+                        <div
+                            style="font-size: 0.75rem; color: var(--color-ib-accent); font-weight: 700; text-transform: uppercase;">
+                            Interest Rate</div>
+                    </div>
+                    <div style="border-left: 1px solid #ddd; padding-left: 2rem;">
+                        <div style="font-size: 1.5rem; font-weight: 800; color: var(--color-ib-blue);">30 Years</div>
+                        <div
+                            style="font-size: 0.75rem; color: var(--color-ib-accent); font-weight: 700; text-transform: uppercase;">
+                            Max
+                            Tenure</div>
+                    </div>
+                    <div style="border-left: 1px solid #ddd; padding-left: 2rem;">
+                        <div style="font-size: 1.5rem; font-weight: 800; color: var(--color-ib-blue);">48 Hours</div>
+                        <div
+                            style="font-size: 0.75rem; color: var(--color-ib-accent); font-weight: 700; text-transform: uppercase;">
+                            Quick
+                            Approval</div>
+                    </div>
+                </div>
+
+                <a href="{% url 'apply_loan' 'Home Loan' %}" class="btn-danger">Apply Now</a>
+            </div>
+            <div>
+                <img src="https://images.unsplash.com/photo-1568605114967-8130f3a36994?auto=format&fit=crop&w=800&q=80"
+                    alt="Beautiful Modern Home"
+                    style="width: 100%; border-radius: 24px; box-shadow: 0 30px 60px rgba(0,0,0,0.15);">
+            </div>
+        </div>
+
+        <div style="padding: 4rem; background: #f8fafc; border-radius: 30px; margin-bottom: 4rem;">
+            <h2 style="text-align: center; font-weight: 800; margin-bottom: 3rem;">Why Choose Indie Home Loans?</h2>
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 2.5rem;">
+                <div class="glass-panel" style="padding: 2rem; text-align: center; background: white;">
+                    <i class="fas fa-percent"
+                        style="font-size: 2rem; color: var(--color-ib-accent); margin-bottom: 1.5rem;"></i>
+                    <h4 style="font-weight: 800; margin-bottom: 1rem;">Minimal Processing</h4>
+                    <p style="font-size: 0.9rem; color: #666;">Fully digital documentation and streamlined verification
+                        process.</p>
+                </div>
+                <div class="glass-panel" style="padding: 2rem; text-align: center; background: white;">
+                    <i class="fas fa-hand-holding-usd"
+                        style="font-size: 2rem; color: var(--color-ib-accent); margin-bottom: 1.5rem;"></i>
+                    <h4 style="font-weight: 800; margin-bottom: 1rem;">No Hidden Costs</h4>
+                    <p style="font-size: 0.9rem; color: #666;">Absolute transparency in fees and zero pre-payment
+                        penalties.</p>
+                </div>
+                <div class="glass-panel" style="padding: 2rem; text-align: center; background: white;">
+                    <i class="fas fa-shield-heart"
+                        style="font-size: 2rem; color: var(--color-ib-accent); margin-bottom: 1.5rem;"></i>
+                    <h4 style="font-weight: 800; margin-bottom: 1rem;">Top-up Options</h4>
+                    <p style="font-size: 0.9rem; color: #666;">Easy top-up loans for renovation or emergency
+                        requirements.</p>
+                </div>
+            </div>
+        </div>
+
+        {% if user.is_authenticated and applications %}
+        <div
+            style="background: white; border-radius: 30px; padding: 4rem; box-shadow: 0 10px 40px rgba(0,0,0,0.03); border: 1px solid #f1f5f9;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2.5rem;">
+                <h2 style="font-weight: 900; color: #0f172a; margin: 0; font-size: 2rem;">Your Home Loan Tracker</h2>
+                <span
+                    style="background: #eff6ff; color: #3b82f6; padding: 0.5rem 1.25rem; border-radius: 50px; font-weight: 700; font-size: 0.85rem;">REAL-TIME
+                    SYNC</span>
+            </div>
+
+            <div style="display: grid; gap: 1.5rem;">
+                {% for app in applications %}
+                <div
+                    style="display: flex; justify-content: space-between; align-items: center; padding: 2rem; background: #fff; border: 1px solid #eef2f6; border-radius: 20px; transition: transform 0.2s ease;">
+                    <div style="display: flex; align-items: center; gap: 1.5rem;">
+                        <div
+                            style="width: 50px; height: 50px; background: #f8fafc; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--color-ib-blue);">
+                            <i class="fas fa-file-invoice-dollar" style="font-size: 1.25rem;"></i>
+                        </div>
+                        <div>
+                            <div style="font-weight: 800; color: #1e293b; font-size: 1.1rem;">₹{{
+                                app.amount|floatformat:2 }} Pending Sanction</div>
+                            <div style="color: #64748b; font-size: 0.85rem;">Requested on {{ app.applied_at|date:"d M,
+                                Y" }} | Ref: IB-HL-{{ app.id }}</div>
+                        </div>
+                    </div>
+                    <div>
+                        {% if app.status == 'PENDING' %}
+                        <div
+                            style="display: flex; align-items: center; gap: 0.5rem; background: #fffbeb; color: #d97706; padding: 0.6rem 1.25rem; border-radius: 12px; font-weight: 700; font-size: 0.85rem;">
+                            <span class="pulse"
+                                style="width: 8px; height: 8px; border-radius: 50%; background: #d97706;"></span>
+                            Under Review
+                        </div>
+                        {% elif app.status == 'APPROVED' %}
+                        <div
+                            style="background: #f0fdf4; color: #16a34a; padding: 0.6rem 1.25rem; border-radius: 12px; font-weight: 700; font-size: 0.85rem;">
+                            <i class="fas fa-check-circle" style="margin-right: 0.4rem;"></i> Approved
+                        </div>
+                        {% else %}
+                        <div
+                            style="background: #fef2f2; color: #dc2626; padding: 0.6rem 1.25rem; border-radius: 12px; font-weight: 700; font-size: 0.85rem;">
+                            <i class="fas fa-times-circle" style="margin-right: 0.4rem;"></i> Unsuccessful
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            {% if applications.0.status == 'PENDING' %}
+            <div
+                style="margin-top: 2rem; padding: 1.5rem; background: #eff6ff; border-radius: 16px; color: #1e40af; font-size: 0.9rem; display: flex; align-items: center; gap: 1rem;">
+                <i class="fas fa-info-circle"></i>
+                <span>Our credit team is currently verifying your income documents. Expect an update within 24
+                    hours.</span>
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<style>
+    @keyframes pulse {
+        0% {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        50% {
+            transform: scale(1.5);
+            opacity: 0.5;
+        }
+
+        100% {
+            transform: scale(1);
+            opacity: 1;
+        }
+    }
+
+    .pulse {
+        animation: pulse 2s infinite;
+    }
+</style>
+{% endblock %}

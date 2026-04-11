@@ -1,0 +1,528 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}SARA - AI Chat Assistant | Indie Bank{% endblock %}
+{% block content %}
+<section style="padding: 0; background: #f7fafc; min-height: 90vh; display: flex; flex-direction: column;">
+    <div class="container" style="flex: 1; display: flex; flex-direction: column; padding: 2rem 0;">
+        <div class="glass-panel"
+            style="flex: 1; background: white; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); display: flex; flex-direction: column; overflow: hidden;">
+            
+            <div
+                style="padding: 1.5rem 2rem; background: var(--color-ib-blue-dark); color: white; display: flex; align-items: center; justify-content: space-between;">
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                    
+                    <div id="sara-avatar-header"
+                        style="width: 50px; height: 50px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; overflow: hidden; box-shadow: 0 0 0 3px rgba(255,200,0,0.5);">
+                        <img src="{% static 'img/sara.png' %}" alt="SARA"
+                            style="width: 100%; height: 100%; object-fit: cover;">
+                    </div>
+                    <div>
+                        <h3 style="font-weight: 800; font-size: 1.1rem; line-height: 1;">SARA AI Assistant</h3>
+                        <span
+                            style="font-size: 0.75rem; color: rgba(255,255,255,0.7); display: flex; align-items: center; gap: 4px;">
+                            <span style="width: 8px; height: 8px; background: #48bb78; border-radius: 50%;"></span>
+                            Always Online
+                        </span>
+                    </div>
+                </div>
+                <div style="position: relative;">
+                    <button id="chat-menu-btn" title="More options"
+                        style="background: none; border: none; color: white; font-size: 1.2rem; cursor: pointer; padding: 0.5rem; border-radius: 8px; transition: background 0.2s;"
+                        onmouseover="this.style.background='rgba(255,255,255,0.1)'"
+                        onmouseout="this.style.background='none'">
+                        <i class="fas fa-ellipsis-v"></i>
+                    </button>
+                    
+                    <div id="chat-menu"
+                        style="display: none; position: absolute; right: 0; top: calc(100% + 8px); background: white; border-radius: 14px; box-shadow: 0 10px 40px rgba(0,0,0,0.15); min-width: 200px; overflow: hidden; z-index: 100; border: 1px solid #e2e8f0;">
+                        <button onclick="clearChat()" class="chat-menu-item">
+                            <i class="fas fa-trash-alt" style="color: #e53e3e;"></i> Clear Chat
+                        </button>
+                        <button onclick="toggleSound()" id="sound-toggle-btn" class="chat-menu-item">
+                            <i class="fas fa-volume-up" style="color: var(--color-ib-blue);"></i> <span
+                                id="sound-label">Mute Sounds</span>
+                        </button>
+                        <button onclick="toggleLanguage()" id="lang-toggle-btn" class="chat-menu-item">
+                            <i class="fas fa-language" style="color: #48bb78;"></i> <span id="lang-label">Switch to
+                                Hindi</span>
+                        </button>
+                        <button onclick="copyConversation()" class="chat-menu-item">
+                            <i class="fas fa-copy" style="color: #718096;"></i> Copy Conversation
+                        </button>
+                        <div style="height: 1px; background: #f1f5f9; margin: 0.25rem 0;"></div>
+                        <a href="{% url 'dashboard' %}" class="chat-menu-item"
+                            style="text-decoration: none; color: inherit;">
+                            <i class="fas fa-th-large" style="color: var(--color-ib-blue);"></i> Go to Dashboard
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div id="chat-messages"
+                style="flex: 1; padding: 2rem; overflow-y: auto; display: flex; flex-direction: column; gap: 1.5rem; max-height: 60vh;">
+                
+                <div style="display: flex; gap: 1rem; max-width: 80%;">
+                    <div
+                        style="width: 36px; height: 36px; border-radius: 50%; overflow: hidden; flex-shrink: 0; box-shadow: 0 0 0 2px rgba(255,204,0,0.3);">
+                        <img src="{% static 'img/sara.png' %}" alt="SARA"
+                            style="width: 100%; height: 100%; object-fit: cover;">
+                    </div>
+                    <div
+                        style="background: #edf2f7; padding: 1rem 1.25rem; border-radius: 0 16px 16px 16px; color: #2d3748; font-size: 0.95rem; line-height: 1.5;">
+                        Hello! I'M SARA AI. I can help you with your account, transfers, or general banking questions.
+                        How can I assist you today?
+                    </div>
+                </div>
+
+                <div style="margin-left: 3.5rem; margin-right: 2rem; margin-top: -0.5rem; margin-bottom: 0.5rem;">
+                    <div style="display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.8rem;">
+                        <div
+                            style="width: 26px; height: 26px; border-radius: 50%; overflow: hidden; flex-shrink: 0; box-shadow: 0 0 0 2px rgba(255,204,0,0.5);">
+                            <img src="{% static 'img/sara.png' %}" alt="SARA"
+                                style="width: 100%; height: 100%; object-fit: cover;">
+                        </div>
+                        <p
+                            style="font-size: 0.7rem; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; margin: 0;">
+                            SARA Suggests</p>
+                    </div>
+                    <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; width: 100%;">
+                        <button onclick="sendQuickMessage('Check my account balance')" class="quick-chip">
+                            <i class="fas fa-wallet"></i> Balance
+                        </button>
+                        <button onclick="sendQuickMessage('How do I transfer money?')" class="quick-chip">
+                            <i class="fas fa-paper-plane"></i> Transfer
+                        </button>
+                        <button onclick="sendQuickMessage('Show my recent transactions')" class="quick-chip">
+                            <i class="fas fa-history"></i> History
+                        </button>
+                        <button onclick="sendQuickMessage('What are the home loan interest rates?')" class="quick-chip">
+                            <i class="fas fa-home"></i> Loan Rates
+                        </button>
+                        <button onclick="sendQuickMessage('Tell me about credit card benefits')" class="quick-chip">
+                            <i class="fas fa-credit-card"></i> Cards
+                        </button>
+                        <button onclick="sendQuickMessage('How do I open a new account?')" class="quick-chip">
+                            <i class="fas fa-plus-circle"></i> Open Account
+                        </button>
+                        <button onclick="sendQuickMessage('How to deposit money?')" class="quick-chip">
+                            <i class="fas fa-piggy-bank"></i> Deposit
+                        </button>
+                        <button onclick="sendQuickMessage('What is the ROI on fixed deposits?')" class="quick-chip">
+                            <i class="fas fa-percentage"></i> ROI
+                        </button>
+                        <button onclick="sendQuickMessage('How is my account secured?')" class="quick-chip">
+                            <i class="fas fa-user-shield"></i> Security
+                        </button>
+                        <button onclick="sendQuickMessage('How do I contact customer support?')" class="quick-chip">
+                            <i class="fas fa-headset"></i> Support
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="typing-indicator" style="padding: 0 2rem 1rem 5rem; display: none;">
+                <div style="display: flex; gap: 4px;">
+                    <div
+                        style="width: 6px; height: 6px; background: #cbd5e0; border-radius: 50%; animation: bounce 1s infinite 0.1s;">
+                    </div>
+                    <div
+                        style="width: 6px; height: 6px; background: #cbd5e0; border-radius: 50%; animation: bounce 1s infinite 0.2s;">
+                    </div>
+                    <div
+                        style="width: 6px; height: 6px; background: #cbd5e0; border-radius: 50%; animation: bounce 1s infinite 0.3s;">
+                    </div>
+                </div>
+            </div>
+
+            <div style="padding: 1.5rem 2rem; border-top: 1px solid #edf2f7; background: white;">
+                <div id="voice-status"
+                    style="display:none; font-size: 0.8rem; font-weight: 700; color: #e53e3e; text-align: center; margin-bottom: 0.6rem; animation: pulse-text 1s infinite;">
+                    <i class="fas fa-circle" style="font-size: 0.5rem; margin-right: 4px;"></i> Listening...
+                </div>
+                <div style="display: flex; gap: 0.75rem; align-items: center;">
+                    <div style="flex: 1; position: relative;">
+                        <input type="text" id="chat-input" placeholder="Type or speak your message..."
+                            style="width: 100%; padding: 1rem 1.5rem; border-radius: 30px; border: 1px solid #e2e8f0; outline: none; font-size: 1rem; transition: border-color 0.3s;">
+                    </div>
+                    <button id="mic-btn" title="Voice input"
+                        style="width: 50px; height: 50px; background: #edf2f7; color: #718096; border: none; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; flex-shrink: 0;">
+                        <i class="fas fa-microphone"></i>
+                    </button>
+                    <button id="send-btn"
+                        style="width: 50px; height: 50px; background: var(--color-ib-blue); color: white; border: none; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.2s; box-shadow: 0 4px 10px rgba(49, 130, 206, 0.3); flex-shrink: 0;">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    @keyframes bounce {
+
+        0%,
+        100% {
+            transform: translateY(0);
+        }
+
+        50% {
+            transform: translateY(-5px);
+        }
+    }
+
+    #chat-input:focus {
+        border-color: var(--color-ib-blue);
+    }
+
+    #send-btn:hover {
+        transform: scale(1.05);
+    }
+
+    #send-btn:active {
+        transform: scale(0.95);
+    }
+
+    .quick-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        background: white;
+        border: 1.5px solid var(--color-ib-blue);
+        color: var(--color-ib-blue);
+        padding: 0.45rem 1rem;
+        border-radius: 20px;
+        font-size: 0.82rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-family: inherit;
+        white-space: nowrap;
+    }
+
+    .quick-chip:hover {
+        background: var(--color-ib-blue);
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 77, 128, 0.25);
+    }
+
+    .quick-chip:active {
+        transform: translateY(0);
+    }
+
+    .quick-chip i {
+        font-size: 0.75rem;
+    }
+
+    #mic-btn:hover {
+        background: #fed7d7;
+        color: #c53030;
+    }
+
+    #mic-btn.listening {
+        background: #e53e3e;
+        color: white;
+        animation: mic-pulse 1.2s infinite;
+        box-shadow: 0 0 0 0 rgba(229, 62, 62, 0.6);
+    }
+
+    @keyframes mic-pulse {
+        0% {
+            box-shadow: 0 0 0 0 rgba(229, 62, 62, 0.6);
+        }
+
+        70% {
+            box-shadow: 0 0 0 12px rgba(229, 62, 62, 0);
+        }
+
+        100% {
+            box-shadow: 0 0 0 0 rgba(229, 62, 62, 0);
+        }
+    }
+
+    @keyframes pulse-text {
+
+        0%,
+        100% {
+            opacity: 1;
+        }
+
+        50% {
+            opacity: 0.4;
+        }
+    }
+
+    .chat-menu-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        width: 100%;
+        padding: 0.85rem 1.25rem;
+        background: none;
+        border: none;
+        text-align: left;
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: #2d3748;
+        cursor: pointer;
+        transition: background 0.15s;
+        font-family: inherit;
+    }
+
+    .chat-menu-item:hover {
+        background: #f7fafc;
+    }
+</style>
+
+<script>
+    let currentLang = 'en';
+    const chatMessages = document.getElementById('chat-messages');
+    const chatInput = document.getElementById('chat-input');
+    const sendBtn = document.getElementById('send-btn');
+    const typingIndicator = document.getElementById('typing-indicator');
+
+    const SARA_IMG_PATH = "{% static 'img/sara.png' %}";
+    const SARA_IMAGE_HTML = `<img src="${SARA_IMG_PATH}" alt="SARA" style="width: 100%; height: 100%; object-fit: cover;">`;
+    const USER_IMG_PATH = "{% static 'img/user.jpeg' %}";
+    const USER_IMAGE_HTML = `<img src="${USER_IMG_PATH}" alt="User" style="width: 100%; height: 100%; object-fit: cover;">`;
+
+    function speakText(text) {
+        if (!soundEnabled || !window.speechSynthesis) return;
+        window.speechSynthesis.cancel(); // stop any previous speech
+        const utter = new SpeechSynthesisUtterance(text);
+        utter.lang = currentLang === 'hi' ? 'hi-IN' : 'en-IN';
+        utter.rate = 1.0;
+        utter.pitch = 1.15;
+        // Prefer a female voice if available
+        const voices = window.speechSynthesis.getVoices();
+        const preferredLang = currentLang === 'hi' ? 'hi' : 'en';
+        const femaleVoice = voices.find(v =>
+            v.lang.startsWith(preferredLang) && /female|woman|girl|zira|samantha|victoria/i.test(v.name)
+        ) || voices.find(v => v.lang.startsWith(preferredLang));
+        if (femaleVoice) utter.voice = femaleVoice;
+        window.speechSynthesis.speak(utter);
+    }
+
+    // Voices may load asynchronously — warm them up
+    if (window.speechSynthesis) {
+        window.speechSynthesis.getVoices();
+        window.speechSynthesis.addEventListener('voiceschanged', () => window.speechSynthesis.getVoices());
+    }
+
+    function addMessage(text, isUser = false) {
+        const messageDiv = document.createElement('div');
+        messageDiv.style.display = 'flex';
+        messageDiv.style.gap = '1rem';
+        messageDiv.style.maxWidth = '80%';
+        if (isUser) {
+            messageDiv.style.alignSelf = 'flex-end';
+            messageDiv.style.flexDirection = 'row-reverse';
+        }
+
+        const iconDiv = document.createElement('div');
+        iconDiv.style.width = '36px';
+        iconDiv.style.height = '36px';
+        iconDiv.style.borderRadius = '50%';
+        iconDiv.style.flexShrink = '0';
+        iconDiv.style.overflow = 'hidden';
+
+        if (isUser) {
+            iconDiv.innerHTML = USER_IMAGE_HTML;
+            iconDiv.style.boxShadow = '0 0 0 2px rgba(49,130,206,0.3)';
+        } else {
+            iconDiv.innerHTML = SARA_IMAGE_HTML;
+            iconDiv.style.boxShadow = '0 0 0 2px rgba(255,204,0,0.3)';
+            // Speak SARA's reply
+            speakText(text);
+        }
+
+        const contentDiv = document.createElement('div');
+        contentDiv.style.padding = '1rem 1.25rem';
+        contentDiv.style.fontSize = '0.95rem';
+        contentDiv.style.lineHeight = '1.5';
+        contentDiv.innerText = text;
+
+        if (isUser) {
+            contentDiv.style.background = 'var(--color-ib-blue)';
+            contentDiv.style.color = 'white';
+            contentDiv.style.borderRadius = '16px 0 16px 16px';
+        } else {
+            contentDiv.style.background = '#edf2f7';
+            contentDiv.style.color = '#2d3748';
+            contentDiv.style.borderRadius = '0 16px 16px 16px';
+        }
+
+        messageDiv.appendChild(iconDiv);
+        messageDiv.appendChild(contentDiv);
+        chatMessages.appendChild(messageDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    async function handleSend() {
+        const message = chatInput.value.trim();
+        if (!message) return;
+
+        addMessage(message, true);
+        chatInput.value = '';
+
+        // Show typing indicator
+        typingIndicator.style.display = 'block';
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+
+        try {
+            const response = await axios.post('{% url "chatbot_response" %}', {
+                message: message,
+                lang: currentLang
+            });
+
+            // Artificial delay for realism
+            setTimeout(() => {
+                typingIndicator.style.display = 'none';
+                addMessage(response.data.response);
+            }, 800);
+
+        } catch (error) {
+            console.error('Error:', error);
+            typingIndicator.style.display = 'none';
+            addMessage("Sorry, I'm having trouble connecting right now. Please try again later.");
+        }
+    }
+
+    function sendQuickMessage(text) {
+        chatInput.value = text;
+        handleSend();
+    }
+
+    sendBtn.addEventListener('click', handleSend);
+    chatInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') handleSend();
+    });
+
+    // ── Header Dropdown Menu ─────────────────────────────────────────
+    const chatMenuBtn = document.getElementById('chat-menu-btn');
+    const chatMenu = document.getElementById('chat-menu');
+
+    chatMenuBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isOpen = chatMenu.style.display === 'block';
+        chatMenu.style.display = isOpen ? 'none' : 'block';
+    });
+
+    document.addEventListener('click', () => {
+        chatMenu.style.display = 'none';
+    });
+
+    function clearChat() {
+        chatMenu.style.display = 'none';
+        // Remove all messages except the first 2 (welcome + quick actions)
+        const msgs = chatMessages.children;
+        while (msgs.length > 2) chatMessages.removeChild(msgs[msgs.length - 1]);
+        addMessage("Chat cleared! How can I help you?");
+    }
+
+    let soundEnabled = true;
+    function toggleSound() {
+        soundEnabled = !soundEnabled;
+        if (!soundEnabled) window.speechSynthesis && window.speechSynthesis.cancel();
+        const label = document.getElementById('sound-label');
+        const icon = document.querySelector('#sound-toggle-btn i');
+        label.textContent = soundEnabled ? 'Mute Sounds' : 'Unmute Sounds';
+        icon.className = soundEnabled ? 'fas fa-volume-up' : 'fas fa-volume-mute';
+        chatMenu.style.display = 'none';
+    }
+
+    function toggleLanguage() {
+        currentLang = currentLang === 'en' ? 'hi' : 'en';
+        const label = document.getElementById('lang-label');
+        label.textContent = currentLang === 'en' ? 'Switch to Hindi' : 'Switch to English';
+        chatMenu.style.display = 'none';
+
+        // Greet in the new language
+        const greeting = currentLang === 'hi'
+            ? "मैंने भाषा को हिंदी में बदल दिया है। मैं आपकी कैसे मदद कर सकती हूँ?"
+            : "I've switched the language to English. How can I help you?";
+        addMessage(greeting);
+    }
+
+    function copyConversation() {
+        chatMenu.style.display = 'none';
+        const msgs = Array.from(chatMessages.querySelectorAll('div > div:last-child'));
+        const text = msgs.map(m => m.innerText.trim()).filter(Boolean).join('\n---\n');
+        navigator.clipboard.writeText(text).then(() => {
+            addMessage("✅ Conversation copied to clipboard!");
+        }).catch(() => {
+            addMessage("Could not copy — please try manually selecting the text.");
+        });
+    }
+
+    // ── Voice Control ────────────────────────────────────────────────
+    const micBtn = document.getElementById('mic-btn');
+    const voiceStatus = document.getElementById('voice-status');
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    if (!SpeechRecognition) {
+        // Hide mic button if browser doesn't support speech recognition
+        micBtn.style.display = 'none';
+    } else {
+        const recognition = new SpeechRecognition();
+        recognition.continuous = false;
+        recognition.interimResults = true;
+        recognition.lang = 'en-IN';
+
+        let isListening = false;
+
+        function startListening() {
+            isListening = true;
+            micBtn.classList.add('listening');
+            micBtn.querySelector('i').className = 'fas fa-stop';
+            voiceStatus.style.display = 'block';
+            chatInput.placeholder = 'Listening...';
+            recognition.start();
+        }
+
+        function stopListening() {
+            isListening = false;
+            micBtn.classList.remove('listening');
+            micBtn.querySelector('i').className = 'fas fa-microphone';
+            voiceStatus.style.display = 'none';
+            chatInput.placeholder = 'Type or speak your message...';
+            try { recognition.stop(); } catch (e) { }
+        }
+
+        micBtn.addEventListener('click', () => {
+            if (isListening) {
+                stopListening();
+            } else {
+                startListening();
+            }
+        });
+
+        recognition.addEventListener('result', (e) => {
+            const transcript = Array.from(e.results)
+                .map(r => r[0].transcript)
+                .join('');
+            chatInput.value = transcript;
+
+            // If final result, auto-send
+            if (e.results[e.results.length - 1].isFinal) {
+                stopListening();
+                setTimeout(() => handleSend(), 300);
+            }
+        });
+
+        recognition.addEventListener('error', (e) => {
+            stopListening();
+            let msg = "Voice input error. Please try again.";
+            if (e.error === 'not-allowed') msg = "Microphone access denied. Please allow microphone permissions.";
+            else if (e.error === 'no-speech') msg = "No speech detected. Please try again.";
+            addMessage(msg);
+        });
+
+        recognition.addEventListener('end', () => {
+            if (isListening) stopListening();
+        });
+    }
+</script>
+{% endblock %}

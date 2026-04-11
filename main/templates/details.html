@@ -1,0 +1,270 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Loan & Credit Card Details | Indie Bank{% endblock %}
+{% block content %}
+
+<div
+    style="position: relative; width: 100%; border-radius: 0rem; overflow: hidden; margin-bottom: 2.5rem; min-height: 350px; display: flex; align-items: center; box-shadow: 0 20px 60px rgba(0,0,0,0.2); background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 40%, #1e293b 100%);">
+    <div
+        style="position: absolute; width: 350px; height: 350px; border-radius: 50%; background: rgba(255,204,0,0.06); top: -100px; right: -80px;">
+    </div>
+    <div style="position: relative; z-index: 2; padding: 5rem; color: white; width: 100%; max-width: 1200px; margin: 0 auto;">
+        <span style="color: #fbeb3c; font-weight: 800; text-transform: uppercase; letter-spacing: 3px; font-size: 0.8rem; display: block; margin-bottom: 1rem;">Active Products</span>
+        <h2 style="color: white; font-size: 3rem; font-weight: 950; margin: 0 0 1rem 0; line-height: 1.1;">
+            Loan & Credit <br>Card Portfolio
+        </h2>
+        <p style="opacity: 0.8; font-size: 1.1rem; font-weight: 500; margin: 0; max-width: 500px;">View, manage, and download documentation for all your active financial products with Indie Bank.</p>
+    </div>
+    <i class="fas fa-file-invoice-dollar"
+        style="position: absolute; right: 5rem; top: 50%; transform: translateY(-50%); font-size: 10rem; opacity: 0.08; color: white;"></i>
+</div>
+
+<div style="text-align: center; margin-bottom: 3rem; margin-top: -1.5rem; position: relative; z-index: 10;">
+    <button onclick="window.print()" class="btn btn-primary"
+        style="padding: 1.25rem 3.5rem; font-weight: 800; border-radius: 50px; font-size: 1.1rem; display: inline-flex; align-items: center; gap: 0.75rem; box-shadow: 0 15px 35px rgba(15,23,42,0.25); cursor: pointer; border: none; background: #0f172a; color: white;">
+        <i class="fas fa-download"></i> Download Portfolio Details (PDF)
+    </button>
+</div>
+
+<div class="container" id="pdf-content" style="max-width: 1000px; margin: 0 auto 5rem auto;">
+
+    <div class="glass-panel"
+        style="padding: 4rem; border-radius: 32px; background: white; margin-bottom: 3rem; box-shadow: 0 30px 100px rgba(0,0,0,0.06); border: 1px solid rgba(0,0,0,0.02);">
+
+        <div
+            style="display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #0f172a; padding-bottom: 2rem; margin-bottom: 3rem;">
+            <div style="display: flex; align-items: center; gap: 1.5rem;">
+                <img src="{% static 'img/bank_logo.png' %}" alt="Indie Bank" style="height: 55px;">
+                <div>
+                    <div style="font-size: 1.8rem; font-weight: 950; color: #0f172a; letter-spacing: -1px;">INDIE BANK</div>
+                    <div style="font-size: 0.75rem; color: #94a3b8; letter-spacing: 3px; font-weight: 700; text-transform: uppercase;">YOUR TRUSTED PARTNER</div>
+                </div>
+            </div>
+            <div style="text-align: right; font-size: 0.85rem; color: #64748b;">
+                <div style="font-weight: 800; color: #0f172a; font-size: 0.9rem;">OFFICIAL PRODUCT PORTFOLIO</div>
+                <div>Ref: IB/PORT/{{ user.id }}/{{ now|date:"Ymd" }}</div>
+                <div>Issued: {% now "jS F, Y" %}</div>
+            </div>
+        </div>
+
+        {% if is_demo %}
+            <div style="background: #fffbeb; border: 1px solid #fef3c7; padding: 1.5rem; border-radius: 16px; margin-bottom: 3rem; display: flex; align-items: center; gap: 1.5rem;">
+                <div style="background: #f59e0b; color: white; width: 45px; height: 45px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                    <i class="fas fa-magic"></i>
+                </div>
+                <div>
+                    <h4 style="margin: 0; color: #92400e; font-weight: 800;">Demo Portfolio Preview</h4>
+                    <p style="margin: 0; color: #b45309; font-size: 0.85rem;">You are viewing a sample portfolio. Login to see your actual approved loans and credit cards.</p>
+                </div>
+                <a href="{% url 'login' %}" style="margin-left: auto; background: #0f172a; color: white; padding: 0.6rem 1.2rem; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 0.85rem;">Login</a>
+            </div>
+        {% endif %}
+
+        {% if not approved_loans and not credit_cards and not is_demo %}
+            <div style="text-align: center; padding: 4rem; background: #f8fafc; border-radius: 20px; border: 2px dashed #e2e8f0;">
+                <i class="fas fa-file-invoice" style="font-size: 3rem; color: #94a3b8; margin-bottom: 1.5rem;"></i>
+                <h3 style="font-weight: 800; color: #1e293b; margin-bottom: 0.5rem;">No Active Products</h3>
+                <p style="color: #64748b;">You don't have any active loans or credit cards yet.</p>
+                <a href="{% url 'products' %}" class="btn btn-primary" style="margin-top: 1.5rem; display: inline-block; padding: 0.75rem 2rem; border-radius: 10px;">Explore Products</a>
+            </div>
+        {% else %}
+
+            <div style="margin-bottom: 4rem;">
+                <h2 style="font-weight: 900; font-size: 2.25rem; color: #0f172a; margin-bottom: 1rem; display: flex; align-items: center; gap: 1rem;">
+                    <i class="fas fa-landmark" style="color: #3b82f6;"></i>
+                    Approved Loan Products
+                </h2>
+                <div style="width: 60px; height: 4px; background: #3b82f6; border-radius: 2px; margin-bottom: 2.5rem;"></div>
+
+                {% for loan in approved_loans %}
+                    <div style="background: white; border-radius: 24px; padding: 0; margin-bottom: 3rem; display: grid; grid-template-columns: 350px 1fr; overflow: hidden; border: 1px solid #f1f5f9; box-shadow: 0 10px 30px rgba(0,0,0,0.03);">
+                        <div style="position: relative;">
+                            {% if loan.loan_type == 'HOME' %}
+                                <img src="{% static 'img/home_loan_detail.png' %}" style="width: 100%; height: 100%; object-fit: cover;">
+                            {% elif loan.loan_type == 'PERSONAL' %}
+                                <img src="{% static 'img/personal_loan_detail.png' %}" style="width: 100%; height: 100%; object-fit: cover;">
+                            {% else %}
+                                <img src="{% static 'img/vehicle_loan_detail.png' %}" style="width: 100%; height: 100%; object-fit: cover;">
+                            {% endif %}
+                            <div style="position: absolute; inset: 0; background: linear-gradient(to right, rgba(0,0,0,0.4), transparent); padding: 2rem; display: flex; flex-direction: column; justify-content: flex-end; color: white;">
+                                <div style="font-weight: 900; font-size: 1.5rem; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">{{ loan.get_loan_type_display }}</div>
+                                <div style="font-size: 0.9rem; opacity: 0.9; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">Ref: IB-LN-{{ loan.id|add:1000 }}</div>
+                            </div>
+                        </div>
+                        <div style="padding: 2.5rem;">
+                            <table style="width: 100%; border-collapse: collapse; font-size: 0.95rem;">
+                                <tr style="border-bottom: 1px solid #f8fafc;">
+                                    <td style="padding: 0.75rem 0; color: #64748b; font-weight: 600;">Sanctioned Amount</td>
+                                    <td style="padding: 0.75rem 0; text-align: right; color: #0f172a; font-weight: 800; font-size: 1.1rem;">₹ {{ loan.amount|floatformat:2 }}</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid #f8fafc;">
+                                    <td style="padding: 0.75rem 0; color: #64748b; font-weight: 600;">Interest Rate</td>
+                                    <td style="padding: 0.75rem 0; text-align: right; color: #0f172a; font-weight: 700;">
+                                        {% if loan.loan_type == 'HOME' %}8.35% p.a.{% elif loan.loan_type == 'PERSONAL' %}10.50% p.a.{% else %}9.25% p.a.{% endif %}
+                                    </td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid #f8fafc;">
+                                    <td style="padding: 0.75rem 0; color: #64748b; font-weight: 600;">Tenure</td>
+                                    <td style="padding: 0.75rem 0; text-align: right; color: #0f172a; font-weight: 700;">{{ loan.tenure_years }} Years</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid #f8fafc;">
+                                    <td style="padding: 0.75rem 0; color: #64748b; font-weight: 600;">Status</td>
+                                    <td style="padding: 0.75rem 0; text-align: right;"><span style="color: #16a34a; font-weight: 800; background: #f0fdf4; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.8rem;">Active</span></td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 1.5rem 0 0.75rem 0; color: #64748b; font-weight: 600;">Account Linked</td>
+                                    <td style="padding: 1.5rem 0 0.75rem 0; text-align: right; color: #3b82f6; font-weight: 800;">SAVINGS-{{ user.id|add:1000 }}</td>
+                                </tr>
+                            </table>
+                            {% if loan.admin_remarks %}
+                                <div style="margin-top: 1.5rem; padding: 1rem; background: #fffbeb; border-radius: 12px; font-size: 0.85rem; color: #b45309; border: 1px solid #fef3c7;">
+                                    <strong>Bank Remarks:</strong> {{ loan.admin_remarks }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% empty %}
+                    <div style="text-align: center; padding: 3rem; background: #f8fafc; border-radius: 20px; margin-bottom: 4rem;">
+                        <i class="fas fa-file-invoice" style="font-size: 2.5rem; color: #cbd5e1; margin-bottom: 1rem; display: block;"></i>
+                        <p style="color: #94a3b8; font-weight: 600;">No active loan products found.</p>
+                        <a href="{% url 'home_loans' %}" style="color: #3b82f6; font-weight: 700; text-decoration: none; font-size: 0.9rem;">Explore Loan Options &rarr;</a>
+                    </div>
+                {% endfor %}
+
+            </div>
+
+            <div style="margin-bottom: 4rem;">
+                <h2 style="font-weight: 900; font-size: 2.25rem; color: #0f172a; margin-bottom: 1rem; display: flex; align-items: center; gap: 1rem;">
+                    <i class="fas fa-credit-card" style="color: #6366f1;"></i>
+                    Active Credit Cards
+                </h2>
+                <div style="width: 60px; height: 4px; background: #6366f1; border-radius: 2px; margin-bottom: 2.5rem;"></div>
+
+                {% for card in credit_cards %}
+                    <div style="background: white; border-radius: 24px; padding: 0; margin-bottom: 3rem; display: grid; grid-template-columns: 350px 1fr; overflow: hidden; border: 1px solid #f1f5f9; box-shadow: 0 10px 30px rgba(0,0,0,0.03);">
+                        <div style="position: relative; overflow: hidden;">
+                             <img src="{% static 'img/credit_card_detail.png' %}" style="width: 100%; height: 100%; object-fit: cover;">
+                             <div style="position: absolute; inset: 0; background: linear-gradient(135deg, rgba(30,41,59,0.8), rgba(15,23,42,0.6));"></div>
+                             <div style="position: absolute; inset: 0; padding: 2rem; display: flex; flex-direction: column; justify-content: space-between; color: white;">
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <div style="font-weight: 900; font-size: 1.2rem; letter-spacing: 1px; text-transform: uppercase;">INDIE {{ card.card_type }}</div>
+                                    <i class="fas fa-microchip" style="font-size: 2rem; color: #f59e0b;"></i>
+                                </div>
+                                <div style="font-family: monospace; font-size: 1.2rem; letter-spacing: 3px;">
+                                    **** **** **** {{ card.account_number|slice:"-4:" }}
+                                </div>
+                                <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+                                    <div>
+                                        <div style="font-size: 0.6rem; opacity: 0.6; text-transform: uppercase;">Holder</div>
+                                        <div style="font-weight: 700; font-size: 0.85rem;">{{ user.get_full_name|upper|default:user.username|upper }}</div>
+                                    </div>
+                                    <i class="fab fa-cc-visa" style="font-size: 2.5rem; opacity: 0.8;"></i>
+                                </div>
+                             </div>
+                        </div>
+                        <div style="padding: 2.5rem;">
+                            <table style="width: 100%; border-collapse: collapse; font-size: 0.95rem;">
+                                <tr style="border-bottom: 1px solid #f8fafc;">
+                                    <td style="padding: 0.75rem 0; color: #64748b; font-weight: 600;">Total Limit</td>
+                                    <td style="padding: 0.75rem 0; text-align: right; color: #0f172a; font-weight: 800; font-size: 1.1rem;">₹ {{ card.credit_limit|floatformat:2 }}</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid #f8fafc;">
+                                    <td style="padding: 0.75rem 0; color: #64748b; font-weight: 600;">Available Limit</td>
+                                    <td style="padding: 0.75rem 0; text-align: right; color: #16a34a; font-weight: 700;">₹ {{ card.balance|floatformat:2 }}</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid #f8fafc;">
+                                    <td style="padding: 0.75rem 0; color: #64748b; font-weight: 600;">Interest Rate (APR)</td>
+                                    <td style="padding: 0.75rem 0; text-align: right; color: #0f172a; font-weight: 700;">41.88% p.a.</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid #f8fafc;">
+                                    <td style="padding: 0.75rem 0; color: #64748b; font-weight: 600;">Next Billing Date</td>
+                                    <td style="padding: 0.75rem 0; text-align: right; color: #0f172a; font-weight: 700;">1st of next month</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 1.5rem 0 0.75rem 0; color: #64748b; font-weight: 600;">Customer Tier</td>
+                                    <td style="padding: 1.5rem 0 0.75rem 0; text-align: right;"><span style="color: #6366f1; font-weight: 800; background: #eef2ff; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.8rem;">Priority Access</span></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                {% empty %}
+                    <div style="text-align: center; padding: 3rem; background: #f8fafc; border-radius: 20px; margin-bottom: 4rem;">
+                        <i class="fas fa-credit-card" style="font-size: 2.5rem; color: #cbd5e1; margin-bottom: 1rem; display: block;"></i>
+                        <p style="color: #94a3b8; font-weight: 600;">No active credit cards found.</p>
+                        <a href="{% url 'credit_cards' %}" style="color: #3b82f6; font-weight: 700; text-decoration: none; font-size: 0.9rem;">Browse Credit Cards &rarr;</a>
+                    </div>
+                {% endfor %}
+
+            </div>
+
+        {% endif %}
+
+        <div style="margin-top: 5rem; padding-top: 3rem; border-top: 2px dashed #e2e8f0;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 3rem;">
+                <div style="max-width: 550px;">
+                    <div
+                        style="font-weight: 900; color: #0f172a; font-size: 1rem; margin-bottom: 0.75rem;">
+                        Terms of Issuance & Disclaimer</div>
+                    <p style="font-size: 0.8rem; color: #94a3b8; line-height: 1.8;">
+                        This document provides a summary of all active credit facilities and card products held by the user with Indie Bank. 
+                        Interest rates and billing cycles are subject to revision as per internal policies and regulatory guidelines. 
+                        For detailed billing statements or loan amortization schedules, users are requested to visit the 'Statements' 
+                        section in the digital banking portal. Any discrepancies should be reported to <strong>support@indiebank.com</strong>.
+                    </p>
+                </div>
+                <div style="text-align: right; min-width: 250px;">
+                    <div style="font-size: 0.85rem; color: #94a3b8; margin-bottom: 1rem;">Digitally Verified By (Retail Lending)</div>
+                    <div
+                        style="font-style: italic; color: #0f172a; font-weight: 900; font-size: 1.5rem; margin-bottom: 0.25rem; font-family: 'Times New Roman', serif;">
+                        V.K. Menon</div>
+                    <div style="font-size: 0.8rem; color: #1e293b; font-weight: 700;">Executive Director, Indie Bank</div>
+                    <div style="font-size: 0.75rem; color: #94a3b8;">Corporate ID: ED/RETAIL/7742</div>
+                </div>
+            </div>
+            <div style="text-align: center; padding: 2rem; background: #f8fafc; border-radius: 20px;">
+                <div style="font-size: 0.75rem; color: #94a3b8; line-height: 1.8;">
+                    <strong>Indie Bank Limited</strong> | Registered Head Office: 66 Rajaji Salai, Chennai – 600001, India<br>
+                    CIN: L65110TN2026PLC001234 | 24x7 Universal Support: 1800 123 4567 | compliance@indiebank.com
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<style>
+    @media print {
+        #main-header,
+        #main-footer,
+        .chatbot-btn,
+        .btn,
+        button {
+            display: none !important;
+        }
+
+        body {
+            background: white !important;
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+
+        #pdf-content {
+            box-shadow: none !important;
+            max-width: 100% !important;
+            margin: 0 !important;
+        }
+
+        .glass-panel {
+            box-shadow: none !important;
+            border: 1px solid #e2e8f0 !important;
+            padding: 2rem !important;
+        }
+        
+        .hero-section {
+            display: none !important;
+        }
+    }
+</style>
+
+{% endblock %}

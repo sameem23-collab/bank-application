@@ -1,0 +1,76 @@
+<style>
+    .premium-ticker-wrapper {
+        background: linear-gradient(90deg, #000a14 0%, #001a33 50%, #000a14 100%);
+        border-top: 1px solid rgba(255, 204, 0, 0.2);
+        border-bottom: 1px solid rgba(255, 204, 0, 0.2);
+        padding: 14px 0;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
+        position: relative;
+        z-index: 10;
+        overflow: hidden;
+    }
+
+    /* Edge fading effects for a smoother scrolling entry/exit */
+    .premium-ticker-wrapper::before,
+    .premium-ticker-wrapper::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        width: 150px;
+        height: 100%;
+        z-index: 2;
+        pointer-events: none;
+    }
+
+    .premium-ticker-wrapper::before {
+        left: 0;
+        background: linear-gradient(to right, #000a14 0%, transparent 100%);
+    }
+
+    .premium-ticker-wrapper::after {
+        right: 0;
+        background: linear-gradient(to left, #000a14 0%, transparent 100%);
+    }
+
+    .premium-ticker-text {
+        font-size: 0.85rem;
+        font-weight: 600;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        color: #e2e8f0;
+        display: flex;
+        align-items: center;
+        width: 100%;
+    }
+
+    .ticker-gold {
+        color: var(--premium-gold);
+        text-shadow: 0 0 10px rgba(255, 204, 0, 0.3);
+        font-weight: 800;
+    }
+
+    .ticker-separator {
+        color: rgba(255, 204, 0, 0.4);
+        margin: 0 40px;
+        font-size: 0.7em;
+        vertical-align: middle;
+    }
+</style>
+
+<div class="premium-ticker-wrapper">
+    <marquee class="premium-ticker-text" behavior="scroll" direction="left" scrollamount="7">
+        <span class="ticker-gold">👑 WELCOME TO INDIE BANK</span>
+        <span class="ticker-separator">✦</span>
+        ✨ EXPERIENCE BESPOKE BANKING DESIGNED FOR THE MODERN ERA
+        <span class="ticker-separator">✦</span>
+        💎 ENJOY OUR PREMIUM SERVICES WITH A STARTING INTEREST OF <span class="ticker-gold">8.35%*</span>
+        <span class="ticker-separator">✦</span>
+        ⚡ ZERO-LATENCY TRANSACTION PROCESSING
+        <span class="ticker-separator">✦</span>
+        🌐 GLOBAL CONCIERGE ACCESS
+        <span class="ticker-separator">✦</span>
+        🛡️ 24/7 DEDICATED SUPPORT
+        <span class="ticker-separator">✦</span>
+        🏆 YOUR TRUSTED FINANCIAL PARTNER
+    </marquee>
+</div>

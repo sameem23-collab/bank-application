@@ -1,0 +1,280 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Loans | Indie Bank{% endblock %}
+{% block content %}
+<style>
+    /* Premium Loans Internal Styles */
+    .premium-card-container {
+        perspective: 1000px;
+        cursor: pointer;
+        margin-bottom: 2rem;
+    }
+
+    .premium-card-body {
+        height: 220px;
+        border-radius: 20px;
+        position: relative;
+        overflow: hidden;
+        padding: 2.5rem;
+        color: white !important;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+        transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.6s ease;
+        backdrop-filter: blur(5px);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .premium-card-container:hover .premium-card-body {
+        transform: rotateY(8deg) rotateX(8deg) translateY(-8px);
+        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+    }
+
+    .card-shine {
+        position: absolute;
+        top: 0;
+        left: -150%;
+        width: 60%;
+        height: 100%;
+        background: linear-gradient(to right,
+                rgba(255, 255, 255, 0) 0%,
+                rgba(255, 255, 255, 0.3) 50%,
+                rgba(255, 255, 255, 0) 100%);
+        transform: skewX(-25deg);
+        z-index: 1;
+    }
+
+    .premium-card-container:hover .card-shine {
+        left: 200%;
+        transition: 0.9s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .loan-variant-home {
+        background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #172554 100%);
+    }
+
+    .loan-variant-personal {
+        background: linear-gradient(135deg, #4c1d95 0%, #8b5cf6 50%, #2e1065 100%);
+    }
+
+    .loan-variant-vehicle {
+        background: linear-gradient(135deg, #064e3b 0%, #10b981 50%, #022c22 100%);
+    }
+
+    .card-logo-overlay {
+        font-size: 1.5rem;
+        font-weight: 900;
+        letter-spacing: 2px;
+        opacity: 0.9;
+        color: white !important;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    /* Premium Golden Button */
+    .btn-gold {
+        background: linear-gradient(135deg, #d4af37 0%, #f9e27d 50%, #b8860b 100%);
+        color: #1a202c !important;
+        border: none;
+        padding: 1rem 2rem;
+        border-radius: 12px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+    }
+
+    .btn-gold:hover {
+        background: linear-gradient(135deg, #f9e27d 0%, #d4af37 50%, #f9e27d 100%);
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(212, 175, 55, 0.5);
+        color: #1a202c !important;
+    }
+</style>
+<section
+    style="padding: 0 0 0rem 0; background: transparent; background: url('{% static 'img/loans.png' %}') center/cover no-repeat;">
+    <div class="container">
+        <div style="text-align: center; margin-bottom: 5rem; padding-top: 4rem;">
+            <h1 style="font-size: 3.5rem; font-weight: 900; color: whitesmoke; margin-bottom: 1rem;">
+                Premium Loan Solutions</h1>
+            <p style="font-size: 1.2rem; color: white;">Achieve your dreams with our world-class financing and lowest
+                market rates.
+            </p>
+        </div>
+
+        <div style="padding: 4rem; background: #f8fafc; border-radius: 30px; margin-bottom: 4rem;">
+            <h2 style="text-align: center; font-weight: 800; margin-bottom: 3rem;">Indie Advantages</h2>
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 2.5rem;">
+                <div class="glass-panel" style="padding: 2rem; text-align: center; background: white;">
+                    <i class="fas fa-percent" style="font-size: 2rem; color: #1e293b; margin-bottom: 1.5rem;"></i>
+                    <h4 style="font-weight: 800; margin-bottom: 1rem;">Lowest Interest Rates</h4>
+                    <p style="font-size: 0.9rem; color: #666;">Experience highly competitive ROIs tailored to your
+                        credit profile.</p>
+                </div>
+                <div class="glass-panel" style="padding: 2rem; text-align: center; background: white;">
+                    <i class="fas fa-bolt" style="font-size: 2rem; color: #d69e2e; margin-bottom: 1.5rem;"></i>
+                    <h4 style="font-weight: 800; margin-bottom: 1rem;">Instant Disbursement</h4>
+                    <p style="font-size: 0.9rem; color: #666;">Get funds directly into your Indie Account within 24
+                        hours of approval.</p>
+                </div>
+                <div class="glass-panel" style="padding: 2rem; text-align: center; background: white;">
+                    <i class="fas fa-file-contract" style="font-size: 2rem; color: #16a34a; margin-bottom: 1.5rem;"></i>
+                    <h4 style="font-weight: 800; margin-bottom: 1rem;">Zero Hidden Charges</h4>
+                    <p style="font-size: 0.9rem; color: #666;">Completely transparent processing fees with zero
+                        surprises.</p>
+                </div>
+            </div>
+        </div>
+
+        {% if user.is_authenticated and applications %}
+        <div
+            style="background: white; border-radius: 30px; padding: 4rem; box-shadow: 0 10px 40px rgba(0,0,0,0.03); border: 1px solid #f1f5f9; margin-bottom: 4rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2.5rem;">
+                <h2 style="font-weight: 900; color: #0f172a; margin: 0; font-size: 2rem;">Your Loan Application Tracker
+                </h2>
+                <span
+                    style="background: #fffbeb; color: #d97706; padding: 0.5rem 1.25rem; border-radius: 50px; font-weight: 700; font-size: 0.85rem;">LIVE
+                    TRACKING</span>
+            </div>
+
+            <div style="display: grid; gap: 1.5rem;">
+                {% for app in applications %}
+                <div
+                    style="display: flex; justify-content: space-between; align-items: center; padding: 2rem; background: #fff; border: 1px solid #eef2f6; border-radius: 20px; transition: transform 0.2s ease;">
+                    <div style="display: flex; align-items: center; gap: 1.5rem;">
+                        <div
+                            style="width: 50px; height: 50px; background: #f8fafc; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--color-ib-blue-dark);">
+                            <i class="fas {% if 'Home' in app.get_loan_type_display %}fa-house-chimney-window{% elif 'Personal' in app.get_loan_type_display %}fa-user-tie{% else %}fa-car-side{% endif %}"
+                                style="font-size: 1.25rem;"></i>
+                        </div>
+                        <div>
+                            <div style="font-weight: 800; color: #1e293b; font-size: 1.1rem;">Indie {{
+                                app.get_loan_type_display }}</div>
+                            <div style="color: #64748b; font-size: 0.85rem;">Applied on {{ app.applied_at|date:"d M, Y"
+                                }} | Principal: ₹{{ app.amount }}</div>
+                        </div>
+                    </div>
+                    <div>
+                        {% if app.status == 'PENDING' %}
+                        <div
+                            style="display: flex; align-items: center; gap: 0.5rem; background: #fef3c7; color: #92400e; padding: 0.6rem 1.25rem; border-radius: 12px; font-weight: 700; font-size: 0.85rem;">
+                            <span class="pulse"
+                                style="width: 8px; height: 8px; border-radius: 50%; background: #92400e;"></span>
+                            Verification Stage
+                        </div>
+                        {% elif app.status == 'APPROVED' %}
+                        <div
+                            style="background: #f0fdf4; color: #16a34a; padding: 0.6rem 1.25rem; border-radius: 12px; font-weight: 700; font-size: 0.85rem;">
+                            <i class="fas fa-check-circle" style="margin-right: 0.4rem;"></i> Sanction Approved
+                        </div>
+                        {% else %}
+                        <div
+                            style="background: #fef2f2; color: #dc2626; padding: 0.6rem 1.25rem; border-radius: 12px; font-weight: 700; font-size: 0.85rem;">
+                            <i class="fas fa-times-circle" style="margin-right: 0.4rem;"></i> Application Declined
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            {% if applications.0.status == 'PENDING' %}
+            <div
+                style="margin-top: 2rem; padding: 1.5rem; background: #fffbeb; border-radius: 16px; color: #854d0e; font-size: 0.9rem; display: flex; align-items: center; gap: 1rem;">
+                <i class="fas fa-shield-check"></i>
+                <span>Our credit risk team is analyzing your securely submitted data. Your sanction letter will be
+                    generated post-verification.</span>
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 2.5rem; margin-bottom: 4rem;">
+
+            <div class="premium-card-container">
+                <div class="premium-card-body loan-variant-home">
+                    <div class="card-shine"></div>
+                    <div class="card-logo-overlay"><i class="fas fa-house-chimney-window"></i> INDIE HOME</div>
+                    <div style="font-family: monospace; font-size: 1.2rem; margin-top: 2rem; opacity: 0.9;">Starting at
+                    </div>
+                    <div style="font-size: 2.5rem; font-weight: 900; margin-top: 0.5rem;">8.35% <span
+                            style="font-size: 1rem;">p.a.</span></div>
+                </div>
+                <div
+                    style="padding: 2.5rem; background: white; border-radius: 0 0 20px 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+                    <h3 style="font-weight: 800; margin-bottom: 1rem; color: #1e293b;">Own Your Dream</h3>
+                    <ul style="padding: 0; list-style: none; color: #475569; font-size: 0.95rem; margin-bottom: 2rem;">
+                        <li style="margin-bottom: 0.75rem;"><i class="fas fa-check"
+                                style="color: #10b981; margin-right: 10px;"></i> Up to 90% LTV</li>
+                        <li style="margin-bottom: 0.75rem;"><i class="fas fa-check"
+                                style="color: #10b981; margin-right: 10px;"></i> Flexible Tenure up to 30 Yrs</li>
+                        <li style="margin-bottom: 0.75rem;"><i class="fas fa-check"
+                                style="color: #10b981; margin-right: 10px;"></i> Zero Pre-payment Charges</li>
+                    </ul>
+                    <a href="{% url 'apply_loan' 'Home' %}" class="btn-gold" style="width: 100%;">Apply Now</a>
+                </div>
+            </div>
+
+            <div class="premium-card-container" style="transform: scale(1.05); z-index: 10;">
+                <div class="premium-card-body loan-variant-personal" style="border: 2px solid #a78bfa;">
+                    <div class="card-shine"></div>
+                    <div class="card-logo-overlay"><i class="fas fa-user-tie"></i> INDIE PERSONAL</div>
+                    <div style="font-family: monospace; font-size: 1.2rem; margin-top: 2rem; opacity: 0.9;">Starting at
+                    </div>
+                    <div style="font-size: 2.5rem; font-weight: 900; margin-top: 0.5rem;">10.50% <span
+                            style="font-size: 1rem;">p.a.</span></div>
+                    <div
+                        style="position: absolute; top: -10px; right: 20px; background: #fbbf24; color: #000; padding: 10px 15px; font-weight: 900; border-radius: 0 0 10px 10px; font-size: 0.7rem;">
+                        INSTANT</div>
+                </div>
+                <div
+                    style="padding: 2.5rem; background: white; border-radius: 0 0 20px 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.15);">
+                    <h3 style="font-weight: 800; margin-bottom: 1rem; color: #1e293b;">Fund Aspirations</h3>
+                    <ul style="padding: 0; list-style: none; color: #475569; font-size: 0.95rem; margin-bottom: 2rem;">
+                        <li style="margin-bottom: 0.75rem;"><i class="fas fa-check"
+                                style="color: #10b981; margin-right: 10px;"></i> Pre-approved Offers</li>
+                        <li style="margin-bottom: 0.75rem;"><i class="fas fa-check"
+                                style="color: #10b981; margin-right: 10px;"></i> No Collateral Required</li>
+                        <li style="margin-bottom: 0.75rem;"><i class="fas fa-check"
+                                style="color: #10b981; margin-right: 10px;"></i> Digital Disbursement</li>
+                    </ul>
+                    <a href="{% url 'apply_loan' 'Personal' %}" class="btn-gold" style="width: 100%;">Apply Now</a>
+                </div>
+            </div>
+
+            <div class="premium-card-container">
+                <div class="premium-card-body loan-variant-vehicle">
+                    <div class="card-shine"></div>
+                    <div class="card-logo-overlay"><i class="fas fa-car-side"></i> INDIE VEHICLE</div>
+                    <div style="font-family: monospace; font-size: 1.2rem; margin-top: 2rem; opacity: 0.9;">Starting at
+                    </div>
+                    <div style="font-size: 2.5rem; font-weight: 900; margin-top: 0.5rem;">8.75% <span
+                            style="font-size: 1rem;">p.a.</span></div>
+                </div>
+                <div
+                    style="padding: 2.5rem; background: white; border-radius: 0 0 20px 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+                    <h3 style="font-weight: 800; margin-bottom: 1rem; color: #1e293b;">Drive The Future</h3>
+                    <ul style="padding: 0; list-style: none; color: #475569; font-size: 0.95rem; margin-bottom: 2rem;">
+                        <li style="margin-bottom: 0.75rem;"><i class="fas fa-check"
+                                style="color: #10b981; margin-right: 10px;"></i> 100% On-road Funding</li>
+                        <li style="margin-bottom: 0.75rem;"><i class="fas fa-check"
+                                style="color: #10b981; margin-right: 10px;"></i> EV Special Subsidies</li>
+                        <li style="margin-bottom: 0.75rem;"><i class="fas fa-check"
+                                style="color: #10b981; margin-right: 10px;"></i> Balloon EMI Options</li>
+                    </ul>
+                    <a href="{% url 'apply_loan' 'Vehicle' %}" class="btn-gold" style="width: 100%;">Apply Now</a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+{% endblock %}
