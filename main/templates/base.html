@@ -323,7 +323,7 @@
             <div class="language-header">
                 <img src="{% static 'img/bank_logo.png' %}" alt="Indie Bank">
                 <h2>INDIE BANK</h2>
-                <button class="close-modal-btn" onclick="document.getElementById('language-overlay-modal').style.display='none'">
+                <button class="close-modal-btn" onclick="dismissLanguageModal()">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
@@ -352,8 +352,7 @@
             if (selectField) {
                 selectField.value = langCode;
                 selectField.dispatchEvent(new Event('change'));
-                document.getElementById('language-overlay-modal').style.display = 'none';
-                localStorage.setItem('ib_lang_selected', 'true');
+                dismissLanguageModal();
             } else {
                 // If not ready, show a small loader and try again in 500ms
                 console.log("Google Translate hasn't loaded yet. Retrying...");
@@ -363,15 +362,26 @@
             }
         }
 
-        // Show modal on first load if no language is selected
+        // Dedicated function to hide modal and remember user preference/dismissal
+        function dismissLanguageModal() {
+            var modal = document.getElementById('language-overlay-modal');
+            if (modal) {
+                modal.style.display = 'none';
+            }
+            localStorage.setItem('ib_lang_selected', 'true');
+        }
+
+        // Show modal on first load if no language is selected or dismissed
         document.addEventListener('DOMContentLoaded', function() {
+            // First check if already selected/dismissed to avoid any unnecessary processing
+            if (localStorage.getItem('ib_lang_selected')) {
+                return; 
+            }
+
             setTimeout(function() {
-                // Check if we already have a selection or if it was dismissed
-                if (!localStorage.getItem('ib_lang_selected')) {
-                    var modal = document.getElementById('language-overlay-modal');
-                    if(modal) modal.style.display = 'flex';
-                }
-            }, 1500); // Slightly longer delay to allow assets to load
+                var modal = document.getElementById('language-overlay-modal');
+                if(modal) modal.style.display = 'flex';
+            }, 1000); // Shorter delay since we already know we need to show it
         });
     </script>
 
