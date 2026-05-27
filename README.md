@@ -1,4 +1,4 @@
- #Online Banking Management System (OBMS)
+# Online Banking Management System (OBMS)
 
 A robust, secure, and modern 24/7 web-based banking application designed to transition traditional, manual financial services into a high-performance digital ecosystem. The platform features a dual-portal design that provides customers with automated wealth management tools and equips bank administrators with a centralized oversight engine to monitor platform-wide liquidity, verify identities, and prevent fraud.
 
