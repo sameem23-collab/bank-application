@@ -94,17 +94,3 @@ The data layer utilizes a normalized schema layout (1NF, 2NF, 3NF compliant) to 
 * **Level 2 (Transaction Validation Layer):** Routes every input string through runtime verification checkpoints enforcing account balance boundaries, format standards, and credential validations prior to modifying state ledgers.
 
 ---
-
-## ⚙️ Installation & Local Server Setup
-
-### Hardware Prerequisites
-* **Minimum:** Dual-core CPU, 4 GB RAM, 1 GB free storage space.
-* **Recommended:** Intel i3/Ryzen 3 or better, 8 GB RAM, 2 GB+ free storage space.
-
-### Step-by-Step Deployment
-Follow these commands to configure the development environment locally:
-
-**1. Clone and Navigate to the Repository**
-```bash
-git clone [https://github.com/YOUR_USERNAME/online-banking-system.git](https://github.com/YOUR_USERNAME/online-banking-system.git)
-cd online-banking-system
